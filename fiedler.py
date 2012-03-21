@@ -57,7 +57,7 @@ def graph_laplacian(adj_list):
 	return A.tocsr()
 
 
-def fiedler(adj_list,fn):
+def fiedler(adj_list,fn,plot=False,n_fied=1):
 	"""calculate the first fiedler vector of a graph adjascancy list 
 	given as a two dimensional arrya of ints of the form:
 	[[node1,node2],
@@ -70,15 +70,44 @@ def fiedler(adj_list,fn):
 	M = ml.aspreconditioner()
 
 	# solve for lowest two modes: constant vector and Fiedler vector
-	X = scipy.rand(A.shape[0], 2) 
+	X = scipy.rand(A.shape[0], n_fied+1)
 	(eval,evec,res) = lobpcg(A, X, M=None, tol=1e-12, largest=False, \
 	        verbosityLevel=0, retResidualNormsHistory=True)
 
 	fied= evec[:,1]
-	output(fied,A.diagonal(),fn)
-	return fied
+	if plot:
+		if n_fied>1:
+			#output fied vs fied:
+			plotFiedvsFied(evec[:,1],evec[:,2],fn)
 
-def output(fied, degree,fn):
+			#output second
+			plotFiedvsDeg(evec[:,2],A.diagonal(),fn+".second.")
+		
+		# output first
+		plotFiedvsDeg(fied,A.diagonal(),fn)
+	
+	return {"f":list(fied),"d":list(A.diagonal()),"o":[int(i) for i in list(numpy.argsort(fied))]}
+	
+
+
+
+def plotFiedvsFied(fied1,fied2,fn):
+	pylab.scatter(fied1, fied2)
+	pylab.grid(True)
+	F = pylab.gcf()
+	F.set_size_inches( (16,16) )
+	F.savefig(fn+".fied1vfied2.png")
+	F.clear()
+
+	pylab.scatter(numpy.argsort(fied1), numpy.argsort(fied2))
+	pylab.grid(True)
+	F = pylab.gcf()
+	F.set_size_inches( (16,16) )
+	F.savefig(fn+".sorted.fied1vfied2.png")
+	F.clear()
+
+
+def plotFiedvsDeg(fied, degree,fn):
 	pylab.scatter(fied, numpy.log2(degree))
 	pylab.grid(True)
 	F = pylab.gcf()
@@ -92,13 +121,15 @@ def output(fied, degree,fn):
 	F = pylab.gcf()
 	F.set_size_inches( (64,8) )
 	F.savefig(fn+"fiedler.sorted.png")
+	F.clear()
+
 	
-	print json.dumps({"f":list(fied),"d":list(degree),"o":[int(i) for i in list(order)]})
+	
 
 def main():
 	fn = sys.argv[1]
 	adj_list=sif_parse(fn)
-	fied = fiedler(adj_list,fn)
+	print fiedler(adj_list,fn,plot=True,n_fied=2)
 
 
 
