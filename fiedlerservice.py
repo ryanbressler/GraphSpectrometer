@@ -32,11 +32,15 @@ import fiedler
 
 def RequestHandler(info,outfo):
 	"""
-	accepts a post body of the form
-	node1\tnode2\n
-	...
+	Parse input,do caclulation, transform into proper format and dump json.
+
+	info: a file like object containing a sif like file
+	outfo: a file like object to write json to
 	"""
 
+	#Change 2 to 1 below to accept 2 column files.
+	#Could also parse json of the form [["node1","node2"],...] with something like
+	#(adj_list,iByn,nByi)=fiedler.file_parse(["%s\t%s"%(e[0],e[1]) for e in json.load(info)],0,2)
 	(adj_list,iByn,nByi)=fiedler.file_parse(info,0,2)
 	fied=fiedler.fiedler(adj_list,plot=False,n_fied=2)
 	out = fied["f1"][:]
