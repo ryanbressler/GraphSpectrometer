@@ -26,7 +26,7 @@ import pylab
 
 from pyamg import smoothed_aggregation_solver
 
-from helper import trimesh, graph_laplacian
+
 
 
 
@@ -132,6 +132,7 @@ def plotFiedvsDeg(fied, degree,fn):
 	F.clear()
 
 	#WHY DO THESE TWO METHODS BELOW YIELD DIFFRENT RESULTS??? 
+	print "there are %s non unique"%(fied.size-numpy.unique(fied).size)
 	order = numpy.argsort(fied)
 	pylab.scatter(numpy.arange(0,fied.size), numpy.log2(degree[order]))
 	pylab.grid(True)
@@ -153,7 +154,7 @@ def plotFiedvsDeg(fied, degree,fn):
 def main():
 	fn = sys.argv[1]
 	adj_list=sif_parse(fn)
-	print fiedler(adj_list,fn,plot=True,n_fied=2)
+	fied=fiedler(adj_list,fn,plot=True,n_fied=2)
 
 
 
