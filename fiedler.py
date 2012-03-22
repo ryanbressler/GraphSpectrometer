@@ -246,8 +246,6 @@ def plotFiedvsDeg(fied, degree,fn):
 	F.clear()
 
 	
-	
-
 def main():
 	
 	fn = sys.argv[1]
