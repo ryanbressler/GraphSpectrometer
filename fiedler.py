@@ -98,7 +98,7 @@ def fiedler(adj_list,fn,plot=False,n_fied=1):
 			plotFiedvsFied(evec[:,1],evec[:,2],fn)
 
 			#output second
-			plotFiedvsDeg(evec[:,2],A.diagonal(),fn+".second.")
+			plotFiedvsDeg(evec[:,2],A.diagonal(),fn+".second")
 		
 		
 	
@@ -132,18 +132,19 @@ def plotFiedvsDeg(fied, degree,fn):
 	F.clear()
 
 	#WHY DO THESE TWO METHODS BELOW YIELD DIFFRENT RESULTS??? 
-	pylab.scatter(numpy.arange(0,fied.size), numpy.log2(degree[numpy.argsort(fied)]))
+	order = numpy.argsort(fied)
+	pylab.scatter(numpy.arange(0,fied.size), numpy.log2(degree[order]))
 	pylab.grid(True)
 	F = pylab.gcf()
 	F.set_size_inches( (64,8) )
 	F.savefig(fn+".fiedler.sorted.method1.png")
 	F.clear()
 
-	pylab.scatter(numpy.argsort(fied), numpy.log2(degree))
+	pylab.scatter(order, numpy.log2(degree))
 	pylab.grid(True)
 	F = pylab.gcf()
 	F.set_size_inches( (64,8) )
-	F.savefig(fn+"fiedler.sorted.png")
+	F.savefig(fn+".fiedler.sorted.png")
 	F.clear()
 
 	
