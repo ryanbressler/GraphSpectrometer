@@ -131,15 +131,15 @@ def plotFiedvsDeg(fied, degree,fn):
 	F.savefig(fn+".fiedler.png")
 	F.clear()
 
-	#WHY DO THESE TO METHODS BELOW YIELD DIFFRENT RESULTS??? 
-	pylab.scatter(numpy.arange(0,fied.size), degree[numpy.argsort(fied)])
+	#WHY DO THESE TWO METHODS BELOW YIELD DIFFRENT RESULTS??? 
+	pylab.scatter(numpy.arange(0,fied.size), numpy.log2(degree[numpy.argsort(fied)]))
 	pylab.grid(True)
 	F = pylab.gcf()
 	F.set_size_inches( (64,8) )
 	F.savefig(fn+".fiedler.sorted.method1.png")
 	F.clear()
 
-	pylab.scatter(numpy.argsort(fied), degree)
+	pylab.scatter(numpy.argsort(fied), numpy.log2(degree))
 	pylab.grid(True)
 	F = pylab.gcf()
 	F.set_size_inches( (64,8) )
