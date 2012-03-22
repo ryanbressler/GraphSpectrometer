@@ -102,10 +102,11 @@ def fiedler(adj_list,fn,plot=False,n_fied=1):
 		
 		
 	
-	return {"f":list(fied),"d":list(A.diagonal()),"o":[int(i) for i in list(numpy.argsort(fied))]}
+	return {"f":list(fied),"d":list(A.diagonal()),"o":[int(i) for i in list(numpy.argsort(numpy.argsort(fied)))]}
 	
 
 
+#Plots are not optimized ...ie they end up sorting the same thing multiple times
 
 def plotFiedvsFied(fied1,fied2,fn):
 	pylab.scatter(fied1, fied2)
@@ -115,7 +116,7 @@ def plotFiedvsFied(fied1,fied2,fn):
 	F.savefig(fn+".fied1vfied2.png")
 	F.clear()
 
-	pylab.scatter(numpy.argsort(fied1), numpy.argsort(fied2))
+	pylab.scatter(numpy.argsort(numpy.argsort(fied1)), numpy.argsort(numpy.argsort(fied2)))
 	pylab.grid(True)
 	F = pylab.gcf()
 	F.set_size_inches( (16,16) )
@@ -131,7 +132,6 @@ def plotFiedvsDeg(fied, degree,fn):
 	F.savefig(fn+".fiedler.png")
 	F.clear()
 
-	#WHY DO THESE TWO METHODS BELOW YIELD DIFFRENT RESULTS??? 
 	print "there are %s non unique"%(fied.size-numpy.unique(fied).size)
 	order = numpy.argsort(fied)
 	pylab.scatter(numpy.arange(0,fied.size), numpy.log2(degree[order]))
@@ -139,13 +139,6 @@ def plotFiedvsDeg(fied, degree,fn):
 	F = pylab.gcf()
 	F.set_size_inches( (64,8) )
 	F.savefig(fn+".fiedler.sorted.method1.png")
-	F.clear()
-
-	pylab.scatter(order, numpy.log2(degree))
-	pylab.grid(True)
-	F = pylab.gcf()
-	F.set_size_inches( (64,8) )
-	F.savefig(fn+".fiedler.sorted.png")
 	F.clear()
 
 	
