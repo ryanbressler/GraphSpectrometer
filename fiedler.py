@@ -1,3 +1,17 @@
+"""
+
+python script/module that uses pyamg to calculat and plot fiedler vectors of sif files.
+
+Comand line Usage:
+python fiedler.py my.sif
+
+Or with x args as a thread pool to plot many sif files:
+ls *.sif | xargs --max-procs=8 -I FILE  python fiedler.py FILE 
+
+
+"""
+
+
 import sys
 import json
 
@@ -76,6 +90,9 @@ def fiedler(adj_list,fn,plot=False,n_fied=1):
 
 	fied= evec[:,1]
 	if plot:
+		# output first
+		plotFiedvsDeg(fied,A.diagonal(),fn)
+
 		if n_fied>1:
 			#output fied vs fied:
 			plotFiedvsFied(evec[:,1],evec[:,2],fn)
@@ -83,8 +100,7 @@ def fiedler(adj_list,fn,plot=False,n_fied=1):
 			#output second
 			plotFiedvsDeg(evec[:,2],A.diagonal(),fn+".second.")
 		
-		# output first
-		plotFiedvsDeg(fied,A.diagonal(),fn)
+		
 	
 	return {"f":list(fied),"d":list(A.diagonal()),"o":[int(i) for i in list(numpy.argsort(fied))]}
 	
@@ -112,11 +128,18 @@ def plotFiedvsDeg(fied, degree,fn):
 	pylab.grid(True)
 	F = pylab.gcf()
 	F.set_size_inches( (64,8) )
-	F.savefig(fn+"fiedler.png")
+	F.savefig(fn+".fiedler.png")
 	F.clear()
 
-	order = numpy.argsort(fied)
-	pylab.scatter(numpy.arange(0,order.size), numpy.log2(degree[order]))
+	#WHY DO THESE TO METHODS BELOW YIELD DIFFRENT RESULTS??? 
+	pylab.scatter(numpy.arange(0,fied.size), degree[numpy.argsort(fied)])
+	pylab.grid(True)
+	F = pylab.gcf()
+	F.set_size_inches( (64,8) )
+	F.savefig(fn+".fiedler.sorted.method1.png")
+	F.clear()
+
+	pylab.scatter(numpy.argsort(fied), degree)
 	pylab.grid(True)
 	F = pylab.gcf()
 	F.set_size_inches( (64,8) )
