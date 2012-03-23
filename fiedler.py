@@ -68,7 +68,7 @@ import pylab
 
 
 
-def file_parse(fo,node1=0,node2=2):
+def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5):
 	"""parse a sif like file into an adjascancy list by index in a matrix and node name look up tables. 
 
 	Takes:
@@ -101,6 +101,9 @@ def file_parse(fo,node1=0,node2=2):
 	for line in fo:
 		vs = line.rstrip().split()
 		if len(vs)>node2:
+			if filter_col!=-1:
+				if float(vs[filter_col])<filter_min:
+					continue
 			for strid in [vs[node1],vs[node2]]:
 				if not strid in intidsbyname:
 					intidsbyname[strid]=incintid
@@ -108,7 +111,7 @@ def file_parse(fo,node1=0,node2=2):
 					incintid = incintid+1 
 
 			
-			out.append([intidsbyname[vs[0]],intidsbyname[vs[2]]])
+			out.append([intidsbyname[vs[node1]],intidsbyname[vs[node2]]])
 		
 	fo.close()
 	return (out,intidsbyname,namesbyintid)
@@ -246,12 +249,33 @@ def plotFiedvsDeg(fied, degree,fn):
 	F.clear()
 
 	
+def filename_parse(fn):
+	"""Wraps file_parse and infers paramaters based on extensions.
+
+	Takes:
+	filename.
+
+	".out" files will be treated as rf-ace output and filtered by imortance
+
+	all other files will be treated as sif files.
+
+	returns:
+	The same tuple as filename_parse
+	"""
+
+	fo = open(fn)
+	out =()
+	if fn[-4:]==".out":
+		out =file_parse(fo,node2=1,filter_col=3,filter_min=.001)
+	else:
+		out= file_parse(fo)
+	fo.close()
+	return out
+
 def main():
 	
-	fn = sys.argv[1]
-	fo = open(fn)
-	(adj_list,iByn,nByi)=file_parse(fo)
-	fo.close()
+	fn = sys.argv[1]	
+	(adj_list,iByn,nByi)=filename_parse(fn)
 	fied=fiedler(adj_list,fn=fn,plot=True,n_fied=2)
 	fied["iByn"]=iByn
 	fied["nByi"]=nByi
