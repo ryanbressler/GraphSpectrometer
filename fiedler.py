@@ -30,6 +30,8 @@ third column repesenting node names and each row repesenting an edge.
 Comand line Usage:
 python fiedler.py my.sif
 
+Can also be used on rf-ace output files provided the file has a ".out" exstension.
+
 Or with x args as a thread pool to plot many sif files:
 ls *.sif | xargs --max-procs=8 -I FILE  python fiedler.py FILE
 
@@ -61,7 +63,6 @@ from scipy.sparse.linalg import lobpcg
 
 from pyamg import smoothed_aggregation_solver
 
-import pylab
 
 
 
@@ -168,6 +169,7 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 
 
 	"""
+	global mpath,mpatches,plt
 
 	A = graph_laplacian(adj_list)
 
@@ -181,12 +183,15 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 	        verbosityLevel=0, retResidualNormsHistory=True)
 
 	if plot:
+		import matplotlib.path as mpath
+		import matplotlib.patches as mpatches
+		import matplotlib.pyplot as plt
 		# output first
 		plotFiedvsDeg(evec[:,1],A.diagonal(),fn)
 
 		if n_fied>1:
 			#output fied vs fied:
-			plotFiedvsFied(evec[:,1],evec[:,2],fn)
+			plotFiedvsFied(evec[:,1],evec[:,2],fn,adj_list=adj_list)
 
 			#output second
 			plotFiedvsDeg(evec[:,2],A.diagonal(),fn+".second")
@@ -202,25 +207,53 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 
 #Plots are not optimized ...ie they end up sorting the same thing multiple times
 
-def plotFiedvsFied(fied1,fied2,fn):
+
+def plotEdges(x,y,ax,adj_list):
+	#codes=[]
+	#points=[]
+	for edge in adj_list:
+		#points[len(points):]=[(x[edge[0]],y[edge[0]]),(x[edge[1]],y[edge[1]])]
+		points=[(x[edge[0]],y[edge[0]]),(x[edge[1]],y[edge[1]])]
+		#codes[len(codes):]=[mpath.Path.MOVETO,mpath.Path.LINETO]
+		codes=[mpath.Path.MOVETO,mpath.Path.LINETO]
+	
+		patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor='green', lw=.25,alpha=.5)
+		ax.add_patch(patch)
+
+def plotFiedvsFied(fied1,fied2,fn,adj_list=False):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
 	fied1: the fiedler vector to use as the x axis
 	fied2: the fiedler vector to use as the y axis
 	fn: the filename to prepend"""
-
-	pylab.scatter(fied1, fied2)
-	pylab.grid(True)
-	F = pylab.gcf()
-	F.set_size_inches( (16,16) )
+	F = plt.figure()
+	ax = F.add_subplot(111)
+	
+	ax.scatter(fied1, fied2,zorder=2)
+	if not adj_list==False:
+		plotEdges(fied1,fied2,ax,adj_list)
+	ax.grid(True)
+	F.set_size_inches( (32,32) )
 	F.savefig(fn+".fied1vfied2.png")
 	F.clear()
 
-	pylab.scatter(numpy.argsort(numpy.argsort(fied1)), numpy.argsort(numpy.argsort(fied2)))
-	pylab.grid(True)
-	F = pylab.gcf()
-	F.set_size_inches( (16,16) )
+	F = plt.figure()
+	ax = F.add_subplot(111)
+	
+	sortx=numpy.argsort(numpy.argsort(fied1))
+	sorty=numpy.argsort(numpy.argsort(fied2))
+	
+	ax.scatter(sortx,sorty,zorder=2)
+	if not adj_list==False:
+		plotEdges(sortx,sorty,ax,adj_list)
+
+			
+
+	ax.grid(True)
+
+	
+	F.set_size_inches( (32,32) )
 	F.savefig(fn+"fied1rank.v.fied2rank.png")
 	F.clear()
 
@@ -232,24 +265,28 @@ def plotFiedvsDeg(fied, degree,fn):
 	fied: the fiedler vector to use as the x axis
 	degree: the degree of the nodes
 	fn: the filename to prepend"""
+	F = plt.figure()
+	ax = F.add_subplot(111)
+	ax.scatter(fied, numpy.log2(degree))
+	ax.grid(True)
 
-	pylab.scatter(fied, numpy.log2(degree))
-	pylab.grid(True)
-	F = pylab.gcf()
 	F.set_size_inches( (64,8) )
 	F.savefig(fn+".fiedler.vs.log2.degree.png")
 	F.clear()
 
+	F = plt.figure()
+	ax = F.add_subplot(111)
+
 	order = numpy.argsort(fied)
-	pylab.scatter(numpy.arange(0,fied.size), numpy.log2(degree[order]))
-	pylab.grid(True)
-	F = pylab.gcf()
+	ax.scatter(numpy.arange(0,fied.size), numpy.log2(degree[order]))
+	ax.grid(True)
+
 	F.set_size_inches( (64,8) )
 	F.savefig(fn+".fiedler.ranks.vs.log2.degree.png")
 	F.clear()
 
 	
-def filename_parse(fn):
+def filename_parse(fn,filter_min=.001):
 	"""Wraps file_parse and infers paramaters based on extensions.
 
 	Takes:
@@ -266,7 +303,7 @@ def filename_parse(fn):
 	fo = open(fn)
 	out =()
 	if fn[-4:]==".out":
-		out =file_parse(fo,node2=1,filter_col=3,filter_min=.001)
+		out =file_parse(fo,node2=1,filter_col=3,filter_min=filter_min)
 	else:
 		out= file_parse(fo)
 	fo.close()
@@ -274,9 +311,12 @@ def filename_parse(fn):
 
 def main():
 	
-	fn = sys.argv[1]	
-	(adj_list,iByn,nByi)=filename_parse(fn)
-	fied=fiedler(adj_list,fn=fn,plot=True,n_fied=2)
+	fn = sys.argv[1]
+	filter_min=""
+	if len(sys.argv)>2:
+		filter_min=float(filter_min)
+	(adj_list,iByn,nByi)=filename_parse(fn,filter_min)
+	fied=fiedler(adj_list,fn=fn+filter_min,plot=True,n_fied=2)
 	fied["iByn"]=iByn
 	fied["nByi"]=nByi
 	fo = open(fn+".json","w")
