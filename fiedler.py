@@ -169,7 +169,7 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 
 
 	"""
-	global mpath,mpatches,plt
+	
 
 	A = graph_laplacian(adj_list)
 
@@ -183,18 +183,7 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 	        verbosityLevel=0, retResidualNormsHistory=True)
 
 	if plot:
-		import matplotlib.path as mpath
-		import matplotlib.patches as mpatches
-		import matplotlib.pyplot as plt
-		# output first
-		plotFiedvsDeg(evec[:,1],A.diagonal(),fn)
-
-		if n_fied>1:
-			#output fied vs fied:
-			plotFiedvsFied(evec[:,1],evec[:,2],fn,adj_list=adj_list)
-
-			#output second
-			plotFiedvsDeg(evec[:,2],A.diagonal(),fn+".second")
+		doPlots(evec[:,1],evec[:,2],A.diagonal(),adj_list,fn)
 		
 		
 	out = {"f1":list(evec[:,1]),"d":list(A.diagonal()),"r1":[int(i) for i in list(numpy.argsort(numpy.argsort(evec[:,1])))]}
@@ -206,7 +195,20 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 
 
 #Plots are not optimized ...ie they end up sorting the same thing multiple times
+def doPlots(f1,f2,degrees,adj_list,fn):
+	global mpath,mpatches,plt
+	import matplotlib.path as mpath
+	import matplotlib.patches as mpatches
+	import matplotlib.pyplot as plt
+	# output first
+	plotFiedvsDeg(f1,degrees,fn)
 
+	#if n_fied>1:
+	#output fied vs fied:
+	plotFiedvsFied(f1,f2,fn,adj_list=adj_list)
+
+	#output second
+	plotFiedvsDeg(f2,degrees,fn+".second")
 
 def plotEdges(x,y,ax,adj_list):
 	#codes=[]
@@ -314,12 +316,13 @@ def main():
 	fn = sys.argv[1]
 	filter_min=""
 	if len(sys.argv)>2:
-		filter_min=float(filter_min)
+		filter_min=float(sys.argv[2])
 	(adj_list,iByn,nByi)=filename_parse(fn,filter_min)
-	fied=fiedler(adj_list,fn=fn+filter_min,plot=True,n_fied=2)
+	fied=fiedler(adj_list,fn=fn+str(filter_min),plot=False,n_fied=2)
+	fied["adj"]=adj_list
 	fied["iByn"]=iByn
 	fied["nByi"]=nByi
-	fo = open(fn+".json","w")
+	fo = open(fn+str(filter_min)+".json","w")
 	json.dump(fied,fo)
 	fo.close()
 
