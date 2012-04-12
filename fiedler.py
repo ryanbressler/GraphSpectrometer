@@ -69,7 +69,7 @@ from pyamg import smoothed_aggregation_solver
 
 
 
-def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5):
+def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5,val_col=-1):
 	"""parse a sif like file into an adjascancy list by index in a matrix and node name look up tables. 
 
 	Takes:
@@ -110,9 +110,13 @@ def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5):
 					intidsbyname[strid]=incintid
 					namesbyintid.append(strid)
 					incintid = incintid+1 
+			row =[intidsbyname[vs[node1]],intidsbyname[vs[node2]]]
+
+			if val_col!=-1:
+				row.append(float(vs[val_col]))
 
 			
-			out.append([intidsbyname[vs[node1]],intidsbyname[vs[node2]]])
+			out.append(row)
 		
 	fo.close()
 	return (out,intidsbyname,namesbyintid)
@@ -135,9 +139,12 @@ def graph_laplacian(adj_list):
 	adj_list=numpy.array(adj_list)
 	Npts = numpy.max(adj_list)+1
 	data = numpy.ones(adj_list.shape[0],dtype=float)
+	if adj_list.shape[1]>2:
+		data=-1*adj_list[:,2]
 	A = coo_matrix((data,(adj_list[:,0],adj_list[:,1])), shape=(Npts,Npts)).tocsr()
-	A = A.T + A
-	A.data = -1*numpy.ones((A.nnz,),dtype=float)
+	A = (A.T + A)/2
+	if adj_list.shape[1]==2:
+		A.data = -1*numpy.ones((A.nnz,),dtype=float)
 	A.setdiag(numpy.zeros((Npts,),dtype=float))
 	A.setdiag(-1*numpy.array(A.sum(axis=1)).ravel())
 	return A.tocsr()
@@ -195,20 +202,23 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 
 
 #Plots are not optimized ...ie they end up sorting the same thing multiple times
-def doPlots(f1,f2,degrees,adj_list,fn):
+def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False):
 	global mpath,mpatches,plt
 	import matplotlib.path as mpath
 	import matplotlib.patches as mpatches
 	import matplotlib.pyplot as plt
 	# output first
-	plotFiedvsDeg(f1,degrees,fn)
+	if vsdeg:
+		plotFiedvsDeg(f1,degrees,fn)
 
 	#if n_fied>1:
-	#output fied vs fied:
-	plotFiedvsFied(f1,f2,fn,adj_list=adj_list)
+	for width in widths:
+		#output fied vs fied:
+		plotFiedvsFied(f1,f2,fn,adj_list=adj_list,width=width,nByi=nByi)
 
 	#output second
-	plotFiedvsDeg(f2,degrees,fn+".second")
+	if vsdeg:
+		plotFiedvsDeg(f2,degrees,fn+".second")
 
 def plotEdges(x,y,ax,adj_list):
 	#codes=[]
@@ -218,11 +228,15 @@ def plotEdges(x,y,ax,adj_list):
 		points=[(x[edge[0]],y[edge[0]]),(x[edge[1]],y[edge[1]])]
 		#codes[len(codes):]=[mpath.Path.MOVETO,mpath.Path.LINETO]
 		codes=[mpath.Path.MOVETO,mpath.Path.LINETO]
-	
-		patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor='green', lw=.25,alpha=.5)
+		alpha=.5
+		if len(edge)>2:
+			alpha=edge[2]
+
+
+		patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor='green', lw=.25,alpha=alpha)
 		ax.add_patch(patch)
 
-def plotFiedvsFied(fied1,fied2,fn,adj_list=False):
+def plotFiedvsFied(fied1,fied2,fn,adj_list=False,width=16,nByi=False):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
@@ -235,9 +249,11 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False):
 	ax.scatter(fied1, fied2,zorder=2)
 	if not adj_list==False:
 		plotEdges(fied1,fied2,ax,adj_list)
+	if not nByi==False and width>32:
+		labelPoints(plt,fied1,fied2,nByi=nByi)
 	ax.grid(True)
-	F.set_size_inches( (32,32) )
-	F.savefig(fn+".fied1vfied2.png")
+	F.set_size_inches( (width,width) )
+	F.savefig(fn+".fied1vfied2.width%s.png"%(width),bbox_inches='tight')
 	F.clear()
 
 	F = plt.figure()
@@ -250,14 +266,28 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False):
 	if not adj_list==False:
 		plotEdges(sortx,sorty,ax,adj_list)
 
+	if not nByi==False and width>32:
+		labelPoints(plt,sortx,sorty,nByi=nByi)
 			
 
 	ax.grid(True)
+	ax.set_xmargin(.01)
+	ax.set_ymargin(.01)
 
 	
-	F.set_size_inches( (32,32) )
-	F.savefig(fn+"fied1rank.v.fied2rank.png")
+	F.set_size_inches( (width,width) )
+	F.savefig(fn+"fied1rank.v.fied2rank.width%s.png"%(width),bbox_inches='tight')
 	F.clear()
+
+def labelPoints(plt,x,y,nByi):
+	for i,xi in enumerate(x):
+		plt.annotate(
+	        ":".join(nByi[i].split(":")[1:3]), 
+	        xy = (xi, y[i]), xytext = (-1, 1),
+	        textcoords = 'offset points', ha = 'right', va = 'bottom',size=6,alpha=.3)
+		# ,
+	 #        bbox = dict(boxstyle = 'round,pad=0.1', fc = 'white', alpha = 0.3),
+	 #        arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
 
 
 def plotFiedvsDeg(fied, degree,fn):
@@ -305,7 +335,7 @@ def filename_parse(fn,filter_min=.001):
 	fo = open(fn)
 	out =()
 	if fn[-4:]==".out":
-		out =file_parse(fo,node2=1,filter_col=3,filter_min=filter_min)
+		out =file_parse(fo,node2=1,filter_col=3,filter_min=filter_min,val_col=3)
 	else:
 		out= file_parse(fo)
 	fo.close()
@@ -322,7 +352,7 @@ def main():
 	fied["adj"]=adj_list
 	fied["iByn"]=iByn
 	fied["nByi"]=nByi
-	fo = open(fn+str(filter_min)+".json","w")
+	fo = open(fn+str(filter_min)+".continuous.json","w")
 	json.dump(fied,fo)
 	fo.close()
 
