@@ -29,7 +29,7 @@ def plotjson(fn):
 	data=json.load(fo)
 	fo.close()
 	if "adj" in data:
-		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn,widths=[16,32,64,128],vsdeg=False,nByi=data["nByi"])
+		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn,widths=[64],vsdeg=False,nByi=data["nByi"])
 
 def main():
 	fn=sys.argv[1]

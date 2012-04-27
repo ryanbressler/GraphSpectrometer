@@ -44,7 +44,8 @@ By default generates a number of pngs of diffrent sorts of plots and a .json fil
 "r1": the rank of each node in the first fiedler vector
 "r2": the rank of each node in the second fiedler vector
 "iByn": the index of the nodes by the string used to represent them in the input file
-"nByi": the string used to represent nodes in the input file by their index in the graph}
+"nByi": the string used to represent nodes in the input file by their index in the graph
+"adj": the adjascancy list}
 
 Author/Contact:Ryan Bressler, ryan.bressler@systemsbiology.org
 
@@ -54,6 +55,7 @@ Author/Contact:Ryan Bressler, ryan.bressler@systemsbiology.org
 
 import sys
 import json
+import math
 
 from scipy.sparse import coo_matrix
 
@@ -200,13 +202,16 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 	return out
 	
 
-
-#Plots are not optimized ...ie they end up sorting the same thing multiple times
-def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False):
+def doPlotingImport():
 	global mpath,mpatches,plt
 	import matplotlib.path as mpath
 	import matplotlib.patches as mpatches
 	import matplotlib.pyplot as plt
+
+
+#Plots are not optimized ...ie they end up sorting the same thing multiple times
+def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False):
+	doPlotingImport()
 	# output first
 	if vsdeg:
 		plotFiedvsDeg(f1,degrees,fn)
@@ -220,7 +225,7 @@ def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False):
 	if vsdeg:
 		plotFiedvsDeg(f2,degrees,fn+".second")
 
-def plotEdges(x,y,ax,adj_list):
+def plotEdges(x,y,ax,adj_list,color="green"):
 	#codes=[]
 	#points=[]
 	for edge in adj_list:
@@ -230,25 +235,78 @@ def plotEdges(x,y,ax,adj_list):
 		codes=[mpath.Path.MOVETO,mpath.Path.LINETO]
 		alpha=.5
 		if len(edge)>2:
-			alpha=edge[2]
+			alpha=math.sqrt(float(edge[2]))
 
 
-		patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor='green', lw=.25,alpha=alpha)
+		patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor=color, lw=.3,alpha=alpha)
 		ax.add_patch(patch)
 
-def plotFiedvsFied(fied1,fied2,fn,adj_list=False,width=16,nByi=False):
+def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
+	doPlotingImport()
+	edgevs = {}
+	nedges = 0
+	nByis=[nByi1,nByi2]
+	for i,adj in enumerate([adj1,adj2]):
+		for edge in adj:
+			[e0,e1,v]=edge
+			e0=nByis[i][e0]
+			e1=nByis[i][e1]
+			if not e0 in edgevs:
+				edgevs[e0]={}
+			if not e1 in edgevs[e0]:
+				edgevs[e0][e1]={}
+				nedges+=1
+			edgevs[e0][e1][i]=float(v)
+	x = numpy.zeros((nedges,),dtype=float)
+	y = numpy.zeros((nedges,),dtype=float)
+	i = 0
+	for n0 in edgevs:
+		for n1 in edgevs[n0]:
+			e = edgevs[n0][n1]
+			if 0 in e:
+				x[i]=e[0]
+			if 1 in e:
+				y[i]=e[1]
+			i=i+1
+
+	F = plt.figure()
+	ax = F.add_subplot(111)
+	
+	ax.scatter(x, y,zorder=2)
+	i = 0
+	for n0 in edgevs:
+		for n1 in edgevs[n0]:
+			plt.annotate(	
+		        "->".join([":".join(n.split(":")[1:3]) for n in [n0,n1]]),
+		        xy = (x[i], y[i]), xytext = (-0, 0),
+		        textcoords = 'offset points', ha = 'right', va = 'bottom',size=6,alpha=.3)
+			i+=1
+
+	ax.grid(True)
+	F.set_size_inches( (width,width) )
+	F.savefig(fn+".EdgeVvsEdgeV.width%s.png"%(width),bbox_inches='tight')
+	F.clear()
+
+
+
+
+
+def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=False):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
 	fied1: the fiedler vector to use as the x axis
 	fied2: the fiedler vector to use as the y axis
 	fn: the filename to prepend"""
+	doPlotingImport()
 	F = plt.figure()
 	ax = F.add_subplot(111)
 	
 	ax.scatter(fied1, fied2,zorder=2)
 	if not adj_list==False:
 		plotEdges(fied1,fied2,ax,adj_list)
+	if not adj_list2==False:
+		plotEdges(fied1,fied2,ax,adj_list2,color="red")
 	if not nByi==False and width>32:
 		labelPoints(plt,fied1,fied2,nByi=nByi)
 	ax.grid(True)
@@ -265,6 +323,8 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False,width=16,nByi=False):
 	ax.scatter(sortx,sorty,zorder=2)
 	if not adj_list==False:
 		plotEdges(sortx,sorty,ax,adj_list)
+	if not adj_list2==False:
+		plotEdges(sortx,sorty,ax,adj_list2,color="red")
 
 	if not nByi==False and width>32:
 		labelPoints(plt,sortx,sorty,nByi=nByi)
@@ -284,10 +344,7 @@ def labelPoints(plt,x,y,nByi):
 		plt.annotate(
 	        ":".join(nByi[i].split(":")[1:3]), 
 	        xy = (xi, y[i]), xytext = (-1, 1),
-	        textcoords = 'offset points', ha = 'right', va = 'bottom',size=6,alpha=.3)
-		# ,
-	 #        bbox = dict(boxstyle = 'round,pad=0.1', fc = 'white', alpha = 0.3),
-	 #        arrowprops = dict(arrowstyle = '->', connectionstyle = 'arc3,rad=0'))
+	        textcoords = 'offset points', ha = 'right', va = 'bottom',size=6,alpha=.4)
 
 
 def plotFiedvsDeg(fied, degree,fn):
