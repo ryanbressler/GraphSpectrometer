@@ -152,8 +152,8 @@ def adj_list(adj_mat,includeValue=True):
 	am=adj_mat.tocoo()
 	rv=numpy.column_stack((am.row,am.col,am.data)).tolist()
 	for row in rv:
-		rv[0]=int(rv[0])
-		rv[1]=int(rv[1])
+		row[0]=int(row[0])
+		row[1]=int(row[1])
 	return rv
 
 
@@ -263,7 +263,7 @@ def plotEdges(x,y,ax,adj_list,color="green"):
 		#codes[len(codes):]=[mpath.Path.MOVETO,mpath.Path.LINETO]
 		codes=[mpath.Path.MOVETO,mpath.Path.LINETO]
 		alpha=.5
-		if len(edge)>2:
+		if len(edge)>2 and float(edge[2])>0:
 			alpha=math.sqrt(float(edge[2]))
 
 
