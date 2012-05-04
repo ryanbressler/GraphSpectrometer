@@ -30,7 +30,10 @@ def plotjson(fn):
 	fo.close()
 	if "adj" in data:
 		A = fiedler.adj_mat(data["adj"])
+		#scew symetricise 
 		A = (A.T - A)/2
+		#TODO subtract out curl
+
 		adj2=fiedler.adj_list(A)
 		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn,widths=[64],vsdeg=False,nByi=data["nByi"],adj_list2=adj2)
 
