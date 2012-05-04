@@ -35,7 +35,7 @@ def plotjson(fn):
 		#TODO subtract out curl
 
 		adj2=fiedler.adj_list(A)
-		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn,widths=[64],vsdeg=False,nByi=data["nByi"],adj_list2=adj2)
+		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn+".decomp.",widths=[64],vsdeg=False,nByi=data["nByi"],adj_list2=adj2)
 
 def main():
 	fn=sys.argv[1]
