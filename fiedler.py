@@ -123,6 +123,39 @@ def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5,val_col=-1):
 	fo.close()
 	return (out,intidsbyname,namesbyintid)
 
+def adj_mat(adj_list):
+	"""get the graph laplacian (in coo_matrix sparse matrix form) of an 
+	adjancy list.0
+	
+	Takes:
+
+	An Nx2 nested list of ints of the form:
+	[[node1,node2],
+	...]
+	or an Nx3 list in the form:
+	[[node1,node2,value],
+	...]
+	Representing the adjascancy list.
+
+	Returns
+	The adjasancy matrix in coo_matrix format.
+	"""
+	adj=numpy.array(adj_list)
+	Npts = numpy.max(adj)+1
+	data = numpy.ones(adj.shape[0],dtype=float)
+	if adj.shape[1]>2:
+		data=-1*adj[:,2]
+	A = coo_matrix((data,(adj[:,0],adj[:,1])), shape=(Npts,Npts))
+	return A
+
+def adj_list(adj_mat,includeValue=True):
+	am=adj_mat.tocoo()
+	rv=numpy.column_stack((am.row,am.col,am.data)).tolist()
+	for row in rv:
+		rv[0]=int(rv[0])
+		rv[1]=int(rv[1])
+	return rv
+
 
 def graph_laplacian(adj_list):
 	"""get the graph laplacian (in coo_matrix sparse matrix form) of an 
@@ -138,13 +171,9 @@ def graph_laplacian(adj_list):
 	Returns
 	The graph laplaciian in coo_matrix format.
 	"""
-	adj_list=numpy.array(adj_list)
-	Npts = numpy.max(adj_list)+1
-	data = numpy.ones(adj_list.shape[0],dtype=float)
-	if adj_list.shape[1]>2:
-		data=-1*adj_list[:,2]
-	A = coo_matrix((data,(adj_list[:,0],adj_list[:,1])), shape=(Npts,Npts)).tocsr()
+	A = adj_mat(adj_list)
 	A = (A.T + A)/2
+	A=A.tocsr()
 	if adj_list.shape[1]==2:
 		A.data = -1*numpy.ones((A.nnz,),dtype=float)
 	A.setdiag(numpy.zeros((Npts,),dtype=float))
@@ -210,7 +239,7 @@ def doPlotingImport():
 
 
 #Plots are not optimized ...ie they end up sorting the same thing multiple times
-def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False):
+def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False,adj_list2=False):
 	doPlotingImport()
 	# output first
 	if vsdeg:
@@ -219,7 +248,7 @@ def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False):
 	#if n_fied>1:
 	for width in widths:
 		#output fied vs fied:
-		plotFiedvsFied(f1,f2,fn,adj_list=adj_list,width=width,nByi=nByi)
+		plotFiedvsFied(f1,f2,fn,adj_list=adj_list,adj_list2=adj_list2,width=width,nByi=nByi)
 
 	#output second
 	if vsdeg:
