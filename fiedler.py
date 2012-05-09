@@ -105,7 +105,7 @@ def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5,val_col=-1):
 		vs = line.rstrip().split()
 		if len(vs)>node2:
 			if filter_col!=-1:
-				if float(vs[filter_col])<filter_min:
+				if math.fabs(float(vs[filter_col]))<filter_min:
 					continue
 			for strid in [vs[node1],vs[node2]]:
 				if not strid in intidsbyname:
@@ -115,7 +115,7 @@ def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5,val_col=-1):
 			row =[intidsbyname[vs[node1]],intidsbyname[vs[node2]]]
 
 			if val_col!=-1:
-				row.append(float(vs[val_col]))
+				row.append(math.fabs(float(vs[val_col])))
 
 			
 			out.append(row)
@@ -146,7 +146,7 @@ def adj_mat(adj_list):
 	if adj.shape[1]>2:
 		data=-1*adj[:,2]
 	A = coo_matrix((data,(adj[:,0],adj[:,1])), shape=(Npts,Npts))
-	return A
+	return (A,adj,Npts)
 
 def adj_list(adj_mat,includeValue=True):
 	am=adj_mat.tocoo()
@@ -171,10 +171,10 @@ def graph_laplacian(adj_list):
 	Returns
 	The graph laplaciian in coo_matrix format.
 	"""
-	A = adj_mat(adj_list)
+	(A,adj,Npts) = adj_mat(adj_list)
 	A = (A.T + A)/2
 	A=A.tocsr()
-	if adj_list.shape[1]==2:
+	if len(adj_list[0])==2:
 		A.data = -1*numpy.ones((A.nnz,),dtype=float)
 	A.setdiag(numpy.zeros((Npts,),dtype=float))
 	A.setdiag(-1*numpy.array(A.sum(axis=1)).ravel())
@@ -257,18 +257,21 @@ def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False,adj_list
 def plotEdges(x,y,ax,adj_list,color="green"):
 	#codes=[]
 	#points=[]
+	emax = x.max()
 	for edge in adj_list:
 		#points[len(points):]=[(x[edge[0]],y[edge[0]]),(x[edge[1]],y[edge[1]])]
 		points=[(x[edge[0]],y[edge[0]]),(x[edge[1]],y[edge[1]])]
 		#codes[len(codes):]=[mpath.Path.MOVETO,mpath.Path.LINETO]
-		codes=[mpath.Path.MOVETO,mpath.Path.LINETO]
+		#codes=[mpath.Path.MOVETO,mpath.Path.LINETO]
 		alpha=.5
-		if len(edge)>2 and float(edge[2])>0:
-			alpha=math.sqrt(float(edge[2]))
+		if len(edge)>2: 
+			alpha=0
+			if float(edge[2])>0:
+				alpha=float(edge[2])
 
-
-		patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor=color, lw=.3,alpha=alpha)
-		ax.add_patch(patch)
+		ax.arrow(points[0][0],points[0][1],points[1][0]-points[0][0],points[1][1]-points[0][1],width=emax*.00003,head_width=emax*.001,head_length=emax*.0015,color=color,alpha=alpha,length_includes_head=True)
+		#patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor=color, lw=.3,alpha=alpha)
+		#ax.add_patch(patch)
 
 def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
 	doPlotingImport()
@@ -308,7 +311,7 @@ def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
 			plt.annotate(	
 		        "->".join([":".join(n.split(":")[1:3]) for n in [n0,n1]]),
 		        xy = (x[i], y[i]), xytext = (-0, 0),
-		        textcoords = 'offset points', ha = 'right', va = 'bottom',size=6,alpha=.3)
+		        textcoords = 'offset points', ha = 'right', va = 'bottom',size=8,alpha=.3)
 			i+=1
 
 	ax.grid(True)
@@ -331,7 +334,7 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=F
 	F = plt.figure()
 	ax = F.add_subplot(111)
 	
-	ax.scatter(fied1, fied2,zorder=2)
+	ax.scatter(fied1, fied2,s=8,alpha=0.1,zorder=2)
 	if not adj_list==False:
 		plotEdges(fied1,fied2,ax,adj_list)
 	if not adj_list2==False:
@@ -341,6 +344,8 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=F
 	ax.grid(True)
 	F.set_size_inches( (width,width) )
 	F.savefig(fn+".fied1vfied2.width%s.png"%(width),bbox_inches='tight')
+	F.savefig(fn+".fied1vfied2.width%s.svg"%(width),bbox_inches='tight')
+
 	F.clear()
 
 	F = plt.figure()
@@ -349,7 +354,7 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=F
 	sortx=numpy.argsort(numpy.argsort(fied1))
 	sorty=numpy.argsort(numpy.argsort(fied2))
 	
-	ax.scatter(sortx,sorty,zorder=2)
+	ax.scatter(sortx,sorty,s=8,alpha=0.1,zorder=2)
 	if not adj_list==False:
 		plotEdges(sortx,sorty,ax,adj_list)
 	if not adj_list2==False:
@@ -366,6 +371,7 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=F
 	
 	F.set_size_inches( (width,width) )
 	F.savefig(fn+"fied1rank.v.fied2rank.width%s.png"%(width),bbox_inches='tight')
+	F.savefig(fn+"fied1rank.v.fied2rank.width%s.svg"%(width),bbox_inches='tight')
 	F.clear()
 
 def labelPoints(plt,x,y,nByi):
@@ -422,6 +428,8 @@ def filename_parse(fn,filter_min=.001):
 	out =()
 	if fn[-4:]==".out":
 		out =file_parse(fo,node2=1,filter_col=3,filter_min=filter_min,val_col=3)
+	if fn[-5:]==".pwpv":
+		out =file_parse(fo,node2=1,filter_col=2,filter_min=filter_min,val_col=2)
 	else:
 		out= file_parse(fo)
 	fo.close()

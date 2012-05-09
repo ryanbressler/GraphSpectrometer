@@ -15,7 +15,11 @@ ls *.json | xargs --max-procs=10 -I FILE  python plotjsondecomp.py FILE
 import sys
 import json
 import numpy
-
+from numpy import asarray, eye, outer, inner, dot, vstack
+from numpy.random import seed, rand
+from numpy.linalg import norm
+from scipy.sparse.linalg import cg
+from pydec import d, delta, simplicial_complex, read_mesh
 import fiedler
 
 def plotjson(fn):
@@ -29,13 +33,30 @@ def plotjson(fn):
 	data=json.load(fo)
 	fo.close()
 	if "adj" in data:
-		A = fiedler.adj_mat(data["adj"])
-		#scew symetricise 
+		(A,adj,Npts) = fiedler.adj_mat(data["adj"])
+		#scew symetricise
 		A = (A.T - A)/2
-		#TODO subtract out curl
+		A=A.tocoo()
+		pos=A.data>0
 
-		adj2=fiedler.adj_list(A)
-		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn+".decomp.",widths=[64],vsdeg=False,nByi=data["nByi"],adj_list2=adj2)
+		sc = simplicial_complex(([[el] for el in range(0,A.shape[0])],numpy.column_stack((A.row[pos],A.col[pos])).tolist()))
+		omega = sc.get_cochain(1)
+		omega.v[:] = A.data[pos]
+		p = omega.k
+		alpha = sc.get_cochain(p - 1)
+		#beta  = sc.get_cochain(p + 1)    
+
+		# Solve for alpha
+		A2 = delta(d(sc.get_cochain_basis(p - 1))).v
+		b = delta(omega).v
+		alpha.v = cg( A2, b, tol=1e-8 )[0]
+		v = A.data[pos]-d(alpha).v
+		adj_list=numpy.column_stack((A.row[pos],A.col[pos],v)).tolist()
+		curl_adj_list=numpy.column_stack((A.row[pos],A.col[pos],d(alpha).v)).tolist()
+
+		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),curl_adj_list,fn+".decomp.just.curl",widths=[64],vsdeg=False,nByi=data["nByi"])
+		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),adj_list,fn+".decomp.curl.free",widths=[64],vsdeg=False,nByi=data["nByi"])
+		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn+".decomp.minus.curl.",widths=[64],vsdeg=False,nByi=data["nByi"],adj_list2=adj_list)
 
 def main():
 	fn=sys.argv[1]
