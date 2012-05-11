@@ -71,7 +71,7 @@ from pyamg import smoothed_aggregation_solver
 
 
 
-def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5,val_col=-1):
+def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5,val_col=-1,blacklist=[]):
 	"""parse a sif like file into an adjascancy list by index in a matrix and node name look up tables. 
 
 	Takes:
@@ -101,12 +101,26 @@ def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5,val_col=-1):
 
 	incintid=0
 	
+	len_blacklist=len(blacklist)
 	for line in fo:
 		vs = line.rstrip().split()
 		if len(vs)>node2:
 			if filter_col!=-1:
 				if math.fabs(float(vs[filter_col]))<filter_min:
 					continue
+			if len_blacklist>0:
+				skip = False
+				for black_sheep in blacklist:
+					for strid in [vs[node1],vs[node2]]:
+						if strid.find(black_sheep)!=-1:
+							skip = True
+							continue
+					if skip==True:
+						continue
+				if skip==True:
+						continue
+
+
 			for strid in [vs[node1],vs[node2]]:
 				if not strid in intidsbyname:
 					intidsbyname[strid]=incintid
@@ -431,7 +445,7 @@ def filename_parse(fn,filter_min=.001):
 	if fn[-4:]==".out":
 		out =file_parse(fo,node2=1,filter_col=3,filter_min=filter_min,val_col=3)
 	if fn[-5:]==".pwpv":
-		out =file_parse(fo,node2=1,filter_col=2,filter_min=filter_min,val_col=2)
+		out =file_parse(fo,node2=1,filter_col=2,filter_min=filter_min,val_col=2,blacklist=["PRDM","CNVR"])
 	else:
 		out= file_parse(fo)
 	fo.close()
