@@ -239,7 +239,7 @@ def doPlotingImport():
 
 
 #Plots are not optimized ...ie they end up sorting the same thing multiple times
-def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False,adj_list2=False):
+def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False,adj_list2=False,directed=False):
 	doPlotingImport()
 	# output first
 	if vsdeg:
@@ -248,13 +248,13 @@ def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False,adj_list
 	#if n_fied>1:
 	for width in widths:
 		#output fied vs fied:
-		plotFiedvsFied(f1,f2,fn,adj_list=adj_list,adj_list2=adj_list2,width=width,nByi=nByi)
+		plotFiedvsFied(f1,f2,fn,adj_list=adj_list,adj_list2=adj_list2,width=width,nByi=nByi,directed=directed)
 
 	#output second
 	if vsdeg:
 		plotFiedvsDeg(f2,degrees,fn+".second")
 
-def plotEdges(x,y,ax,adj_list,color="green"):
+def plotEdges(x,y,ax,adj_list,color="green",directed=False):
 	#codes=[]
 	#points=[]
 	emax = x.max()
@@ -262,16 +262,18 @@ def plotEdges(x,y,ax,adj_list,color="green"):
 		#points[len(points):]=[(x[edge[0]],y[edge[0]]),(x[edge[1]],y[edge[1]])]
 		points=[(x[edge[0]],y[edge[0]]),(x[edge[1]],y[edge[1]])]
 		#codes[len(codes):]=[mpath.Path.MOVETO,mpath.Path.LINETO]
-		#codes=[mpath.Path.MOVETO,mpath.Path.LINETO]
+		codes=[mpath.Path.MOVETO,mpath.Path.LINETO]
 		alpha=.5
 		if len(edge)>2: 
 			alpha=0
 			if float(edge[2])>0:
 				alpha=float(edge[2])
 
-		ax.arrow(points[0][0],points[0][1],points[1][0]-points[0][0],points[1][1]-points[0][1],width=emax*.00003,head_width=emax*.001,head_length=emax*.0015,color=color,alpha=alpha,length_includes_head=True)
-		#patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor=color, lw=.3,alpha=alpha)
-		#ax.add_patch(patch)
+		if directed:
+			ax.arrow(points[0][0],points[0][1],points[1][0]-points[0][0],points[1][1]-points[0][1],width=emax*.000015,head_width=emax*.001,head_length=emax*.0015,color=color,alpha=alpha,length_includes_head=True)
+		else:
+			patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor=color, lw=.3,alpha=alpha)
+			ax.add_patch(patch)
 
 def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
 	doPlotingImport()
@@ -311,7 +313,7 @@ def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
 			plt.annotate(	
 		        "->".join([":".join(n.split(":")[1:3]) for n in [n0,n1]]),
 		        xy = (x[i], y[i]), xytext = (-0, 0),
-		        textcoords = 'offset points', ha = 'right', va = 'bottom',size=8,alpha=.3)
+		        textcoords = 'offset points', ha = 'right', va = 'bottom',size=8,alpha=.4)
 			i+=1
 
 	ax.grid(True)
@@ -323,7 +325,7 @@ def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
 
 
 
-def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=False):
+def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=False,directed=False):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
@@ -336,9 +338,9 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=F
 	
 	ax.scatter(fied1, fied2,s=8,alpha=0.1,zorder=2)
 	if not adj_list==False:
-		plotEdges(fied1,fied2,ax,adj_list)
+		plotEdges(fied1,fied2,ax,adj_list,directed=directed)
 	if not adj_list2==False:
-		plotEdges(fied1,fied2,ax,adj_list2,color="red")
+		plotEdges(fied1,fied2,ax,adj_list2,color="red",directed=directed)
 	if not nByi==False and width>32:
 		labelPoints(plt,fied1,fied2,nByi=nByi)
 	ax.grid(True)
@@ -356,9 +358,9 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=F
 	
 	ax.scatter(sortx,sorty,s=8,alpha=0.1,zorder=2)
 	if not adj_list==False:
-		plotEdges(sortx,sorty,ax,adj_list)
+		plotEdges(sortx,sorty,ax,adj_list,directed=directed)
 	if not adj_list2==False:
-		plotEdges(sortx,sorty,ax,adj_list2,color="red")
+		plotEdges(sortx,sorty,ax,adj_list2,color="red",directed=directed)
 
 	if not nByi==False and width>32:
 		labelPoints(plt,sortx,sorty,nByi=nByi)

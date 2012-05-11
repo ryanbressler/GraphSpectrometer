@@ -2,10 +2,10 @@ import sys
 import json
 import numpy
 import fiedler
+import glob
 
 
-
-def main():
+def plotPair(fn1,fn2):
 	outfn=".vs.".join(sys.argv[1:3])
 	data = []
 	for i,fn in enumerate(sys.argv[1:3]):
@@ -47,6 +47,14 @@ def main():
 	d1index=numpy.array(d1index,dtype="int")
 	fiedler.plotFiedvsFied(data[0]["f1"][d0index],data[1]["f1"][d1index],outfn,adj_list=adjs[0],adj_list2=adjs[1],width=64,nByi=nByi)
 
+def main():
+	if len(sys.argv)==3:
+		plotPair(*sys.argv[1:3])
+	else:
+		files = glob.glob(sys.argv[1])
+		for fn1 in files:
+			for fn2 in files:
+				plotPair(fn1,fn2)
 
 if __name__ == '__main__':
 	main()

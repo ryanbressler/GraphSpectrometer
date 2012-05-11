@@ -51,12 +51,12 @@ def plotjson(fn):
 		b = delta(omega).v
 		alpha.v = cg( A2, b, tol=1e-8 )[0]
 		v = A.data[pos]-d(alpha).v
-		adj_list=numpy.column_stack((A.row[pos],A.col[pos],v)).tolist()
-		curl_adj_list=numpy.column_stack((A.row[pos],A.col[pos],d(alpha).v)).tolist()
+		cyclic_adj_list=numpy.column_stack((A.row[pos],A.col[pos],v)).tolist()
+		div_adj_list=numpy.column_stack((A.row[pos],A.col[pos],d(alpha).v)).tolist()
 
-		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),curl_adj_list,fn+".decomp.just.curl",widths=[64],vsdeg=False,nByi=data["nByi"])
-		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),adj_list,fn+".decomp.curl.free",widths=[64],vsdeg=False,nByi=data["nByi"])
-		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn+".decomp.minus.curl.",widths=[64],vsdeg=False,nByi=data["nByi"],adj_list2=adj_list)
+		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),cyclic_adj_list,fn+".decomp.cyclic.curl",widths=[64],vsdeg=False,nByi=data["nByi"])
+		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),div_adj_list,fn+".decomp.acyclic.free",widths=[64],vsdeg=False,nByi=data["nByi"])
+		fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn+".decomp.acyclic.over.all.curl.",widths=[64],vsdeg=False,nByi=data["nByi"],adj_list2=div_adj_list)
 
 def main():
 	fn=sys.argv[1]
