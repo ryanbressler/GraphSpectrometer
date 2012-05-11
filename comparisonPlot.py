@@ -3,12 +3,13 @@ import json
 import numpy
 import fiedler
 import glob
+import os.path
 
 
 def plotPair(fn1,fn2):
-	outfn=".vs.".join(sys.argv[1:3])
+	outfn=".vs.".join([fn1,fn2])
 	data = []
-	for i,fn in enumerate(sys.argv[1:3]):
+	for i,fn in enumerate([fn1,fn2]):
 		fo = open(fn)
 		data.append(json.load(fo))
 		data[i]["f1"]=numpy.array(data[i]["f1"])
@@ -51,10 +52,12 @@ def main():
 	if len(sys.argv)==3:
 		plotPair(*sys.argv[1:3])
 	else:
-		files = glob.glob(sys.argv[1])
+		files = glob.glob(sys.argv[1])[:]
+		files2=files[:]
 		for fn1 in files:
-			for fn2 in files:
-				plotPair(fn1,fn2)
+			for fn2 in files2:
+				if fn1!=fn2:
+					plotPair(os.path.basename(fn1),os.path.basename(fn2))
 
 if __name__ == '__main__':
 	main()
