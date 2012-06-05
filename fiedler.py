@@ -414,10 +414,10 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
 		    for index in class_members:
 		        x = X[index]
 		        if index in core_samples and k != -1:
-		            markersize = 14
+		            markersize = 10
 		        else:
 		            markersize = 6
-		        ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize)
+		        ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize,alpha=.6)
 
 	else:
 		ax.scatter(fied1, fied2,s=10,alpha=0.4,zorder=2)
