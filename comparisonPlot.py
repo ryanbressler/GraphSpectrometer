@@ -55,7 +55,7 @@ def main():
 		files = glob.glob(sys.argv[1])[:]
 		files2=files[:]
 		for fn1 in files:
-			for fn2 in files2:
+			for fn2 in files2 :
 				if fn1!=fn2:
 					plotPair(os.path.basename(fn1),os.path.basename(fn2))
 

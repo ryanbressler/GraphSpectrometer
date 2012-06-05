@@ -56,14 +56,26 @@ Author/Contact:Ryan Bressler, ryan.bressler@systemsbiology.org
 import sys
 import json
 import math
+import random
 
 from scipy.sparse import coo_matrix
 
 import numpy
 import scipy
 from scipy.sparse.linalg import lobpcg
+from scipy import linalg
 
 from pyamg import smoothed_aggregation_solver
+
+import matplotlib as mpl
+#mpl.use("Agg")
+import pylab as pl
+import matplotlib.path as mpath
+import matplotlib.patches as mpatches
+import matplotlib.pyplot as plt
+from sklearn import mixture
+from sklearn.cluster import DBSCAN
+import itertools
 
 
 
@@ -245,30 +257,28 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 	return out
 	
 
-def doPlotingImport():
-	global mpath,mpatches,plt
-	import matplotlib.path as mpath
-	import matplotlib.patches as mpatches
-	import matplotlib.pyplot as plt
+
 
 
 #Plots are not optimized ...ie they end up sorting the same thing multiple times
-def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],vsdeg=True,nByi=False,adj_list2=False,directed=False):
-	doPlotingImport()
+def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],heights=False,vsdeg=True,nByi=False,adj_list2=False,directed=False):
 	# output first
 	if vsdeg:
 		plotFiedvsDeg(f1,degrees,fn)
 
 	#if n_fied>1:
-	for width in widths:
+	for i,width in enumerate(widths):
+		height=width
+		if heights!=False:
+			height=heights[i]
 		#output fied vs fied:
-		plotFiedvsFied(f1,f2,fn,adj_list=adj_list,adj_list2=adj_list2,width=width,nByi=nByi,directed=directed)
+		plotFiedvsFied(f1,f2,fn,adj_list=adj_list,adj_list2=adj_list2,width=width,height=height,nByi=nByi,directed=directed)
 
 	#output second
 	if vsdeg:
 		plotFiedvsDeg(f2,degrees,fn+".second")
 
-def plotEdges(x,y,ax,adj_list,color="green",directed=False):
+def plotEdges(x,y,ax,adj_list,width,height,color="green",directed=False):
 	#codes=[]
 	#points=[]
 	emax = x.max()
@@ -281,16 +291,22 @@ def plotEdges(x,y,ax,adj_list,color="green",directed=False):
 		if len(edge)>2: 
 			alpha=0
 			if float(edge[2])>0:
+				#alpha=math.sqrt(float(edge[2]))
 				alpha=float(edge[2])
 
 		if directed:
-			ax.arrow(points[0][0],points[0][1],points[1][0]-points[0][0],points[1][1]-points[0][1],width=emax*.000015,head_width=emax*.001,head_length=emax*.0015,color=color,alpha=alpha,length_includes_head=True)
+			dx=points[1][0]-points[0][0]
+			dy=points[1][1]-points[0][1]
+			length = math.sqrt(dx*dx+dy*dy)
+			head_width=emax*.3*length/(width*math.fabs(dy)+height*math.fabs(dx))
+			head_length=emax*.4*length/(height*math.fabs(dy)+width*math.fabs(dx))
+
+			ax.arrow(points[0][0],points[0][1],dx,dy,width=.2*head_width,head_width=head_width,head_length=head_length,color=color,alpha=alpha,length_includes_head=True)
 		else:
 			patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor=color, lw=.3,alpha=alpha)
 			ax.add_patch(patch)
 
 def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
-	doPlotingImport()
 	edgevs = {}
 	nedges = 0
 	nByis=[nByi1,nByi2]
@@ -332,63 +348,117 @@ def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
 
 	ax.grid(True)
 	F.set_size_inches( (width,width) )
-	F.savefig(fn+".EdgeVvsEdgeV.width%s.png"%(width),bbox_inches='tight')
+	F.savefig(fn+".EdgeVvsEdgeV.width%s.pdf"%(width),bbox_inches='tight')
 	F.clear()
 
 
 
 
 
-def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,nByi=False,directed=False):
+
+def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
 	fied1: the fiedler vector to use as the x axis
 	fied2: the fiedler vector to use as the y axis
 	fn: the filename to prepend"""
-	doPlotingImport()
+	plt.axis('off')
+	if height==False:
+		height=width
 	F = plt.figure()
 	ax = F.add_subplot(111)
+	ax.get_xaxis().set_visible(False)
+	ax.get_yaxis().set_visible(False)
 	
-	ax.scatter(fied1, fied2,s=8,alpha=0.1,zorder=2)
+	if gmmcomponents>1:
+		dpgmm = mixture.DPGMM(gmmcomponents,"full",alpha=.1,thresh=1e-2)
+		#dpgmm = mixture.GMM(gmmcomponents,"full",thresh=1e-10)
+		xmax=float(numpy.max(fied1))
+		ymax=float(numpy.max(fied2))
+		X=numpy.column_stack((fied1/xmax,fied2/ymax))
+		dpgmm.fit(X)
+		Y_ = dpgmm.predict(X)
+		#color_iter = itertools.cycle(['r', 'g', 'b', 'c', 'm'])
+
+		colors=((random.random(),random.random(),random.random()) for el in dpgmm.means_)
+		for i, (mean, covar, color) in enumerate(zip(dpgmm.means_, dpgmm._get_covars(),colors)):
+			if not numpy.any(Y_ == i):
+				continue
+			v, w = linalg.eigh(covar)
+			u = w[0] / linalg.norm(w[0])
+			ax.scatter(X[Y_ == i, 0]*xmax, X[Y_ == i, 1]*ymax, 2, color=color,zorder=2)
+
+			# Plot an ellipse to show the Gaussian component
+			angle = numpy.arctan(u[1] / u[0])
+			angle = 180 * angle / numpy.pi  # convert to degrees
+			print "Ploting elipse: %s"%(", ".join([str(el) for el in [mean, v[0], v[1], 180 + angle, color]]))
+			ell = mpl.patches.Ellipse([mean[0]*xmax,mean[1]*ymax], v[0]*xmax, v[1]*ymax, 180 + angle, color=color)
+			ell.set_clip_box(ax.bbox)
+			ell.set_alpha(0.5)
+			ax.add_artist(ell)
+	elif dbscan_eps>0:
+		X=numpy.column_stack((fied1,fied2))
+		db = DBSCAN(eps=dbscan_eps, min_samples=10).fit(X)
+		core_samples = db.core_sample_indices_
+		labels = db.labels_
+		colors=[(random.random(),random.random(),random.random()) for el in labels]
+		for k, col in zip(set(labels), colors):
+		    if k == -1:
+		        # Black used for noise.
+		        col = 'k'
+		        markersize = 6
+		    class_members = [index[0] for index in numpy.argwhere(labels == k)]
+		    cluster_core_samples = [index for index in core_samples
+		                            if labels[index] == k]
+		    for index in class_members:
+		        x = X[index]
+		        if index in core_samples and k != -1:
+		            markersize = 14
+		        else:
+		            markersize = 6
+		        ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize)
+
+	else:
+		ax.scatter(fied1, fied2,s=10,alpha=0.4,zorder=2)
 	if not adj_list==False:
-		plotEdges(fied1,fied2,ax,adj_list,directed=directed)
+		plotEdges(fied1,fied2,ax,adj_list,width,height,directed=directed)
 	if not adj_list2==False:
-		plotEdges(fied1,fied2,ax,adj_list2,color="red",directed=directed)
+		plotEdges(fied1,fied2,ax,adj_list2,width,height,color="red",directed=directed)
 	if not nByi==False and width>32:
 		labelPoints(plt,fied1,fied2,nByi=nByi)
-	ax.grid(True)
-	F.set_size_inches( (width,width) )
-	F.savefig(fn+".fied1vfied2.width%s.png"%(width),bbox_inches='tight')
-	F.savefig(fn+".fied1vfied2.width%s.svg"%(width),bbox_inches='tight')
+	#ax.grid(True)
+	min1=numpy.min(fied1)
+	max1=numpy.max(fied1)
+	pad1=.05*(max1-min1)
+	min2=numpy.min(fied2)
+	max2=numpy.max(fied2)
+	pad2=.05*(max2-min2)
+	ax.set_xlim([min1-pad1, max1+pad1])
+	ax.set_ylim([min2-pad2, max2+pad2])
+	ax.set_xmargin(0)
+	ax.set_ymargin(0)
+	
+	F.set_size_inches( (width,height) )
+	F.savefig(fn+".png",bbox_inches='tight',pad_inches=0)
+#	F.savefig(fn+".svg",bbox_inches='tight')
 
 	F.clear()
 
-	F = plt.figure()
-	ax = F.add_subplot(111)
-	
+
+def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,dbscan_rank_eps=0):
+	""" make scatter plots and rank v rank plots and write to files.
+
+	Takes
+	fied1: the fiedler vector to use as the x axis
+	fied2: the fiedler vector to use as the y axis
+	fn: the filename to prepend"""
+	doSinglePlot(fied1,fied2,fn+".fied1vfied2.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps)
+
 	sortx=numpy.argsort(numpy.argsort(fied1))
 	sorty=numpy.argsort(numpy.argsort(fied2))
-	
-	ax.scatter(sortx,sorty,s=8,alpha=0.1,zorder=2)
-	if not adj_list==False:
-		plotEdges(sortx,sorty,ax,adj_list,directed=directed)
-	if not adj_list2==False:
-		plotEdges(sortx,sorty,ax,adj_list2,color="red",directed=directed)
 
-	if not nByi==False and width>32:
-		labelPoints(plt,sortx,sorty,nByi=nByi)
-			
-
-	ax.grid(True)
-	ax.set_xmargin(.01)
-	ax.set_ymargin(.01)
-
-	
-	F.set_size_inches( (width,width) )
-	F.savefig(fn+"fied1rank.v.fied2rank.width%s.png"%(width),bbox_inches='tight')
-	F.savefig(fn+"fied1rank.v.fied2rank.width%s.svg"%(width),bbox_inches='tight')
-	F.clear()
+	doSinglePlot(sortx,sorty,fn+".fied1rank.v.fied2rank.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_rank_eps)
 
 def labelPoints(plt,x,y,nByi):
 	for i,xi in enumerate(x):
