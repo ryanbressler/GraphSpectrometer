@@ -1,4 +1,5 @@
 import numpy as numpy
+import sys
 from scipy.stats import hypergeom
 
 def loadList(filename):
@@ -10,7 +11,7 @@ def loadList(filename):
 def enrich(genes,background,dbfilename,verbose=False):
 	ntrys = len(genes)
 	total= len(background)
-	gmtDB = open(sys.argv[3]):
+	gmtDB = open(dbfilename)
 	names =[]
 	links =[]
 	probs =[]
@@ -24,11 +25,13 @@ def enrich(genes,background,dbfilename,verbose=False):
 		links.append(vs[1])
 		probs.append(prob)
 		if verbose:
-			print "\t".join([*vs[:2],str(prob))
+			print "\t".join([vs[0],vs[1],str(prob)])
+	gmtDB.close()
 	names = np.array(names)
 	links = np.array(links)
 	probs = np.array(prob)
 	sortedarray=numpy.column_stack((names,links,probs))[np.argsort(probs)].tolist()
+	return sortedarray
 	
 
 def main():
