@@ -30,7 +30,7 @@ def plotjson(fn):
 	fo.close()
 	
 	#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn,widths=[64],vsdeg=False,nByi=data["nByi"])
-	fiedler.plotFiedvsFied(numpy.array(data["f1"]),numpy.array(data["f2"]),fn+".dbscan.",data["adj"],width=32,nByi=data["nByi"],dbscan_eps=.01,dbscan_rank_eps=32)
+	fiedler.plotFiedvsFied(numpy.array(data["f1"]),numpy.array(data["f2"]),fn+".dbscan.128.",width=32,nByi=data["nByi"],dbscan_eps=.001,dbscan_rank_eps=128)
 
 def main():
 	fn=sys.argv[1]

@@ -37,7 +37,9 @@ def plotjson(fn):
 		#scew symetricise
 		A = (A.T - A)/2
 		A=A.tocoo()
+		
 		pos=A.data>0
+		skew = numpy.column_stack((A.row[pos],A.col[pos],A.data[pos])).tolist()
 
 		sc = simplicial_complex(([[el] for el in range(0,A.shape[0])],numpy.column_stack((A.row[pos],A.col[pos])).tolist()))
 		omega = sc.get_cochain(1)
@@ -52,14 +54,17 @@ def plotjson(fn):
 		rank=cg( A2, b, tol=1e-8 )[0]
 		alpha.v = rank
 		v = A.data[pos]-d(alpha).v
+		
 		cyclic_adj_list=numpy.column_stack((A.row[pos],A.col[pos],v)).tolist()
 		div_adj_list=numpy.column_stack((A.row[pos],A.col[pos],d(alpha).v)).tolist()
 
 		#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),cyclic_adj_list,fn+".decomp.cyclic.",widths=[64],vsdeg=False,nByi=data["nByi"],directed=True)
 		#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),div_adj_list,fn+".decomp.acyclic.",widths=[64],vsdeg=False,nByi=data["nByi"],directed=True)
 		#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn+".decomp.acyclic.over.all.",widths=[64],vsdeg=False,nByi=data["nByi"],adj_list2=div_adj_list,directed=True)
-		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),div_adj_list,fn+".decomp.acyclic.v.grad.",widths=[256],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True)
-		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),data["adj"],fn+".decomp.acyclic.over.all.v.grad.",widths=[256],heights=[8],vsdeg=False,nByi=data["nByi"],adj_list2=div_adj_list,directed=True)
+		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),div_adj_list,fn+".decomp.acyclic.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True)
+		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),cyclic_adj_list,fn+".decomp.harmonic.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True)
+		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),skew,fn+".decomp.skew.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True)
+		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),data["adj"],fn+".decomp.acyclic.over.all.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],adj_list2=div_adj_list,directed=True)
 		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),data["adj"],fn+".all.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True)
 
 def main():

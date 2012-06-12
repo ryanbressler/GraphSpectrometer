@@ -414,10 +414,14 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
 		    for index in class_members:
 		        x = X[index]
 		        if index in core_samples and k != -1:
-		            markersize = 10
+		            markersize = 6
+
 		        else:
 		            markersize = 6
-		        ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize,alpha=.6)
+		        if k!=-1:
+		        	plotCircles(ax,[(x[0],x[1])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
+		        ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize,alpha=.4)
+		        
 
 	else:
 		ax.scatter(fied1, fied2,s=10,alpha=0.4,zorder=2)
@@ -444,6 +448,11 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
 #	F.savefig(fn+".svg",bbox_inches='tight')
 
 	F.clear()
+
+def plotCircles(ax,xy,radius,facecolor,alpha=.5,edgecolor="k",zorder=-1):
+	for point in xy:
+		patch = mpatches.Circle(point,radius=radius,facecolor=facecolor,edgecolor=edgecolor,alpha=alpha,linewidth=0,zorder=-1)
+		ax.add_patch(patch)
 
 
 def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,dbscan_rank_eps=0):
