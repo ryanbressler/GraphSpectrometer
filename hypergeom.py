@@ -23,7 +23,12 @@ def enrich(genes,background,dbfilename,verbose=False):
 		names.append(vs[0])
 		links.append(vs[1])
 		probs.append(prob)
-		print "\t".join([*vs[:2],str(prob))
+		if verbose:
+			print "\t".join([*vs[:2],str(prob))
+	names = np.array(names)
+	links = np.array(links)
+	probs = np.array(prob)
+	sortedarray=numpy.column_stack((names,links,probs))[np.argsort(probs)].tolist()
 	
 
 def main():
