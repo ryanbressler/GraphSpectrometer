@@ -53,29 +53,33 @@ Author/Contact:Ryan Bressler, ryan.bressler@systemsbiology.org
 
 
 
+
 import sys
 import json
 import math
 import random
+import itertools
 
-from scipy.sparse import coo_matrix
+
 
 import numpy
 import scipy
 from scipy.sparse.linalg import lobpcg
 from scipy import linalg
+from scipy.sparse import coo_matrix
 
 from pyamg import smoothed_aggregation_solver
 
 import matplotlib as mpl
-#mpl.use("Agg")
 import pylab as pl
 import matplotlib.path as mpath
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
+
 from sklearn import mixture
 from sklearn.cluster import DBSCAN
-import itertools
+
+import hypergeom
 
 
 
@@ -356,7 +360,7 @@ def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
 
 
 
-def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0):
+def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,enrichdb=""):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
@@ -403,11 +407,27 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
 		core_samples = db.core_sample_indices_
 		labels = db.labels_
 		colors=[(random.random(),random.random(),random.random()) for el in labels]
+		backgroundgenes =[]
+		enrich=False
+		enriched = []
+		if nByi!=False and enrichdb!="":
+			enrich=True
+			backgroundgenes = [gene for gene in [nodelabel.split(":")[2] for nodelabel in nByi] if gene!=""]
 		for k, col in zip(set(labels), colors):
 		    if k == -1:
 		        # Black used for noise.
 		        col = 'k'
 		        markersize = 6
+		    elif enrich:
+				memberins = numpy.argwhere(labels == k)
+				setgenes = [nByi[i].split(":")[2] for i in memberins]
+				setgenes = numpy.array([gene for gene in setgenes if gene!=""])
+				enrichedsets = hypergeom.enrich(setgenes,backgroundgenes,enrichdb,verbose=False)
+				enriched.append({"genes":setgenes.tolist(),"sets":enrichedsets})
+				text=str(len(enriched))
+				if len(enrichedsets)>0:
+					text=":".join([text,enrichedsets[0][0],str(enrichedsets[0][2])])
+				labelPoints(plt,[numpy.mean(fied1[memberins])],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,ha="center",trim=False)
 		    class_members = [index[0] for index in numpy.argwhere(labels == k)]
 		    cluster_core_samples = [index for index in core_samples
 		                            if labels[index] == k]
@@ -421,6 +441,11 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
 		        if k!=-1:
 		        	plotCircles(ax,[(x[0],x[1])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
 		        ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize,alpha=.4)
+		if enrich:
+			
+			fo = open (fn+".clusts.json","w")
+			json.dump(enriched,fo)
+			fo.close()
 		        
 
 	else:
@@ -429,7 +454,7 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
 		plotEdges(fied1,fied2,ax,adj_list,width,height,directed=directed)
 	if not adj_list2==False:
 		plotEdges(fied1,fied2,ax,adj_list2,width,height,color="red",directed=directed)
-	if not nByi==False and width>32:
+	if not nByi==False:
 		labelPoints(plt,fied1,fied2,nByi=nByi)
 	#ax.grid(True)
 	min1=numpy.min(fied1)
@@ -455,26 +480,29 @@ def plotCircles(ax,xy,radius,facecolor,alpha=.5,edgecolor="k",zorder=-1):
 		ax.add_patch(patch)
 
 
-def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,dbscan_rank_eps=0):
+def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,dbscan_rank_eps=0,enrichdb=""):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
 	fied1: the fiedler vector to use as the x axis
 	fied2: the fiedler vector to use as the y axis
 	fn: the filename to prepend"""
-	doSinglePlot(fied1,fied2,fn+".fied1vfied2.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps)
+	doSinglePlot(fied1,fied2,fn+".fied1vfied2.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb)
 
 	sortx=numpy.argsort(numpy.argsort(fied1))
 	sorty=numpy.argsort(numpy.argsort(fied2))
 
-	doSinglePlot(sortx,sorty,fn+".fied1rank.v.fied2rank.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_rank_eps)
+	doSinglePlot(sortx,sorty,fn+".fied1rank.v.fied2rank.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_rank_eps,enrichdb)
 
-def labelPoints(plt,x,y,nByi):
+def labelPoints(plt,x,y,nByi,size=6,zorder=3,alpha=.4,color="k",ha="right",trim=True):
 	for i,xi in enumerate(x):
+		text = nByi[i]
+		if trim:
+			text=":".join(text.split(":")[1:3])
 		plt.annotate(
-	        ":".join(nByi[i].split(":")[1:3]), 
+	        text, 
 	        xy = (xi, y[i]), xytext = (-1, 1),
-	        textcoords = 'offset points', ha = 'right', va = 'bottom',size=6,alpha=.4)
+	        textcoords = 'offset points', ha = ha, va = 'bottom',size=size,alpha=alpha,zorder=zorder,color=color)
 
 
 def plotFiedvsDeg(fied, degree,fn):

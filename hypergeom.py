@@ -1,4 +1,4 @@
-import numpy as numpy
+import numpy as np
 import sys
 from scipy.stats import hypergeom
 
@@ -8,7 +8,7 @@ def loadList(filename):
 	fo.close()
 	return data
 
-def enrich(genes,background,dbfilename,verbose=False):
+def enrich(genes,background,dbfilename,verbose=False,returnn=20):
 	ntrys = len(genes)
 	total= len(background)
 	gmtDB = open(dbfilename)
@@ -19,18 +19,21 @@ def enrich(genes,background,dbfilename,verbose=False):
 		vs=line.rstrip().split()
 		setgenes=np.array(vs[2:])
 		nfound = np.sum(np.in1d(genes,setgenes))
-		npresent = np.sum(np.in1d(setgenes,background))
-		prob = hypergeom.sf(nfound,total,npresent,ntrys)
-		names.append(vs[0])
-		links.append(vs[1])
-		probs.append(prob)
-		if verbose:
-			print "\t".join([vs[0],vs[1],str(prob)])
+		if nfound > 1:
+			npresent = np.sum(np.in1d(setgenes,background))
+			prob = hypergeom.sf(nfound-1,total,npresent,ntrys)
+			names.append(vs[0])
+			links.append(vs[1])
+			probs.append(prob)
+			if verbose:
+				print "\t".join([vs[0],vs[1],str(prob)])
 	gmtDB.close()
-	names = np.array(names)
-	links = np.array(links)
-	probs = np.array(prob)
-	sortedarray=numpy.column_stack((names,links,probs))[np.argsort(probs)].tolist()
+	#names = np.array(names)
+	#links = np.array(links)
+	sortedarray = []
+	for i in  np.argsort(np.array(probs))[0:returnn]:
+		sortedarray.append([names[i],links[i],probs[i]])
+	#sortedarray=np.column_stack((names,links,probs))[np.argsort(probs)].tolist()
 	return sortedarray
 	
 
