@@ -18,7 +18,7 @@ import numpy
 
 import fiedler
 
-def plotjson(fn):
+def plotjson(fn,dbscan_rank_eps):
 	"""
 	plotjson: make plots from json output of fiedler.py
 
@@ -30,12 +30,13 @@ def plotjson(fn):
 	fo.close()
 	
 	#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn,widths=[64],vsdeg=False,nByi=data["nByi"])
-	fiedler.plotFiedvsFied(numpy.array(data["f1"]),numpy.array(data["f2"]),fn+".dbscan.64.",width=64,nByi=data["nByi"],dbscan_eps=.001,dbscan_rank_eps=64,enrichdb="../GraphSpec/c5.all.v3.0.symbols.gmt.gmt")
+	fiedler.plotFiedvsFied(numpy.array(data["f1"]),numpy.array(data["f2"]),fn+".dbscan.%s."%(dbscan_rank_eps),width=64,nByi=data["nByi"],dbscan_eps=.001,dbscan_rank_eps=dbscan_rank_eps,enrichdb="../GraphSpec/homo-sapiens-9606-gene-symbol.gmt")
 
 def main():
-	fn=sys.argv[1]
+	dbscan_rank_eps=int(sys.argv[1])
+	fn=sys.argv[2]
 	
-	plotjson(fn)
+	plotjson(fn,dbscan_rank_eps)
 	
 
 

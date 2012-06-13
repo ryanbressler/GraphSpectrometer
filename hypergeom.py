@@ -69,7 +69,7 @@ def enrich(inputgenes,backgroundgenes,dbfilename,verbose=False,returnn=20):
 	links =[]
 	probs =[]
 	for line in gmtDB:
-		vs=line.rstrip().split()
+		vs=line.rstrip().split("\t")
 		setgenes=np.array(vs[2:])
 		nfound = np.sum(np.in1d(genes,setgenes,assume_unique=True))
 		if nfound > 1:

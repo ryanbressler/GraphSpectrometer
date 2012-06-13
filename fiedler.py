@@ -358,9 +358,75 @@ def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
 
 
 
+def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb,axis="xy"):
+	"""
+	add enriched dbscan information to a plot
+
+	"""
+	X=0
+	if axis == "x":
+		X=numpy.column_stack((fied1))
+	elif axis == "y":
+		X=numpy.column_stack((fied2))
+	else:
+		X=numpy.column_stack((fied1,fied2))
+	db = DBSCAN(eps=dbscan_eps, min_samples=10).fit(X)
+	core_samples = db.core_sample_indices_
+	labels = db.labels_
+	colors=[(random.random(),random.random(),random.random()) for el in labels]
+	backgroundgenes =[]
+	enrich=False
+	enriched = []
+	if nByi!=False and enrichdb!="":
+		enrich=True
+		backgroundgenes = [gene for gene in [nodelabel.split(":")[2] for nodelabel in nByi] if gene!=""]
+	for k, col in zip(set(labels), colors):
+	    if k == -1:
+	        # Black used for noise.
+	        col = 'k'
+	        markersize = 6
+	    elif enrich:
+			memberins = numpy.argwhere(labels == k)
+			setgenes = [nByi[i].split(":")[2] for i in memberins]
+			setgenes = numpy.array([gene for gene in setgenes if gene!=""])
+			enrichedsets = hypergeom.enrich(setgenes,backgroundgenes,enrichdb,verbose=False)
+			enriched.append({"genes":setgenes.tolist(),"sets":enrichedsets})
+			text=str(len(enriched))
+			if len(enrichedsets)>0:
+				text=":".join([text,enrichedsets[0][0].replace("_"," "),str(enrichedsets[0][2])])
+			if axis == "x":
+				labelPoints(plt,[numpy.mean(fied1[memberins])],[0],[text],size=14,zorder=4,alpha=.6,color=col,ha="center",trim=False)
+			elif axis == "y":
+				labelPoints(plt,[0],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,ha="left",trim=False)
+			else:
+				labelPoints(plt,[numpy.mean(fied1[memberins])],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,ha="center",trim=False)
+	    class_members = [index[0] for index in numpy.argwhere(labels == k)]
+	    cluster_core_samples = [index for index in core_samples
+	                            if labels[index] == k]
+	    for index in class_members:
+	        x = X[index]
+	        if index in core_samples and k != -1:
+	            markersize = 6
+
+	        else:
+	            markersize = 6
+	        if k!=-1:
+	        	if axis == "x":
+	        		plotCircles(ax,[(x[0],0)],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
+	        	elif axis == "y":
+	        		plotCircles(ax,[(0,x[1])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
+	        	else:
+	        		plotCircles(ax,[(x[0],x[1])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
 
 
-def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,enrichdb=""):
+	        ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize,alpha=.4)
+	if enrich:
+		
+		fo = open (fn+".clusts.json","w")
+		json.dump(enriched,fo)
+		fo.close()
+
+def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,enrichdb="",clust_x=False,clust_y=False,clust_xy=True):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
@@ -402,50 +468,13 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
 			ell.set_alpha(0.5)
 			ax.add_artist(ell)
 	elif dbscan_eps>0:
-		X=numpy.column_stack((fied1,fied2))
-		db = DBSCAN(eps=dbscan_eps, min_samples=10).fit(X)
-		core_samples = db.core_sample_indices_
-		labels = db.labels_
-		colors=[(random.random(),random.random(),random.random()) for el in labels]
-		backgroundgenes =[]
-		enrich=False
-		enriched = []
-		if nByi!=False and enrichdb!="":
-			enrich=True
-			backgroundgenes = [gene for gene in [nodelabel.split(":")[2] for nodelabel in nByi] if gene!=""]
-		for k, col in zip(set(labels), colors):
-		    if k == -1:
-		        # Black used for noise.
-		        col = 'k'
-		        markersize = 6
-		    elif enrich:
-				memberins = numpy.argwhere(labels == k)
-				setgenes = [nByi[i].split(":")[2] for i in memberins]
-				setgenes = numpy.array([gene for gene in setgenes if gene!=""])
-				enrichedsets = hypergeom.enrich(setgenes,backgroundgenes,enrichdb,verbose=False)
-				enriched.append({"genes":setgenes.tolist(),"sets":enrichedsets})
-				text=str(len(enriched))
-				if len(enrichedsets)>0:
-					text=":".join([text,enrichedsets[0][0],str(enrichedsets[0][2])])
-				labelPoints(plt,[numpy.mean(fied1[memberins])],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,ha="center",trim=False)
-		    class_members = [index[0] for index in numpy.argwhere(labels == k)]
-		    cluster_core_samples = [index for index in core_samples
-		                            if labels[index] == k]
-		    for index in class_members:
-		        x = X[index]
-		        if index in core_samples and k != -1:
-		            markersize = 6
-
-		        else:
-		            markersize = 6
-		        if k!=-1:
-		        	plotCircles(ax,[(x[0],x[1])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
-		        ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize,alpha=.4)
-		if enrich:
-			
-			fo = open (fn+".clusts.json","w")
-			json.dump(enriched,fo)
-			fo.close()
+		if clust_xy:
+			doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb)
+		if clust_x:
+			doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb,axis="x")
+		if clust_y:
+			doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb,axis="y")
+		
 		        
 
 	else:
@@ -480,19 +509,19 @@ def plotCircles(ax,xy,radius,facecolor,alpha=.5,edgecolor="k",zorder=-1):
 		ax.add_patch(patch)
 
 
-def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,dbscan_rank_eps=0,enrichdb=""):
+def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,dbscan_rank_eps=0,enrichdb="",clust_x=False,clust_y=False,clust_xy=True):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
 	fied1: the fiedler vector to use as the x axis
 	fied2: the fiedler vector to use as the y axis
 	fn: the filename to prepend"""
-	doSinglePlot(fied1,fied2,fn+".fied1vfied2.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb)
+	doSinglePlot(fied1,fied2,fn+".fied1vfied2.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb,clust_x,clust_y,clust_xy)
 
 	sortx=numpy.argsort(numpy.argsort(fied1))
 	sorty=numpy.argsort(numpy.argsort(fied2))
 
-	doSinglePlot(sortx,sorty,fn+".fied1rank.v.fied2rank.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_rank_eps,enrichdb)
+	doSinglePlot(sortx,sorty,fn+".fied1rank.v.fied2rank.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_rank_eps,enrichdb,clust_x,clust_y,clust_xy)
 
 def labelPoints(plt,x,y,nByi,size=6,zorder=3,alpha=.4,color="k",ha="right",trim=True):
 	for i,xi in enumerate(x):
