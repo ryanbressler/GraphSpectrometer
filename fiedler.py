@@ -364,12 +364,15 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 
 	"""
 	X=0
+	minormin = 0
 	if axis == "x":
 		print "dbscaning x at %s"%(dbscan_eps)
 		X=numpy.transpose(numpy.column_stack((fied1)))
+		minormin = fied2.min()
 	elif axis == "y":
 		print "dbscaning y at %s"%(dbscan_eps)
 		X=numpy.transpose(numpy.column_stack((fied2)))
+		minormin = fied1.min()
 	else:
 		print "dbscaning xy at %s"%(dbscan_eps)
 		X=numpy.column_stack((fied1,fied2))
@@ -396,12 +399,13 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 			enrichedsets = hypergeom.enrich(setgenes,backgroundgenes,enrichdb,verbose=False)
 			enriched.append({"genes":setgenes.tolist(),"sets":enrichedsets})
 			text=str(len(enriched))
+			
 			if len(enrichedsets)>0:
 				text=":".join([text,enrichedsets[0][0].replace("_"," "),str(enrichedsets[0][2])])
 			if axis == "x":
-				labelPoints(plt,[numpy.mean(fied1[memberins])],[0],[text],size=24,zorder=4,alpha=.8,color=col,ha="center",trim=False)
+				labelPoints(plt,[numpy.mean(fied1[memberins])],[minormin],[text],size=24,zorder=4,alpha=.8,color=col,ha="center",trim=False)
 			elif axis == "y":
-				labelPoints(plt,[0],[numpy.mean(fied2[memberins])],[text],size=24,zorder=4,alpha=.8,color=col,ha="left",trim=False)
+				labelPoints(plt,[minormin],[numpy.mean(fied2[memberins])],[text],size=24,zorder=4,alpha=.8,color=col,ha="left",trim=False)
 			else:
 				labelPoints(plt,[numpy.mean(fied1[memberins])],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,ha="center",trim=False)
 	    class_members = [index[0] for index in numpy.argwhere(labels == k)]
@@ -416,9 +420,9 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 	            markersize = 6
 	        if k!=-1:
 	        	if axis == "x":
-	        		plotCircles(ax,[(x[0],0)],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
+	        		plotCircles(ax,[(x[0],minormin)],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
 	        	elif axis == "y":
-	        		plotCircles(ax,[(0,x[0])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
+	        		plotCircles(ax,[(minormin,x[0])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
 	        	else:
 	        		plotCircles(ax,[(x[0],x[1])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
 
