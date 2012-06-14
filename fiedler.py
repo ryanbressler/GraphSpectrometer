@@ -403,11 +403,11 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 			if len(enrichedsets)>0:
 				text=":".join([text,enrichedsets[0][0].replace("_"," "),str(enrichedsets[0][2])])
 			if axis == "x":
-				labelPoints(plt,[numpy.mean(fied1[memberins])],[minormin],[text],size=24,zorder=4,alpha=.8,color=col,ha="center",trim=False)
+				labelPoints(plt,[numpy.mean(fied1[memberins])],[minormin],[text],size=24,zorder=4,alpha=.8,color=col,rotation='vertical',ha="left",trim=False)
 			elif axis == "y":
 				labelPoints(plt,[minormin],[numpy.mean(fied2[memberins])],[text],size=24,zorder=4,alpha=.8,color=col,ha="left",trim=False)
 			else:
-				labelPoints(plt,[numpy.mean(fied1[memberins])],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,rotation='vertical',ha="left",trim=False)
+				labelPoints(plt,[numpy.mean(fied1[memberins])],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,ha="center",trim=False)
 	    class_members = [index[0] for index in numpy.argwhere(labels == k)]
 	    cluster_core_samples = [index for index in core_samples
 	                            if labels[index] == k]
@@ -535,7 +535,7 @@ def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height
 
 		doSinglePlot(sortx,sorty,fn+".fied1rank.v.fied2rank.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_rank_eps,enrichdb,clust_x,clust_y,clust_xy)
 
-def labelPoints(plt,x,y,nByi,size=6,zorder=3,alpha=.4,color="k",ha="right",trim=True):
+def labelPoints(plt,x,y,nByi,size=6,zorder=3,alpha=.4,color="k",rotation=0,ha="right",trim=True):
 	for i,xi in enumerate(x):
 		text = nByi[i]
 		if trim:
@@ -543,7 +543,7 @@ def labelPoints(plt,x,y,nByi,size=6,zorder=3,alpha=.4,color="k",ha="right",trim=
 		plt.annotate(
 	        text, 
 	        xy = (xi, y[i]), xytext = (-1, 1),
-	        textcoords = 'offset points', ha = ha, va = 'bottom',size=size,alpha=alpha,zorder=zorder,color=color)
+	        textcoords = 'offset points', ha = ha, va = 'bottom',size=size,alpha=alpha,zorder=zorder,color=color,rotation=rotation)
 
 
 def plotFiedvsDeg(fied, degree,fn):
