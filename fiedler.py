@@ -407,7 +407,7 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 			elif axis == "y":
 				labelPoints(plt,[minormin],[numpy.mean(fied2[memberins])],[text],size=24,zorder=4,alpha=.8,color=col,ha="left",trim=False)
 			else:
-				labelPoints(plt,[numpy.mean(fied1[memberins])],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,ha="center",trim=False)
+				labelPoints(plt,[numpy.mean(fied1[memberins])],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,rotation='vertical',ha="left",trim=False)
 	    class_members = [index[0] for index in numpy.argwhere(labels == k)]
 	    cluster_core_samples = [index for index in core_samples
 	                            if labels[index] == k]
