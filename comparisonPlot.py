@@ -17,7 +17,7 @@ def plotPair(fn1,fn2):
 	
 
 	print "Comparing data set with %i nodes with data set with %i nodes."%(len(data[0]["nByi"]),len(data[1]["nByi"]))
-	fiedler.PlotEdgeVvsEdgeV(data[0]["adj"],data[1]["adj"],data[0]["nByi"],data[1]["nByi"],outfn,width=64)
+	#fiedler.PlotEdgeVvsEdgeV(data[0]["adj"],data[1]["adj"],data[0]["nByi"],data[1]["nByi"],outfn,width=64)
 	
 	d0index = []
 	d1index = []
@@ -46,7 +46,7 @@ def plotPair(fn1,fn2):
 
 	d0index=numpy.array(d0index,dtype="int")
 	d1index=numpy.array(d1index,dtype="int")
-	fiedler.plotFiedvsFied(data[0]["f1"][d0index],data[1]["f1"][d1index],outfn,adj_list=adjs[0],adj_list2=adjs[1],width=64,nByi=nByi,dbscan_eps=.001,dbscan_rank_epsenrichdb=64,"../GraphSpec/homo-sapiens-9606-gene-symbol.gmt",clust_x=True,clust_y=True)
+	fiedler.plotFiedvsFied(data[0]["f1"][d0index],data[1]["f1"][d1index],outfn,adj_list=adjs[0],adj_list2=adjs[1],width=64,nByi=nByi,dbscan_eps=.0005,dbscan_rank_eps=64,enrichdb="../GraphSpec/homo-sapiens-9606-gene-symbol.gmt",clust_x=.0001,clust_y=.0001,dorank=False)
 
 def main():
 	if len(sys.argv)==3:

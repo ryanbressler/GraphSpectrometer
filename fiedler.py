@@ -365,14 +365,18 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 	"""
 	X=0
 	if axis == "x":
-		X=numpy.column_stack((fied1))
+		print "dbscaning x at %s"%(dbscan_eps)
+		X=numpy.transpose(numpy.column_stack((fied1)))
 	elif axis == "y":
-		X=numpy.column_stack((fied2))
+		print "dbscaning y at %s"%(dbscan_eps)
+		X=numpy.transpose(numpy.column_stack((fied2)))
 	else:
+		print "dbscaning xy at %s"%(dbscan_eps)
 		X=numpy.column_stack((fied1,fied2))
 	db = DBSCAN(eps=dbscan_eps, min_samples=10).fit(X)
 	core_samples = db.core_sample_indices_
 	labels = db.labels_
+	print "Found %s core samples and %s labels"%(len(core_samples),len(labels))
 	colors=[(random.random(),random.random(),random.random()) for el in labels]
 	backgroundgenes =[]
 	enrich=False
@@ -395,9 +399,9 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 			if len(enrichedsets)>0:
 				text=":".join([text,enrichedsets[0][0].replace("_"," "),str(enrichedsets[0][2])])
 			if axis == "x":
-				labelPoints(plt,[numpy.mean(fied1[memberins])],[0],[text],size=14,zorder=4,alpha=.6,color=col,ha="center",trim=False)
+				labelPoints(plt,[numpy.mean(fied1[memberins])],[0],[text],size=24,zorder=4,alpha=.8,color=col,ha="center",trim=False)
 			elif axis == "y":
-				labelPoints(plt,[0],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,ha="left",trim=False)
+				labelPoints(plt,[0],[numpy.mean(fied2[memberins])],[text],size=24,zorder=4,alpha=.8,color=col,ha="left",trim=False)
 			else:
 				labelPoints(plt,[numpy.mean(fied1[memberins])],[numpy.mean(fied2[memberins])],[text],size=14,zorder=4,alpha=.6,color=col,ha="center",trim=False)
 	    class_members = [index[0] for index in numpy.argwhere(labels == k)]
@@ -414,12 +418,12 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 	        	if axis == "x":
 	        		plotCircles(ax,[(x[0],0)],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
 	        	elif axis == "y":
-	        		plotCircles(ax,[(0,x[1])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
+	        		plotCircles(ax,[(0,x[0])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
 	        	else:
 	        		plotCircles(ax,[(x[0],x[1])],dbscan_eps,col,edgecolor=col,alpha=.01,zorder=-1)
 
-
-	        ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize,alpha=.4)
+	        if axis == "xy":
+	        	ax.plot(x[0], x[1], 'o', markerfacecolor=col, markeredgecolor='k', markersize=markersize,alpha=.4)
 	if enrich:
 		
 		fo = open (fn+".clusts.json","w")
@@ -470,10 +474,12 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
 	elif dbscan_eps>0:
 		if clust_xy:
 			doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb)
-		if clust_x:
-			doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb,axis="x")
-		if clust_y:
-			doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb,axis="y")
+		if clust_x!=False:
+			doDbScan(plt,ax,fied1,fied2,fn+".x.",adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,clust_x,enrichdb,axis="x")
+		if clust_y!=False:
+			doDbScan(plt,ax,fied1,fied2,fn+".y.",adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,clust_y,enrichdb,axis="y")
+		if clust_xy==False:
+			ax.scatter(fied1, fied2,s=10,alpha=0.4,zorder=2)
 		
 		        
 
@@ -509,19 +515,21 @@ def plotCircles(ax,xy,radius,facecolor,alpha=.5,edgecolor="k",zorder=-1):
 		ax.add_patch(patch)
 
 
-def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,dbscan_rank_eps=0,enrichdb="",clust_x=False,clust_y=False,clust_xy=True):
+def plotFiedvsFied(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,dbscan_rank_eps=0,enrichdb="",clust_x=False,clust_y=False,clust_xy=True,dorank=True,doraw=True):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
 	fied1: the fiedler vector to use as the x axis
 	fied2: the fiedler vector to use as the y axis
 	fn: the filename to prepend"""
-	doSinglePlot(fied1,fied2,fn+".fied1vfied2.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb,clust_x,clust_y,clust_xy)
+	if doraw:
+		doSinglePlot(fied1,fied2,fn+".fied1vfied2.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb,clust_x,clust_y,clust_xy)
 
-	sortx=numpy.argsort(numpy.argsort(fied1))
-	sorty=numpy.argsort(numpy.argsort(fied2))
+	if dorank:
+		sortx=numpy.argsort(numpy.argsort(fied1))
+		sorty=numpy.argsort(numpy.argsort(fied2))
 
-	doSinglePlot(sortx,sorty,fn+".fied1rank.v.fied2rank.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_rank_eps,enrichdb,clust_x,clust_y,clust_xy)
+		doSinglePlot(sortx,sorty,fn+".fied1rank.v.fied2rank.width%s"%(width),adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_rank_eps,enrichdb,clust_x,clust_y,clust_xy)
 
 def labelPoints(plt,x,y,nByi,size=6,zorder=3,alpha=.4,color="k",ha="right",trim=True):
 	for i,xi in enumerate(x):
