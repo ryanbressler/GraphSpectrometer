@@ -265,7 +265,7 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
 
 
 #Plots are not optimized ...ie they end up sorting the same thing multiple times
-def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],heights=False,vsdeg=True,nByi=False,adj_list2=False,directed=False):
+def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],heights=False,vsdeg=True,nByi=False,adj_list2=False,directed=False,dbscan_eps=0,dbscan_rank_eps=0,enrichdb="",clust_x=False,clust_y=False,clust_xy=True,dorank=True,doraw=True):
 	# output first
 	if vsdeg:
 		plotFiedvsDeg(f1,degrees,fn)
@@ -276,7 +276,7 @@ def doPlots(f1,f2,degrees,adj_list,fn,widths=[16],heights=False,vsdeg=True,nByi=
 		if heights!=False:
 			height=heights[i]
 		#output fied vs fied:
-		plotFiedvsFied(f1,f2,fn,adj_list=adj_list,adj_list2=adj_list2,width=width,height=height,nByi=nByi,directed=directed)
+		plotFiedvsFied(f1,f2,fn,adj_list=adj_list,adj_list2=adj_list2,width=width,height=height,nByi=nByi,directed=directed,dbscan_eps=dbscan_eps,dbscan_rank_eps=dbscan_rank_eps,enrichdb=enrichdb,clust_x=clust_x,clust_y=clust_y,clust_xy=clust_xy,dorank=dorank,doraw=doraw)
 
 	#output second
 	if vsdeg:
@@ -307,7 +307,7 @@ def plotEdges(x,y,ax,adj_list,width,height,color="green",directed=False):
 
 			ax.arrow(points[0][0],points[0][1],dx,dy,width=.2*head_width,head_width=head_width,head_length=head_length,color=color,alpha=alpha,length_includes_head=True)
 		else:
-			patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor=color, lw=.3,alpha=alpha)
+			patch = mpatches.PathPatch(mpath.Path(points,codes), edgecolor=color, lw=.2,alpha=alpha)
 			ax.add_patch(patch)
 
 def PlotEdgeVvsEdgeV(adj1,adj2,nByi1,nByi2,fn,width=16):
@@ -397,7 +397,7 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 			setgenes = [nByi[i].split(":")[2] for i in memberins]
 			setgenes = numpy.array([gene for gene in setgenes if gene!=""])
 			enrichedsets = hypergeom.enrich(setgenes,backgroundgenes,enrichdb,verbose=False)
-			enriched.append({"genes":setgenes.tolist(),"sets":enrichedsets})
+			enriched.append({"indexes":memberins.tolist(),"genes":setgenes.tolist(),"sets":enrichedsets})
 			text=str(len(enriched))
 			
 			if len(enrichedsets)>0:
@@ -434,7 +434,7 @@ def doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed
 		json.dump(enriched,fo)
 		fo.close()
 
-def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,enrichdb="",clust_x=False,clust_y=False,clust_xy=True):
+def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=False,nByi=False,directed=False,gmmcomponents=0,dbscan_eps=0,enrichdb="",clust_x=0,clust_y=0,clust_xy=True):
 	""" make scatter plots and rank v rank plots and write to files.
 
 	Takes
@@ -475,14 +475,15 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
 			ell.set_clip_box(ax.bbox)
 			ell.set_alpha(0.5)
 			ax.add_artist(ell)
-	elif dbscan_eps>0:
-		if clust_xy:
+	elif dbscan_eps>0 or clust_x > 0 or clust_y > 0:
+		if clust_xy>0:
+			print "clust_xy:"+str(clust_xy)
 			doDbScan(plt,ax,fied1,fied2,fn,adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,dbscan_eps,enrichdb)
-		if clust_x!=False:
+		if clust_x>0:
 			doDbScan(plt,ax,fied1,fied2,fn+".x.",adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,clust_x,enrichdb,axis="x")
-		if clust_y!=False:
+		if clust_y>0:
 			doDbScan(plt,ax,fied1,fied2,fn+".y.",adj_list,adj_list2,width,height,nByi,directed,gmmcomponents,clust_y,enrichdb,axis="y")
-		if clust_xy==False:
+		if clust_xy==False or clust_xy == 0:
 			ax.scatter(fied1, fied2,s=10,alpha=0.4,zorder=2)
 		
 		        
