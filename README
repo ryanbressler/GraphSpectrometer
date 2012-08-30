@@ -2,7 +2,7 @@ GraphSpectrometer
 
 A set of scripts and utilities for using fiedler vectors to visualize large graphs.
 
-fiedler.py: calculate the fielder vectors of a graph
-plotjson.py: make plots from the json produced from above.
+Slides explaining math and example output:
+https://docs.google.com/presentation/d/1uUtt7kVcQtESLISqiNzVMqbsbzcNn09P1q37QBFCeiQ/edit
 
-See doc strings for usage
+See doc strings in code for usage for now
