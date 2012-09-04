@@ -54,7 +54,7 @@ def main():
     fied["adj"] = adj_list
     fied["iByn"] = iByn
     fied["nByi"] = nByi
-    fo = open(fn + ".fied.json", "w")
+    fo = open(fn + ".json", "w")
     json.dump(fied, fo)
     fo.close()
 
