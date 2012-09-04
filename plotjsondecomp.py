@@ -72,15 +72,14 @@ def plotjson(fn):
 		div_adj_list=numpy.column_stack((A.row[pos],A.col[pos],d(alpha).v)).tolist()
 
 		fn=fn+".abstract"
-		#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),cyclic_adj_list,fn+".decomp.cyclic.",widths=[64],vsdeg=False,nByi=data["nByi"],directed=True)
-		#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),div_adj_list,fn+".decomp.acyclic.",widths=[64],vsdeg=False,nByi=data["nByi"],directed=True)
-		#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn+".decomp.acyclic.over.all.",widths=[64],vsdeg=False,nByi=data["nByi"],adj_list2=div_adj_list,directed=True)
-		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),div_adj_list,fn+".decomp.acyclic.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True)
-		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),cyclic_adj_list,fn+".decomp.harmonic.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True)
-		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),skew,fn+".decomp.skew.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True)
-		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),data["adj"],fn+".decomp.acyclic.over.all.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],adj_list2=div_adj_list,directed=True)
-		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),data["adj"],fn+".all.v.grad.",widths=[64],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True)
-		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),data["adj"],fn+".all.enriched.0002",widths=[96],heights=[8],vsdeg=False,nByi=data["nByi"],directed=True,enrichdb="../GraphSpec/homo-sapiens-9606-gene-symbol.gmt",clust_x=.0002,clust_xy=False,dorank=False)
+		#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),cyclic_adj_list,fn+".decomp.cyclic.",widths=[6],vsdeg=False,nByi=data["nByi"],directed=True)
+		#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),div_adj_list,fn+".decomp.acyclic.",widths=[6],vsdeg=False,nByi=data["nByi"],directed=True)
+		#fiedler.doPlots(numpy.array(data["f1"]),numpy.array(data["f2"]),numpy.array(data["d"]),data["adj"],fn+".decomp.acyclic.over.all.",widths=[6],vsdeg=False,nByi=data["nByi"],adj_list2=div_adj_list,directed=True)
+		#fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),cyclic_adj_list,fn+".decomp.harmonic.v.grad.",widths=[6],heights=[2],vsdeg=False,nByi=data["nByi"],directed=True)
+		#fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),skew,fn+".decomp.skew.v.grad.",widths=[6],heights=[2],vsdeg=False,nByi=data["nByi"],directed=True)
+		#fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),data["adj"],fn+".decomp.acyclic.over.all.v.grad.",widths=[6],heights=[2],vsdeg=False,nByi=data["nByi"],adj_list2=div_adj_list,directed=True)
+		fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),data["adj"],fn+".all.v.grad.",widths=[16],heights=[4],vsdeg=False,nByi=data["nByi"],directed=True)
+		#fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),data["adj"],fn+".all.enriched.0002",widths=[6],heights=[2],vsdeg=False,nByi=data["nByi"],directed=True,enrichdb="../GraphSpec/homo-sapiens-9606-gene-symbol.gmt",clust_x=.0002,clust_xy=False,dorank=False)
 
 def main():
 	fn=sys.argv[1]
