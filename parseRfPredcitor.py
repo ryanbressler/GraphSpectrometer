@@ -1,31 +1,43 @@
 import sys
 import json
+import math
 import fiedler
+
+
+def parserow(line):
+    #DOES NOT RETURN CORRECT VALUES FOR VALUES WITH COMMAS IN THEM
+    return dict([b for b in [a.split("=") for a in line.split(",")] if len(b) == 2])
 
 
 def parseRfPredict(fo):
     adj_hash = {}
     predicted = "UNKNOWN"
-    for line in fo:
-        parents = {"": predicted}
-        terms = [v.split("=") for v in line.rstrip().split(",")]
-        if terms[0][0] == "FOREST":
-            predicted = terms[0][1]
-        elif terms[0][0] == "TREE":
-            parents = {"": predicted}
-        elif terms[0][0] == "NODE":
-            vhash = dict(terms)
-            if "SPLITTER" in vhash:
-                source = vhash["SPLITTER"]
-                node = vhash["NODE"]
-                parents[node] = source
-                target = parents[node[:-1]]
-                if not source in adj_hash:
-                    adj_hash[source] = {}
-                if not target in adj_hash[source]:
-                    adj_hash[source][target] = 1
-                else:
-                    adj_hash[source][target] += 1
+    ntrees = 0
+    parents = {"": predicted}
+    for i, line in enumerate(fo):
+        try:
+            if line[:6] == "FOREST":
+                vhash = parserow(line)
+                predicted = vhash["TARGET"]
+            elif line[:4] == "TREE":
+                ntrees += 1
+                parents = {"": predicted}
+            elif line[:4] == "NODE":
+                vhash = parserow(line)
+                if "SPLITTER" in vhash:
+                    source = vhash["SPLITTER"]
+                    node = vhash["NODE"]
+                    parents[node] = source
+                    target = parents[node[:-1]]
+                    if not source in adj_hash:
+                        adj_hash[source] = {}
+                    if not target in adj_hash[source]:
+                        adj_hash[source][target] = 1.0
+                    else:
+                        adj_hash[source][target] += 1.0 / len(node)
+        except:
+            print "Error parsing line %s: %s\nparents:%s" % (i, line, parents)
+            raise
 
     out = []
     intidsbyname = {}
@@ -34,14 +46,16 @@ def parseRfPredict(fo):
     incintid = 0
 
     for source in adj_hash:
-        for target in adj_hash["source"]:
+        for target in adj_hash[source]:
             for strid in [source, target]:
                 if not strid in intidsbyname:
                     intidsbyname[strid] = incintid
                     namesbyintid.append(strid)
                     incintid += 1
             row = [intidsbyname[source], intidsbyname[target], float(adj_hash[source][target])]
+    
             out.append(row)
+
     return (out, intidsbyname, namesbyintid)
 
 
