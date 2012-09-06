@@ -119,6 +119,8 @@ def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5,val_col=-1,blackli
     
     len_blacklist=len(blacklist)
     for line in fo:
+        if line[1]=="#":
+            continue
         vs = line.rstrip().split()
         if len(vs)>node2:
             if filter_col!=-1:
@@ -510,7 +512,7 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
     
     F.set_size_inches( (width,height) )
     F.savefig(fn+".png",bbox_inches='tight',pad_inches=0)
-#   F.savefig(fn+".svg",bbox_inches='tight')
+    F.savefig(fn+".svg",bbox_inches='tight')
 
     F.clear()
 

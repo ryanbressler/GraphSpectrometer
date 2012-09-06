@@ -6,7 +6,7 @@ import fiedler
 
 def parserow(line):
     #DOES NOT RETURN CORRECT VALUES FOR VALUES WITH COMMAS IN THEM
-    return dict([b for b in [a.split("=") for a in line.split(",")] if len(b) == 2])
+    return dict([[c.strip("\"") for c in b] for b in [a.split("=") for a in line.split(",")] if len(b) == 2])
 
 
 def parseRfPredict(fo):
@@ -47,14 +47,15 @@ def parseRfPredict(fo):
 
     for source in adj_hash:
         for target in adj_hash[source]:
-            for strid in [source, target]:
-                if not strid in intidsbyname:
-                    intidsbyname[strid] = incintid
-                    namesbyintid.append(strid)
-                    incintid += 1
-            row = [intidsbyname[source], intidsbyname[target], float(adj_hash[source][target])]
+            if adj_hash[source][target] > 1:
+                for strid in [source, target]:
+                    if not strid in intidsbyname:
+                        intidsbyname[strid] = incintid
+                        namesbyintid.append(strid)
+                        incintid += 1
+                row = [intidsbyname[source], intidsbyname[target], float(adj_hash[source][target])]
     
-            out.append(row)
+                out.append(row)
 
     return (out, intidsbyname, namesbyintid)
 
