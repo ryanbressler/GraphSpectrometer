@@ -36,9 +36,20 @@ def plotjson(fn):
     if "adj" in data:
         (A,adj,Npts) = fiedler.adj_mat(data["adj"])
         #scew symetricise
+        # A=A.todense()
+        # print "Symetric edges ", numpy.sum(numpy.equal(A.T,A))
+        # print numpy.sum(numpy.sum(A!=0, axis=0)==0)
+        # print numpy.sum(numpy.sum(A!=0, axis=1)==0)
+        pos=A.data>0
+        unique = numpy.unique(numpy.column_stack((A.row[pos],A.col[pos])))
+        print "Unique ", len(unique), unique
 
-        A = (A.T - A)/2
-
+        #A = (A.T - A)/2
+        print "Dim ", A.shape
+        
+        # print numpy.sum(numpy.sum(A!=0, axis=0)==0)
+        # print numpy.sum(numpy.sum(A!=0, axis=1)==0)
+        # A=scipy.sparse.coo_matrix(A)
         A=A.tocoo()
         pos=A.data>0
         skew = numpy.column_stack((A.row[pos],A.col[pos],A.data[pos])).tolist()
@@ -57,7 +68,8 @@ def plotjson(fn):
         # rank=cg( A2, b, tol=1e-8 )[0]
 
         # method from ranking driver.py
-
+        unique = numpy.unique(numpy.column_stack((A.row[pos],A.col[pos])))
+        print "Unique ", len(unique), unique
         asc = abstract_simplicial_complex([numpy.column_stack((A.row[pos],A.col[pos])).tolist()])
         B1 = asc.chain_complex()[1] # boundary matrix
         rank = lsqr(B1.T, A.data[pos])[0] # solve least squares problem

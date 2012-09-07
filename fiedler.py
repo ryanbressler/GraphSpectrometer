@@ -176,7 +176,7 @@ def adj_mat(adj_list):
     Npts = numpy.max(adj)+1
     data = numpy.ones(adj.shape[0],dtype=float)
     if adj.shape[1]>2:
-        data=-1*adj[:,2]
+        data=adj[:,2]
     A = coo_matrix((data,(adj[:,0],adj[:,1])), shape=(Npts,Npts))
     return (A,adj,Npts)
 
