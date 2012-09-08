@@ -8,7 +8,7 @@ def parserow(line):
     #DOES NOT RETURN CORRECT VALUES FOR VALUES WITH COMMAS IN THEM
     clauses=[]
     insidequotes=[]
-    for term in line.split(","):
+    for term in line.strip().split(","):
         quotes = term.count('"')
         if quotes == 1 or len(insidequotes)>0:
             insidequotes.append(term)
@@ -18,7 +18,7 @@ def parserow(line):
             clauses.append(",".join(insidequotes))
             insidequotes=[]
 
-    return dict([[c.strip('"').strip() for c in b] for b in [a.split("=") for a in clauses] if len(b) == 2])
+    return dict([[c.strip().strip('"').strip() for c in b] for b in [a.split("=") for a in clauses] if len(b) == 2])
     #return dict([[c.strip("\"") for c in b] for b in [a.split("=") for a in line.split(",")] if len(b) == 2])
 
 
@@ -55,7 +55,7 @@ def parseRfPredict(fo, cutoff):
                     if not target in adj_hash[source]:
                         adj_hash[source][target] = 1.0
                     else:
-                        adj_hash[source][target] += 1.0  #/ len(node)
+                        adj_hash[source][target] += 1.0  
         except:
             print "Error parsing line %s: %s\nparents:%s" % (i, line, parents)
             raise

@@ -204,7 +204,7 @@ def graph_laplacian(adj_list):
     The graph laplaciian in coo_matrix format.
     """
     (A,adj,Npts) = adj_mat(adj_list)
-    A = (A.T + A)/2
+    A = -1*(A.T + A)/2
     A=A.tocsr()
     if len(adj_list[0])==2:
         A.data = -1*numpy.ones((A.nnz,),dtype=float)
