@@ -10,6 +10,23 @@ python plotjsondecomp.python fiedler.out.json
 or often:
 ls *.json | xargs --max-procs=10 -I FILE  python plotjsondecomp.py FILE
 
+THis script also updates the json file to include two additional fields: the value of the grad
+component of the hodge decomposition and the rank produced by it:
+
+
+{"f1": the first fiedler vector,
+"f2": (if caclulated) the second fideler vector
+"d": the node degrees,
+"r1": the rank of each node in the first fiedler vector
+"r2": the rank of each node in the second fiedler vector
+"iByn": the index of the nodes by the string used to represent them in
+the input file
+"nByi": the string used to represent nodes in the input file by their
+index in the graph
+"adj": the adjascancy list,
+["hodge": the values of the gradient from hodge decomposition,
+"hodgerank": the hodge rank]}
+
 """
 
 import sys
