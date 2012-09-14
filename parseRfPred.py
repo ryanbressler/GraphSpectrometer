@@ -83,10 +83,12 @@ def parseRfPredict(fo, cutoff):
 
 def main():
     fn = sys.argv[1]
+    fo = open(fn)
     cutoff = 1.0
     if len(sys.argv) > 2:
         cutoff = float(sys.argv[2])
-    fo = open(fn)
+        fn += "cutoff"+str(cutoff)
+    
     (adj_list, iByn, nByi, spliter_by_feature) = parseRfPredict(fo, cutoff)
     fo.close()
     fied = fiedler.fiedler(adj_list, fn=fn, plot=False, n_fied=2)
