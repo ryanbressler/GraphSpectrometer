@@ -93,7 +93,7 @@ def plotjson(fn):
         alist=fiedler.adj_list(A)
         fn=fn+".abstract"
         #fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+".all.v.grad.",widths=[24],heights=[6],vsdeg=False,nByi=data["nByi"],directed=False)
-        fiedler.doPlots(numpy.argsort(numpy.argsort(numpy.array(data["f1"]))),-1*numpy.log(numpy.array(rank)-numpy.amin(rank)+1),numpy.array(data["d"]),alist,fn+"fied.rank.v.hodge",widths=[24],heights=[16],vsdeg=False,nByi=data["nByi"],directed=False,dorank=False)
+        fiedler.doPlots(numpy.argsort(numpy.argsort(numpy.array(data["f1"]))),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+"fied.rank.v.hodge",widths=[24],heights=[16],vsdeg=False,nByi=data["nByi"],directed=False,dorank=False)
         
         
 
