@@ -94,8 +94,8 @@ def plotjson(fn):
             fiedler.doPlots(numpy.argsort(numpy.argsort(numpy.array(data["f1"]))),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+"fied.rank.v.hodge",widths=[24],heights=[16],vsdeg=False,nByi=data["nByi"],directed=False,dorank=False)
         except ValueError:
             print "ValueError ploting ", fn
-            print "A", A.shape,"pos",pos.shape,"B1.T.shape", B1.T.shape, "A.data[pos]", A.data[pos].shape, "rank", rank.shape, "numpy.array(data[\"f1\"])", numpy.array(data["f1"]).shape
-        
+            print "A", A.shape,"A.data",A.data.shape,A.row.shape,A.col.shape,"pos",pos.shape,"B1.T.shape", B1.T.shape, "A.data[pos]", A.data[pos].shape, "rank", rank.shape, "numpy.array(data[\"f1\"])", numpy.array(data["f1"]).shape
+            print "pos", pos
 
 def main():
     fn=sys.argv[1]
