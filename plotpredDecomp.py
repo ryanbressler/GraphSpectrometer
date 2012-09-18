@@ -95,7 +95,7 @@ def plotjson(fn):
         except ValueError:
             print "ValueError ploting ", fn
             print "A", A.shape,"A.data",A.data.shape,A.row.shape,A.col.shape,"pos",pos.shape,"B1.T.shape", B1.T.shape, "A.data[pos]", A.data[pos].shape, "rank", rank.shape, "numpy.array(data[\"f1\"])", numpy.array(data["f1"]).shape
-            print "pos", pos
+            pass
 
 def main():
     fn=sys.argv[1]

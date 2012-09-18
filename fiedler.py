@@ -173,7 +173,7 @@ def adj_mat(adj_list):
     The adjasancy matrix in coo_matrix format.
     """
     adj=numpy.array(adj_list)
-    Npts = numpy.max(adj)+1
+    Npts = numpy.max(adj[:,:2])+1
     data = numpy.ones(adj.shape[0],dtype=float)
     if adj.shape[1]>2:
         data=adj[:,2]
