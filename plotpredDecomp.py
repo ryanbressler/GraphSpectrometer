@@ -72,14 +72,14 @@ def plotjson(fn):
         B1 = asc.chain_complex()[1] # boundary matrix
         rank = lsqr(B1.T, A.data[pos])[0] # solve least squares problem
         
-        sc = simplicial_complex(([[el] for el in range(0,A.shape[0])],numpy.column_stack((A.row[pos],A.col[pos])).tolist()))
-        omega = sc.get_cochain(1)
-        omega.v[:] = A.data[pos]
-        p = omega.k
-        alpha = sc.get_cochain(p - 1)
+        # sc = simplicial_complex(([[el] for el in range(0,A.shape[0])],numpy.column_stack((A.row[pos],A.col[pos])).tolist()))
+        # omega = sc.get_cochain(1)
+        # omega.v[:] = A.data[pos]
+        # p = omega.k
+        # alpha = sc.get_cochain(p - 1)
         
-        alpha.v = rank
-        v = A.data[pos]-d(alpha).v
+        # alpha.v = rank
+        # v = A.data[pos]-d(alpha).v
         
         cyclic_adj_list=numpy.column_stack((A.row[pos],A.col[pos],v)).tolist()
         div_adj_list=numpy.column_stack((A.row[pos],A.col[pos],d(alpha).v)).tolist()
