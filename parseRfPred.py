@@ -91,6 +91,7 @@ def main():
     
     (adj_list, iByn, nByi, spliter_by_feature) = parseRfPredict(fo, cutoff)
     fo.close()
+    print "adj_list", numpy.array(adj_list).shape
     fied = fiedler.fiedler(adj_list, fn=fn, plot=False, n_fied=2)
     fied["adj"] = adj_list
     fied["iByn"] = iByn
