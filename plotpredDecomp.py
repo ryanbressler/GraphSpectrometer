@@ -81,8 +81,8 @@ def plotjson(fn):
         # alpha.v = rank
         # v = A.data[pos]-d(alpha).v
         
-        cyclic_adj_list=numpy.column_stack((A.row[pos],A.col[pos],v)).tolist()
-        div_adj_list=numpy.column_stack((A.row[pos],A.col[pos],d(alpha).v)).tolist()
+        # cyclic_adj_list=numpy.column_stack((A.row[pos],A.col[pos],v)).tolist()
+        # div_adj_list=numpy.column_stack((A.row[pos],A.col[pos],d(alpha).v)).tolist()
 
         data["hodge"]=list(rank)
         data["hodgerank"]=list(numpy.argsort(numpy.argsort(rank)))
