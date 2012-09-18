@@ -68,7 +68,6 @@ def plotjson(fn):
         asc = abstract_simplicial_complex([numpy.column_stack((A.row[pos],A.col[pos])).tolist()])
         B1 = asc.chain_complex()[1] # boundary matrix
         rank = lsqr(B1.T, A.data[pos])[0] # solve least squares problem
-        print "B1.T.shape", B1.T.shape, "A.data[pos]", A.data[pos].shape, "rank", rank.shape, "numpy.array(data[\"f1\"])", numpy.array(data["f1"]).shape
         # sc = simplicial_complex(([[el] for el in range(0,A.shape[0])],numpy.column_stack((A.row[pos],A.col[pos])).tolist()))
         # omega = sc.get_cochain(1)
         # omega.v[:] = A.data[pos]
@@ -90,8 +89,12 @@ def plotjson(fn):
         alist=fiedler.adj_list(A)
         fn=fn+".abstract"
         #fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+".all.v.grad.",widths=[24],heights=[6],vsdeg=False,nByi=data["nByi"],directed=False)
-        fiedler.doPlots(numpy.argsort(numpy.argsort(numpy.array(data["f1"]))),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+"fied.rank.v.hodge",widths=[24],heights=[16],vsdeg=False,nByi=data["nByi"],directed=False,dorank=False)
-        
+        try:
+            print "Ploting ", fn
+            fiedler.doPlots(numpy.argsort(numpy.argsort(numpy.array(data["f1"]))),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+"fied.rank.v.hodge",widths=[24],heights=[16],vsdeg=False,nByi=data["nByi"],directed=False,dorank=False)
+        except ValueError:
+            print "ValueError ploting ", fn
+            print "A", A.shape,"pos",pos.shape,B1.T.shape", B1.T.shape, "A.data[pos]", A.data[pos].shape, "rank", rank.shape, "numpy.array(data[\"f1\"])", numpy.array(data["f1"]).shape
         
 
 def main():
