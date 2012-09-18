@@ -55,14 +55,11 @@ def plotjson(fn):
     if "adj" in data:
         (A,adj,Npts) = fiedler.adj_mat(data["adj"])
 
-        A =  A
-        pos=A.data>0
-
 
         #A = (A.T - A)/2
 
         A=A.tocoo()
-        pos=A.data>0
+        pos=A.data!=0
         skew = numpy.column_stack((A.row[pos],A.col[pos],A.data[pos])).tolist()
         
       
