@@ -95,7 +95,10 @@ def main():
     fied["adj"] = adj_list
     fied["iByn"] = iByn
     fied["nByi"] = nByi
-    fied["sByf"] = spliter_by_feature
+    #fied["sByf"] = spliter_by_feature
+    fo = open(fn + ".splitters", "w")
+    json.dump(spliter_by_feature, fo, indent=2)
+    fo.close()
     fo = open(fn + ".json", "w")
     json.dump(fied, fo, indent=2)
     fo.close()
