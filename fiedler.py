@@ -59,6 +59,7 @@ import json
 import math
 import random
 import itertools
+import os
 
 
 
@@ -593,10 +594,8 @@ def filename_parse(fn, filter_min=.001):
     fo = open(fn)
     out = ()
     if fn[-4:] == ".out":
-        print "Parsing as rf-ace filter output"
         out = file_parse(fo, node2=1, filter_col=3, filter_min=filter_min, val_col=3)
     elif fn[-5:] == ".pwpv":
-        print "Parsing as pairwise"
         out = file_parse(fo, node2=1, filter_col=2, filter_min=filter_min, val_col=2, blacklist=["PRDM", "CNVR"])
     else:
         out = file_parse(fo)
@@ -609,13 +608,13 @@ def main():
     filter_min = ""
     if len(sys.argv) > 2:
         filter_min = float(sys.argv[2])
-    print "Filter min: ", filter_min
+
     (adj_list, iByn, nByi) = filename_parse(fn, filter_min)
+    fn = os.path.basename(fn)
     fied = fiedler(adj_list, fn=fn + str(filter_min), plot=False, n_fied=2)
     fied["adj"] = adj_list
     fied["iByn"] = iByn
     fied["nByi"] = nByi
-    print "fied", fied
     fo = open(fn + str(filter_min) + ".continuous.json", "w")
     json.dump(fied, fo)
     fo.close()
