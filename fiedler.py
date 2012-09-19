@@ -82,13 +82,8 @@ from sklearn.cluster import DBSCAN
 import hypergeom
 
 
-
-
-
-
-
-def file_parse(fo,node1=0,node2=2,filter_col=-1,filter_min=.5,val_col=-1,blacklist=[]):
-    """parse a sif like file into an adjascancy list by index in a matrix and node name look up tables. 
+def file_parse(fo, node1=0, node2=2, filter_col=-1, filter_min=.5, val_col=-1, blacklist=[]):
+    """parse a sif like file into an adjascancy list by index in a matrix and node name look up tables.
 
     Takes:
     f0: A file like object containing a sif or similar white space deliminated file containing at at least 2
@@ -581,7 +576,7 @@ def plotFiedvsDeg(fied, degree,fn):
     F.clear()
 
     
-def filename_parse(fn,filter_min=.001):
+def filename_parse(fn, filter_min=.001):
     """Wraps file_parse and infers paramaters based on extensions.
 
     Takes:
@@ -596,29 +591,33 @@ def filename_parse(fn,filter_min=.001):
     """
 
     fo = open(fn)
-    out =()
-    if fn[-4:]==".out":
-        out =file_parse(fo,node2=1,filter_col=3,filter_min=filter_min,val_col=3)
-    elif fn[-5:]==".pwpv":
-        out =file_parse(fo,node2=1,filter_col=2,filter_min=filter_min,val_col=2,blacklist=["PRDM","CNVR"])
+    out = ()
+    if fn[-4:] == ".out":
+        print "Parsing as rf-ace filter output"
+        out = file_parse(fo, node2=1, filter_col=3, filter_min=filter_min, val_col=3)
+    elif fn[-5:] == ".pwpv":
+        print "Parsing as pairwise"
+        out = file_parse(fo, node2=1, filter_col=2, filter_min=filter_min, val_col=2, blacklist=["PRDM", "CNVR"])
     else:
-        out= file_parse(fo)
+        out = file_parse(fo)
     fo.close()
     return out
 
+
 def main():
-    
     fn = sys.argv[1]
-    filter_min=""
-    if len(sys.argv)>2:
-        filter_min=float(sys.argv[2])
-    (adj_list,iByn,nByi)=filename_parse(fn,filter_min)
-    fied=fiedler(adj_list,fn=fn+str(filter_min),plot=False,n_fied=2)
-    fied["adj"]=adj_list
-    fied["iByn"]=iByn
-    fied["nByi"]=nByi
-    fo = open(fn+str(filter_min)+".continuous.json","w")
-    json.dump(fied,fo)
+    filter_min = ""
+    if len(sys.argv) > 2:
+        filter_min = float(sys.argv[2])
+    print "Filter min: ", filter_min
+    (adj_list, iByn, nByi) = filename_parse(fn, filter_min)
+    fied = fiedler(adj_list, fn=fn + str(filter_min), plot=False, n_fied=2)
+    fied["adj"] = adj_list
+    fied["iByn"] = iByn
+    fied["nByi"] = nByi
+    print "fied", fied
+    fo = open(fn + str(filter_min) + ".continuous.json", "w")
+    json.dump(fied, fo)
     fo.close()
 
 
