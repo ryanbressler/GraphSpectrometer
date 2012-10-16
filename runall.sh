@@ -1,0 +1,8 @@
+FMATRIX=$1
+BLACKLIST=$2
+OUTDIR=$3
+PWFILE=$1
+
+bash runrf.sh $FMATRIX $OUTDIR
+bash runrf_no_bl.sh $FMATRIX $BLACKLIST $OUTDIR
+bash runpw.sh $PWFILE $OUTDIR
