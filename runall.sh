@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 # usage ./runall.sh /titan/cancerregulome9/ITMI_PTB/public/analysis/ /titan/cancerregulome9/workspaces/users/rbressle/2012_09_18/blacklist.txt /titan/cancerregulome9/ITMI_PTB/public/analysis/layouts/
+export NGSPECCORES=4
+export NGSPECPLOTINGCORES=2
+export RFACE=/titan/cancerregulome9/workspaces/rf-ace/bin/rf-ace
+export GSPEC=/titan/cancerregulome9/workspaces/users/rbressle/GraphSpectrometer
+
 ADIR=$1
 BLACKLIST=$2
 OUTDIRBASE=$3
