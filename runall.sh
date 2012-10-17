@@ -6,12 +6,12 @@ OUTDIRBASE=$3
 
 
 #Loop over feature matrixes
-for FILE in $(ADIR)/feature_matrices/*
+for FILE in ${ADIR}/feature_matrices/*
 do
 	echo Feature Matrix $FILE
 	if [ -f $FILE ]
 	then
-		OUTDIR=$(OUTDIRBASE)/$(basename $FILE)
+		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
 		if [ ! -e $OUTDIR ]
 		then
 			mkdir $OUTDIR
@@ -22,12 +22,12 @@ do
 done
 
 #Loop over pairwise results
-for FILE in $(ADIR)/pairwise/*
+for FILE in ${ADIR}/pairwise/*
 do
 	echo Pairwise $FILE
 	if [ -f $FILE ]
 	then
-		OUTDIR=$(OUTDIRBASE)/$(basename $FILE)
+		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
 		if [ ! -e $OUTDIR ]
 		then
 			mkdir $OUTDIR
