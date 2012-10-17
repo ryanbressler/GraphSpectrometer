@@ -16,8 +16,8 @@ do
 		then
 			mkdir $OUTDIR
 		fi
-		bash runrf.sh $FILE $OUTDIR
-		bash runrf_no_bl.sh $FILE $BLACKLIST $OUTDIR
+		./runrf_no_bl.sh $FILE $OUTDIR
+		./runrf.sh $FILE $BLACKLIST $OUTDIR
 	fi
 done
 
@@ -32,6 +32,6 @@ do
 		then
 			mkdir $OUTDIR
 		fi
-		bash runpw.sh $FILE $OUTDIR
+		./runpw.sh $FILE $OUTDIR
 	fi
 done
