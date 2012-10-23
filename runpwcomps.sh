@@ -17,5 +17,5 @@ do
 done
 
 seq .8 -.2 .2 | xargs --max-procs=${NGSPECPLOTINGCORES} -I CUTOFF  \
-python ${GSPEC}/comparisonPlot.py "*${CUTOFF}*${CUTOFF}*.pwpv.json"
+python ${GSPEC}/comparisonPlot.py "*.pwpv${CUTOFF}.continuous.json"
 
