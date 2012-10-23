@@ -2,7 +2,7 @@
 # usage ./runall.sh /titan/cancerregulome9/ITMI_PTB/public/analysis/ /titan/cancerregulome9/workspaces/users/rbressle/2012_09_18/blacklist.txt /titan/cancerregulome9/ITMI_PTB/public/analysis/layouts/
 export NGSPECCORES=4
 export NGSPECPLOTINGCORES=2
-export GSPEC=/titan/cancerregulome9/workspaces/users/rbressle/GraphSpectrometer
+export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
 
 #for FILE in /titan/cancerregulome3/TCGA/outputs/brca/brca.newMerge.01oct.hack.imp1_NCI.*.pwpv
 #do
