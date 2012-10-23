@@ -3,12 +3,12 @@
 export NGSPECCORES=4
 export GSPEC=/titan/cancerregulome9/workspaces/users/rbressle/GraphSpectrometer
 
-for FILE in /titan/cancerregulome3/TCGA/outputs/brca/brca.newMerge.01oct.hack.imp1_NCI.*.pwpv
-do
-	grep GNAB $FILE > $(basename $FILE)
-done
+#for FILE in /titan/cancerregulome3/TCGA/outputs/brca/brca.newMerge.01oct.hack.imp1_NCI.*.pwpv
+#do
+#	grep GNAB $FILE > $(basename $FILE)
+#done
 
-ls *.pwpv | xargs --max-procs=${NGSPECCORES} -I FILE  python ${GSPEC}/fiedler.py FILE
+ls *.pwpv | xargs --max-procs=${NGSPECCORES} -I FILE  python ${GSPEC}/runpw.sh FILE .
 
 python ${GSPEC}/comparisonPlot.py "*.pwpv.json"
 
