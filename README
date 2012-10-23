@@ -1,6 +1,10 @@
 GraphSpectrometer
 
-A set of scripts and utilities for using fiedler vectors to visualize large graphs.
+A set of python/numpy scripts and utilities for using fiedler vectors and discrete exterior calculus to layout, analize and visualize large graphs.
+
+Dependecies:
+http://code.google.com/p/pyamg/
+http://code.google.com/p/pydec/
 
 Slides explaining math and example output:
 https://docs.google.com/presentation/d/1uUtt7kVcQtESLISqiNzVMqbsbzcNn09P1q37QBFCeiQ/edit
