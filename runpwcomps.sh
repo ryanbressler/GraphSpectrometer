@@ -9,13 +9,13 @@ export GSPEC=/titan/cancerregulome9/workspaces/users/rbressle/GraphSpectrometer
 #	grep GNAB $FILE > $(basename $FILE)
 #done
 
-for PWFILE in *.pwpv
-do
-	seq .8 -.2 .2 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
-	python ${GSPEC}/fiedler.py \
-	${PWFILE} CUTOFF
-done
+# for PWFILE in *.pwpv
+# do
+# 	seq .8 -.2 .2 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
+# 	python ${GSPEC}/fiedler.py \
+# 	${PWFILE} CUTOFF
+# done
 
-seq .8 -.2 .2 | xargs --max-procs=${NGSPECPLOTINGCORES} -I CUTOFF  \
+seq .8 -.2 .2 | xargs --max-procs=${NGSPECPLOTINGCORES} -I ${CUTOFF}  \
 python ${GSPEC}/comparisonPlot.py "*.pwpv${CUTOFF}.continuous.json"
 
