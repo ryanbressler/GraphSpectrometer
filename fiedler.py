@@ -578,6 +578,8 @@ def filename_parse(fn, filter_min=.001):
         out = file_parse(fo, node2=1, filter_col=3, filter_min=filter_min, val_col=3)
     elif fn[-5:] == ".pwpv":
         out = file_parse(fo, node2=1, filter_col=2, filter_min=filter_min, val_col=2, blacklist=["PRDM", "CNVR"])
+    elif fn[-4:] == ".tsv":
+        out = file_parse(fo, node2=1, filter_col=2, filter_min=filter_min, val_col=2)
     else:
         out = file_parse(fo)
     fo.close()
