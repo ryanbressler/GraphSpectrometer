@@ -8,7 +8,7 @@ export GSPEC=/titan/cancerregulome9/workspaces/users/rbressle/GraphSpectrometer
 #	grep GNAB $FILE > $(basename $FILE)
 #done
 
-ls *.pwpv | xargs --max-procs=${NGSPECCORES} -I FILE  bash ${GSPEC}/runpw.sh FILE .
+ls *.pwpv | xargs -I FILE  bash ${GSPEC}/runpw.sh FILE .
 
 python ${GSPEC}/comparisonPlot.py "*.pwpv.json"
 
