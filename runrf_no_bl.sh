@@ -9,16 +9,16 @@ echo RUNNING RANDOM FOREST WITH BLACKLIST
 $RFACE -I $FMATRIX \
 -i N:CLIN:TermCategory:NB:::: -O ${TREES} -n 12800
 
-OUTDIR=${OUTDIR}/layouts/$(basename $TREES)
-if [ ! -e $OUTDIR ]
+JSONDIR=${OUTDIR}/layouts/$(basename $TREES)
+if [ ! -e $JSONDIR ]
 then
-	mkdir $OUTDIR
+	mkdir $JSONDIR
 fi
 
-cd ${OUTDIR}
+cd ${JSONDIR}
 echo PARSING PREDICTOR 
 seq 0 1 60 | xargs --max-procs=NGSPECCORES -I CUTOFF  \
 python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 echo FINDING HODGE RANK
-ls ${OUTDIR}/*.json | xargs --max-procs=${NGSPECPLOTINGCORES} -I FILE  \
+ls ${JSONDIR}/* | xargs --max-procs=${NGSPECPLOTINGCORES} -I FILE  \
 python ${GSPEC}/plotpredDecomp.py FILE
