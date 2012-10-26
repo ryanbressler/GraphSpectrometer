@@ -26,8 +26,8 @@ do
 			mkdir $LAYOUTS
 		fi
 		
-		./runrf_no_bl.sh $FILE $OUTDIR
-		./runrf.sh $FILE $BLACKLIST $OUTDIR
+		./runrf_no_bl.sh $FILE $OUTDIRBASE
+		./runrf.sh $FILE $BLACKLIST $OUTDIRBASE
 	fi
 done
 
