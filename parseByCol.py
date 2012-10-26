@@ -1,6 +1,7 @@
 import fiedler
+import os.path
 
-def filename_parse(fn, filter_min=.001,col=2):
+def filename_parse(fn, filter_min=.001,col=2,filter_col=2):
     """Wraps file_parse and infers paramaters based on extensions.
 
     Takes:
@@ -17,7 +18,7 @@ def filename_parse(fn, filter_min=.001,col=2):
     fo = open(fn)
     out = ()
 
-    out = fiedler.file_parse(fo, node2=1, filter_col=2, filter_min=filter_min, val_col=col)
+    out = fiedler.file_parse(fo, node2=1, filter_col=filter_col, filter_min=filter_min, val_col=col)
     
     fo.close()
     return out
@@ -27,14 +28,18 @@ def main():
     filter_min = ""
     
     filter_min = float(sys.argv[2])
+    
     col = int(sys.argv[3])
+    filter_col = col
+    if len(sys.argv)>4:
+        filter_col=int(sys.argv[4])
 
-    (adj_list, iByn, nByi) = filename_parse(fn, filter_min,col)
+    (adj_list, iByn, nByi) = filename_parse(fn, filter_min, col, filter_col)
     fn = os.path.basename(fn)
     fied = fiedler.fiedler(adj_list, fn=fn + str(filter_min), plot=False, n_fied=2)
     fied["adj"] = adj_list
     fied["iByn"] = iByn
     fied["nByi"] = nByi
-    fo = open(fn + str(filter_min) + ".pwpv.json", "w")
+    fo = open(os.path.basename(fn) +".cutoff."+ str(filter_min) + ".json", "w")
     json.dump(fied, fo)
     fo.close()
