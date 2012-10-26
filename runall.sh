@@ -9,7 +9,7 @@ BLACKLIST=$2
 
 
 
-#Loop over feature matrixes
+#Loop over feature matrixes and run and layout rf-ace predictors
 for FILE in ${ADIR}/feature_matrices/*
 do
 	echo Feature Matrix $FILE
@@ -35,7 +35,7 @@ do
 	fi
 done
 
-#Loop over pairwise results
+#Loop over pairwise results and run fiedler and mds
 for FILE in ${ADIR}/pairwise/*
 do
 	echo Pairwise $FILE
@@ -46,51 +46,61 @@ do
 		then
 			mkdir $OUTDIRBASE
 		fi
-		OUTDIRBASE=${ADIR}/pairwise/fiedler
+
+		OUTDIRBASE=${OUTDIRBASE}/$(basename $FILE)
 		if [ ! -e $OUTDIRBASE ]
 		then
 			mkdir $OUTDIRBASE
 		fi
-		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
+
+		OUTDIR=${OUTDIRBASE}/fiedler
 		if [ ! -e $OUTDIR ]
 		then
 			mkdir $OUTDIR
 		fi
-		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
+		
+		./runpw.sh $FILE $OUTDIR 2
+
+		OUTDIR=${OUTDIRBASE}/mds
 		if [ ! -e $OUTDIR ]
 		then
 			mkdir $OUTDIR
 		fi
-		./runpw.sh $FILE $OUTDIR
 	fi
 done
 
-#Loop over pairwise results
+#Loop over rf-ace filter results and run fiedler and mds
 for FILE in ${ADIR}/rf-ace/*
 do
 	echo Pairwise $FILE
 	if [ -f $FILE ]
 	then
-		OUTDIRBASE=${ADIR}/pairwise/layouts
+		OUTDIRBASE=${ADIR}/rf-ace/layouts
 		if [ ! -e $OUTDIRBASE ]
 		then
 			mkdir $OUTDIRBASE
 		fi
-		OUTDIRBASE=${ADIR}/pairwise/fiedler
+
+		OUTDIRBASE=${OUTDIRBASE}/$(basename $FILE)
 		if [ ! -e $OUTDIRBASE ]
 		then
 			mkdir $OUTDIRBASE
 		fi
-		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
+
+		OUTDIR=${OUTDIRBASE}/fiedler
 		if [ ! -e $OUTDIR ]
 		then
 			mkdir $OUTDIR
 		fi
-		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
+
+		./runpw.sh $FILE $OUTDIR 3
+
+		OUTDIR=${OUTDIRBASE}/mds
 		if [ ! -e $OUTDIR ]
 		then
 			mkdir $OUTDIR
 		fi
-		./runpw.sh $FILE $OUTDIR
 	fi
 done
+
+

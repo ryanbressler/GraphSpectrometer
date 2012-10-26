@@ -1,6 +1,6 @@
 import fiedler
 
-def filename_parse(fn, filter_min=.001):
+def filename_parse(fn, filter_min=.001,col=2):
     """Wraps file_parse and infers paramaters based on extensions.
 
     Takes:
@@ -17,7 +17,7 @@ def filename_parse(fn, filter_min=.001):
     fo = open(fn)
     out = ()
 
-    out = fiedler.file_parse(fo, node2=1, filter_col=2, filter_min=filter_min, val_col=2, blacklist=["PRDM", "CNVR"])
+    out = fiedler.file_parse(fo, node2=1, filter_col=2, filter_min=filter_min, val_col=col)
     
     fo.close()
     return out
@@ -25,10 +25,11 @@ def filename_parse(fn, filter_min=.001):
 def main():
     fn = sys.argv[1]
     filter_min = ""
-    if len(sys.argv) > 2:
-        filter_min = float(sys.argv[2])
+    
+    filter_min = float(sys.argv[2])
+    col = int(sys.argv[3])
 
-    (adj_list, iByn, nByi) = filename_parse(fn, filter_min)
+    (adj_list, iByn, nByi) = filename_parse(fn, filter_min,col)
     fn = os.path.basename(fn)
     fied = fiedler.fiedler(adj_list, fn=fn + str(filter_min), plot=False, n_fied=2)
     fied["adj"] = adj_list
