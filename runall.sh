@@ -25,11 +25,7 @@ do
 		then
 			mkdir $LAYOUTS
 		fi
-		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
-		if [ ! -e $OUTDIR ]
-		then
-			mkdir $OUTDIR
-		fi
+		
 		./runrf_no_bl.sh $FILE $OUTDIR
 		./runrf.sh $FILE $BLACKLIST $OUTDIR
 	fi
