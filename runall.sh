@@ -6,7 +6,7 @@ export RFACE=/titan/cancerregulome9/workspaces/rf-ace/bin/rf-ace
 export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
 ADIR=$1
 BLACKLIST=$2
-OUTDIRBASE=$3
+
 
 
 #Loop over feature matrixes
@@ -15,6 +15,16 @@ do
 	echo Feature Matrix $FILE
 	if [ -f $FILE ]
 	then
+		OUTDIRBASE=${ADIR}/rf-pred/
+		if [ ! -e $OUTDIRBASE ]
+		then
+			mkdir $OUTDIRBASE
+		fi
+		LAYOUTS=${OUTDIRBASE}/layouts
+		if [ ! -e $LAYOUTS ]
+		then
+			mkdir $LAYOUTS
+		fi
 		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
 		if [ ! -e $OUTDIR ]
 		then
@@ -31,6 +41,51 @@ do
 	echo Pairwise $FILE
 	if [ -f $FILE ]
 	then
+		OUTDIRBASE=${ADIR}/pairwise/layouts
+		if [ ! -e $OUTDIRBASE ]
+		then
+			mkdir $OUTDIRBASE
+		fi
+		OUTDIRBASE=${ADIR}/pairwise/fiedler
+		if [ ! -e $OUTDIRBASE ]
+		then
+			mkdir $OUTDIRBASE
+		fi
+		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
+		if [ ! -e $OUTDIR ]
+		then
+			mkdir $OUTDIR
+		fi
+		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
+		if [ ! -e $OUTDIR ]
+		then
+			mkdir $OUTDIR
+		fi
+		./runpw.sh $FILE $OUTDIR
+	fi
+done
+
+#Loop over pairwise results
+for FILE in ${ADIR}/rf-ace/*
+do
+	echo Pairwise $FILE
+	if [ -f $FILE ]
+	then
+		OUTDIRBASE=${ADIR}/pairwise/layouts
+		if [ ! -e $OUTDIRBASE ]
+		then
+			mkdir $OUTDIRBASE
+		fi
+		OUTDIRBASE=${ADIR}/pairwise/fiedler
+		if [ ! -e $OUTDIRBASE ]
+		then
+			mkdir $OUTDIRBASE
+		fi
+		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
+		if [ ! -e $OUTDIR ]
+		then
+			mkdir $OUTDIR
+		fi
 		OUTDIR=${OUTDIRBASE}/$(basename $FILE)
 		if [ ! -e $OUTDIR ]
 		then

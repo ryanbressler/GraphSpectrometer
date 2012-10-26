@@ -85,17 +85,17 @@ def plotjson(fn):
         fo = open(fn,"w")
         json.dump(data,fo, indent=2)
         fo.close()
-        A.data = A.data * .25
-        alist=fiedler.adj_list(A)
-        fn=fn+".abstract"
-        #fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+".all.v.grad.",widths=[24],heights=[6],vsdeg=False,nByi=data["nByi"],directed=False)
-        try:
-            print "Ploting ", fn
-            fiedler.doPlots(numpy.argsort(numpy.argsort(numpy.array(data["f1"]))),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+"fied.rank.v.hodge",widths=[24],heights=[16],vsdeg=False,nByi=data["nByi"],directed=False,dorank=False)
-        except ValueError:
-            print "ValueError ploting ", fn
-            print "A", A.shape,"A.data",A.data.shape,A.row.shape,A.col.shape,"pos",pos.shape,"B1.T.shape", B1.T.shape, "A.data[pos]", A.data[pos].shape, "rank", rank.shape, "numpy.array(data[\"f1\"])", numpy.array(data["f1"]).shape
-            pass
+        # A.data = A.data * .25
+        # alist=fiedler.adj_list(A)
+        # fn=fn+".abstract"
+        # #fiedler.doPlots(numpy.array(data["f1"]),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+".all.v.grad.",widths=[24],heights=[6],vsdeg=False,nByi=data["nByi"],directed=False)
+        # try:
+        #     print "Ploting ", fn
+        #     fiedler.doPlots(numpy.argsort(numpy.argsort(numpy.array(data["f1"]))),-1*numpy.array(rank),numpy.array(data["d"]),alist,fn+"fied.rank.v.hodge",widths=[24],heights=[16],vsdeg=False,nByi=data["nByi"],directed=False,dorank=False)
+        # except ValueError:
+        #     print "ValueError ploting ", fn
+        #     print "A", A.shape,"A.data",A.data.shape,A.row.shape,A.col.shape,"pos",pos.shape,"B1.T.shape", B1.T.shape, "A.data[pos]", A.data[pos].shape, "rank", rank.shape, "numpy.array(data[\"f1\"])", numpy.array(data["f1"]).shape
+        #     pass
 
 def main():
     fn=sys.argv[1]
