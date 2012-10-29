@@ -8,7 +8,7 @@ COL=$3
 #fnbase=2012_09_19.pwpv
 
 cd ${OUTDIR}
-echo PARSIN PWFILE AND FINDING FIEDLER VECTORS
+echo PARSING PWFILE AND FINDING FIEDLER VECTORS
 seq 1 -.1 0 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
 python ${GSPEC}/parseByCol.py \
 ${PWFILE} CUTOFF $COL

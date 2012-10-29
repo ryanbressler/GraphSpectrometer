@@ -46,3 +46,6 @@ def main():
     print "Outputing fiedler results for %s to %s"%(os.path.abspath(fn),os.path.abspath(outfn))
     json.dump(fied, fo)
     fo.close()
+
+if __name__ == '__main__':
+    main()
