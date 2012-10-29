@@ -16,16 +16,10 @@ do
 	if [ -f $FILE ]
 	then
 		OUTDIRBASE=${ADIR}/rf-pred/
-		if [ ! -e $OUTDIRBASE ]
-		then
-			mkdir $OUTDIRBASE
-		fi
 		LAYOUTS=${OUTDIRBASE}/layouts
-		if [ ! -e $LAYOUTS ]
-		then
-			mkdir $LAYOUTS
-		fi
+		mkdir -p $LAYOUTS
 		
+
 		./runrf_no_bl.sh $FILE $OUTDIRBASE
 		./runrf.sh $FILE $BLACKLIST $OUTDIRBASE
 	fi
@@ -37,31 +31,14 @@ do
 	echo Pairwise $FILE
 	if [ -f $FILE ]
 	then
-		OUTDIRBASE=${ADIR}/pairwise/layouts
-		if [ ! -e $OUTDIRBASE ]
-		then
-			mkdir $OUTDIRBASE
-		fi
-
-		OUTDIRBASE=${OUTDIRBASE}/$(basename $FILE)
-		if [ ! -e $OUTDIRBASE ]
-		then
-			mkdir $OUTDIRBASE
-		fi
-
+		OUTDIRBASE=${ADIR}/pairwise/layouts/$(basename $FILE)
 		OUTDIR=${OUTDIRBASE}/fiedler
-		if [ ! -e $OUTDIR ]
-		then
-			mkdir $OUTDIR
-		fi
+		mkdir -p $OUTDIR
 		
 		./runpw.sh $FILE $OUTDIR 2
 
 		OUTDIR=${OUTDIRBASE}/mds
-		if [ ! -e $OUTDIR ]
-		then
-			mkdir $OUTDIR
-		fi
+		mkdir -p $OUTDIR
 	fi
 done
 
@@ -71,31 +48,14 @@ do
 	echo Pairwise $FILE
 	if [ -f $FILE ]
 	then
-		OUTDIRBASE=${ADIR}/rf-ace/layouts
-		if [ ! -e $OUTDIRBASE ]
-		then
-			mkdir $OUTDIRBASE
-		fi
-
-		OUTDIRBASE=${OUTDIRBASE}/$(basename $FILE)
-		if [ ! -e $OUTDIRBASE ]
-		then
-			mkdir $OUTDIRBASE
-		fi
-
+		OUTDIRBASE=${ADIR}/pairwise/rf-ace/$(basename $FILE)
 		OUTDIR=${OUTDIRBASE}/fiedler
-		if [ ! -e $OUTDIR ]
-		then
-			mkdir $OUTDIR
-		fi
-
+		mkdir -p $OUTDIR
+		
 		./runpw.sh $FILE $OUTDIR 3
 
 		OUTDIR=${OUTDIRBASE}/mds
-		if [ ! -e $OUTDIR ]
-		then
-			mkdir $OUTDIR
-		fi
+		mkdir -p $OUTDIR
 	fi
 done
 

@@ -97,10 +97,12 @@ def main():
     fied["iByn"] = iByn
     fied["nByi"] = nByi
     #fied["sByf"] = spliter_by_feature
-    fo = open(os.path.basename(fn) +".cutoff."+ str(filter_min) + ".splitters", "w")
-    json.dump(spliter_by_feature, fo, indent=2)
-    fo.close()
-    fo = open(os.path.basename(fn) +".cutoff."+ str(filter_min) + ".json", "w")
+    # fo = open(os.path.basename(fn) +".cutoff."+ str(filter_min) + ".splitters", "w")
+    # json.dump(spliter_by_feature, fo, indent=2)
+    # fo.close()
+    outfn=os.path.basename(fn) +".cutoff."+ str(filter_min) + ".json"
+    fo = open(outfn, "w")
+    print "Outputing fiedler results for %s to %s"%(os.path.abspath(fn),os.path.abspath(outfn))
     json.dump(fied, fo, indent=2)
     fo.close()
 

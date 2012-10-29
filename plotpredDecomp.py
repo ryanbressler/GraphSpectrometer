@@ -82,6 +82,7 @@ def plotjson(fn):
 
         data["hodge"]=list(rank)
         data["hodgerank"]=list(numpy.argsort(numpy.argsort(rank)))
+        print "Adding hodge results to %s"%(os.path.abspath(fn))
         fo = open(fn,"w")
         json.dump(data,fo, indent=2)
         fo.close()

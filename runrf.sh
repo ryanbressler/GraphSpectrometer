@@ -10,11 +10,8 @@ echo RUNNING RANDOM FOREST WITH BLACKLIST
 $RFACE -I $FMATRIX \
 -i N:CLIN:TermCategory:NB:::: -B ${BLACKLIST} -O ${TREES} -n 12800
 
-JSONDIR=${OUTDIR}/layouts/$(basename $TREES)
-if [ ! -e $JSONDIR ]
-then
-	mkdir $JSONDIR
-fi
+JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
+mkdir -p $JSONDIR
 
 cd ${JSONDIR}
 echo PARSING PREDICTOR 

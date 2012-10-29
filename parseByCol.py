@@ -33,6 +33,7 @@ def main():
     filter_col = col
     if len(sys.argv)>4:
         filter_col=int(sys.argv[4])
+    print "Parseing %s min %s val_col %s filter_col %s"%(os.path.abspath(fn),filter_min,filter_col)
 
     (adj_list, iByn, nByi) = filename_parse(fn, filter_min, col, filter_col)
     fn = os.path.basename(fn)
@@ -40,6 +41,8 @@ def main():
     fied["adj"] = adj_list
     fied["iByn"] = iByn
     fied["nByi"] = nByi
-    fo = open(os.path.basename(fn) +".cutoff."+ str(filter_min) + ".json", "w")
+    outfn=os.path.basename(fn) +".cutoff."+ str(filter_min) + ".json"
+    fo = open(outfn, "w")
+    print "Outputing fiedler results for %s to %s"%(os.path.abspath(fn),os.path.abspath(outfn))
     json.dump(fied, fo)
     fo.close()
