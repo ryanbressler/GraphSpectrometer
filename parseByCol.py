@@ -1,5 +1,6 @@
 import fiedler
 import os.path
+import sys
 
 def filename_parse(fn, filter_min=.001,col=2,filter_col=2):
     """Wraps file_parse and infers paramaters based on extensions.
