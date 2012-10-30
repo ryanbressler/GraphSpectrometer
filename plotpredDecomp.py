@@ -30,7 +30,7 @@ index in the graph
 "hodgerank": the hodge rank]}
 
 """
-
+import os
 import sys
 import json
 import numpy
