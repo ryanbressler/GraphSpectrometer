@@ -21,3 +21,10 @@ python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 echo FINDING HODGE RANK
 ls ${JSONDIR}/* | xargs --max-procs=${NGSPECPLOTINGCORES} -I FILE  \
 python ${GSPEC}/plotpredDecomp.py FILE
+
+if [ "$(ls -A $JSONDIR)" ]; then
+     echo "$JSONDIR is not Empty"
+else
+    echo "$JSONDIR is Empty. Removeing."
+    rm $JSONDIR
+fi

@@ -7,7 +7,14 @@ export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
 ADIR=$1
 BLACKLIST=$2
 
-
+function RMEMPTY {
+	if [ "$(ls -A $1)" ]; then
+	     echo "$1 is not Empty"
+	else
+	    echo "$1 is Empty. Removeing."
+	    rm -r $1
+	fi
+} 
 
 #Loop over feature matrixes and run and layout rf-ace predictors
 for FILE in ${ADIR}/feature_matrices/*
@@ -36,9 +43,13 @@ do
 		mkdir -p $OUTDIR
 		
 		./runpw.sh $FILE $OUTDIR 2
+		RMEMPTY $OUTDIR
 
 		OUTDIR=${OUTDIRBASE}/mds
 		mkdir -p $OUTDIR
+		RMEMPTY $OUTDIR
+		RMEMPTY $OUTDIRBASE
+
 	fi
 done
 
@@ -48,14 +59,17 @@ do
 	echo Pairwise $FILE
 	if [ -f $FILE ]
 	then
-		OUTDIRBASE=${ADIR}/pairwise/rf-ace/$(basename $FILE)
+		OUTDIRBASE=${ADIR}/rf-ace/layouts/$(basename $FILE)
 		OUTDIR=${OUTDIRBASE}/fiedler
 		mkdir -p $OUTDIR
 		
 		./runpw.sh $FILE $OUTDIR 3
+		RMEMPTY $OUTDIR
 
 		OUTDIR=${OUTDIRBASE}/mds
 		mkdir -p $OUTDIR
+		RMEMPTY $OUTDIR
+		RMEMPTY $OUTDIRBASE
 	fi
 done
 

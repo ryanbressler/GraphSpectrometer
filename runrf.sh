@@ -21,5 +21,7 @@ echo FINDING HODGE RANK
 ls ${JSONDIR}/* | xargs --max-procs=${NGSPECPLOTINGCORES} -I FILE  \
 python ${GSPEC}/plotpredDecomp.py FILE
 
+RMEMPTY $JSONDIR
+RMEMPTY ${OUTDIR}/layouts/$(basename $TREES)
 
 
