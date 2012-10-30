@@ -88,7 +88,7 @@ def main():
     cutoff = 1.0
     if len(sys.argv) > 2:
         cutoff = float(sys.argv[2])
-        fn += "cutoff"+str(cutoff)
+        #fn += "cutoff"+str(cutoff)
     
     (adj_list, iByn, nByi, spliter_by_feature) = parseRfPredict(fo, cutoff)
     fo.close()
@@ -100,7 +100,7 @@ def main():
     # fo = open(os.path.basename(fn) +".cutoff."+ str(filter_min) + ".splitters", "w")
     # json.dump(spliter_by_feature, fo, indent=2)
     # fo.close()
-    outfn=os.path.basename(fn) +".cutoff."+ str(filter_min) + ".json"
+    outfn=os.path.basename(fn) +".cutoff."+ str(cutoff) + ".json"
     fo = open(outfn, "w")
     print "Outputing fiedler results for %s to %s"%(os.path.abspath(fn),os.path.abspath(outfn))
     json.dump(fied, fo, indent=2)
