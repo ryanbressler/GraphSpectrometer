@@ -13,7 +13,7 @@ $RFACE -I $FMATRIX \
 JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
 mkdir -p $JSONDIR
 
-if [ -e ${TREES}]
+if [ -e "${TREES}" ]
 then
 	cd ${JSONDIR}
 	echo PARSING PREDICTOR 
