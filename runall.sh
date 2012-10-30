@@ -14,7 +14,9 @@ function RMEMPTY {
 	    echo "$1 is Empty. Removeing."
 	    rm -r $1
 	fi
-} 
+}
+
+export -f RMEMPTY 
 
 #Loop over feature matrixes and run and layout rf-ace predictors
 for FILE in ${ADIR}/feature_matrices/*

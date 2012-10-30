@@ -4,7 +4,7 @@ BLACKLIST=$2
 OUTDIR=$3
 NAME=$(basename $FMATRIX)
 TREES=${OUTDIR}/${NAME}_blacklisted
-
+set +e
 cd ${OUTDIR}
 echo RUNNING RANDOM FOREST WITH BLACKLIST
 $RFACE -I $FMATRIX \
@@ -20,7 +20,9 @@ python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 echo FINDING HODGE RANK
 ls ${JSONDIR}/* | xargs --max-procs=${NGSPECPLOTINGCORES} -I FILE  \
 python ${GSPEC}/plotpredDecomp.py FILE
+set -e
 
+cd ${OUTDIR}
 RMEMPTY $JSONDIR
 RMEMPTY ${OUTDIR}/layouts/$(basename $TREES)
 
