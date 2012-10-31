@@ -33,7 +33,7 @@ def filename_parse(fn, filter_min=.001,col=2,filter_col=2):
     fo.close()
     return out
 
-def MDS(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
+def MDS(adj_list):
     (A,adj,Npts) = fiedler.adj_mat(adj_list)
     D = A.todense()
 
@@ -88,8 +88,8 @@ def main():
 
 
     (adj_list, iByn, nByi) = filename_parse(fn, filter_min, col, filter_col)
-    fn = os.path.basename(fn)
-    fied = MDS(adj_list, fn=fn + str(filter_min), plot=False, n_fied=2)
+
+    fied = MDS(adj_list)
     fied["adj"] = adj_list
     fied["iByn"] = iByn
     fied["nByi"] = nByi

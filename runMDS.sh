@@ -11,6 +11,6 @@ COL=$3
 
 cd ${OUTDIR}
 echo PARSING FILE AND FINDING MDS
-seq 1 -.1 0 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
+seq 1 -.1 0 | xargs --max-procs=1 -I CUTOFF  \
 python ${GSPEC}/runMDS.py \
 ${PWFILE} CUTOFF $COL
