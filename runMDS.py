@@ -2,6 +2,11 @@ import os
 import sys
 
 import numpy as np
+import scipy.linalg as linalg
+import matplotlib.pyplot as plt
+from scipy import sparse
+import matplotlib.gridspec as gridspec
+import scipy.spatial.distance as distance
 
 import fiedler
 
