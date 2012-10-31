@@ -1,22 +1,8 @@
 #!/usr/bin/env bash
 # usage ./runall.sh /titan/cancerregulome9/ITMI_PTB/public/analysis/ /titan/cancerregulome9/workspaces/users/rbressle/2012_09_18/blacklist.txt /titan/cancerregulome9/ITMI_PTB/public/analysis/layouts/
-export NGSPECCORES=4
-export NGSPECPLOTINGCORES=2
-export RFACE=/titan/cancerregulome9/workspaces/rf-ace/bin/rf-ace
-export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
+source setvars.sh
 ADIR=$1
 BLACKLIST=$2
-
-function RMEMPTY {
-	if [ "$(ls -A $1)" ]; then
-	     echo "$1 is not Empty"
-	else
-	    echo "$1 is Empty. Removeing."
-	    rm -r $1
-	fi
-}
-
-export -f RMEMPTY 
 
 #Loop over feature matrixes and run and layout rf-ace predictors
 for FILE in ${ADIR}/feature_matrices/*
