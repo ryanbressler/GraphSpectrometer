@@ -65,7 +65,7 @@ def MDS(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
         Y = 0
     else:
         Y = V[:,E>eps]*np.sqrt(E[E>eps])
-    return {"m1":Y[0,:] "m2":Y[1,:]}
+    return {"m1":list(Y[:,0], "m2":Y[:,1]}
     #return(Y,E)
 
 def main():

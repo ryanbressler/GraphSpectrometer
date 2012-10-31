@@ -10,7 +10,7 @@ COL=$3
 #fnbase=2012_09_19.pwpv
 
 cd ${OUTDIR}
-echo PARSING PWFILE AND FINDING FIEDLER VECTORS
+echo PARSING FILE AND FINDING MDS
 seq 1 -.1 0 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
 python ${GSPEC}/runMDS.py \
 ${PWFILE} CUTOFF $COL
