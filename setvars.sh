@@ -2,6 +2,7 @@ export NGSPECCORES=4
 export NGSPECPLOTINGCORES=2
 export RFACE=/titan/cancerregulome9/workspaces/rf-ace/bin/rf-ace
 export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
+export LCOUNT=/titan/cancerregulome9/ITMI_PTB/bin/go/src/github.com/ryanbressler/CloudForest/leafcount/leafcount
 
 
 function RMEMPTY {
