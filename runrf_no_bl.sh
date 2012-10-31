@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+source setvars.sh
+
 FMATRIX=$1
 OUTDIR=$2
 NAME=$(basename $FMATRIX)

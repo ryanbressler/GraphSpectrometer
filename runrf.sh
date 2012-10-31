@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+source setvars.sh
+
 FMATRIX=$1
 BLACKLIST=$2
 OUTDIR=$3
