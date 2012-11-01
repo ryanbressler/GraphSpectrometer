@@ -22,19 +22,21 @@ do
 		-rfpred="${FILE}" -feature_matrices="${FMATRIX}"
 		if [ -e "${LEAFFILE}" ]
 		then
-			LEAFLAYOUT=${LEAFDIR}/layouts/${FILE}/fiedler
+			LEAFLAYOUT=${LEAFDIR}/layouts/${NAME}/fiedler
 
 			mkdir -p $LEAFLAYOUT
 			cd $LEAFLAYOUT
 			seq 2 2 128 | xargs -P 8 -I CUT python ${GSPEC}/fiedler.py LEAFFILE CUT
-			for JSONFILE in ${LEAFDIR}/*
+			for JSONFILE in ${LEAFLAYOUT}/*
 			do
 				python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX 
 			done
 
 			cd -
 			RMEMPTY $LEAFLAYOUT
-		fi 
+			RMEMPTY ${LEAFDIR}/layouts/${NAME}
+		fi
+		RMEMPTY ${LEAFDIR}/layouts 
 		RMEMPTY $LEAFDIR
 		RMEMPTY $BRANCHEDIR
 
