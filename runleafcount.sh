@@ -19,7 +19,7 @@ do
 		BRANCHFILE=${BRANCHEDIR}/${NAME} 
 		LEAFFILE=${LEAFDIR}/${NAME}
 		${LCOUNT} -branches="$BRANCHFILE" -leaves="$LEAFFILE" \
-		-rfpred="${FILE}" -feature_matrices="${FMATRIX}"
+		-rfpred="${FILE}" -fm="${FMATRIX}"
 		if [ -e "${LEAFFILE}" ]
 		then
 			LEAFLAYOUT=${LEAFDIR}/layouts/${NAME}/fiedler
