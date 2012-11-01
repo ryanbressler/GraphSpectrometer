@@ -26,7 +26,7 @@ do
 
 			mkdir -p $LEAFLAYOUT
 			cd $LEAFLAYOUT
-			seq 2 2 128 | xargs -P 8 -I CUT python ${GSPEC}/fiedler.py LEAFFILE CUT
+			seq 2 2 128 | xargs -P 8 -I CUT python ${GSPEC}/fiedler.py ${LEAFFILE} CUT
 			for JSONFILE in ${LEAFLAYOUT}/*
 			do
 				python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX 
