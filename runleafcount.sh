@@ -16,8 +16,8 @@ do
 		mkdir -p $LEAFDIR
 		mkdir -p $BRANCHEDIR
 
-		BRANCHFILE =${BRANCHEDIR}/${NAME} 
-		LEAFFILE =${LEAFDIR}/${NAME}
+		BRANCHFILE=${BRANCHEDIR}/${NAME} 
+		LEAFFILE=${LEAFDIR}/${NAME}
 		${LCOUNT} -branches="$BRANCHFILE" -leaves="$LEAFFILE" \
 		-rfpred="${FILE}" -feature_matrices="${FMATRIX}"
 		if [ -e "${LEAFFILE}" ]
