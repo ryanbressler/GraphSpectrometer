@@ -11,6 +11,8 @@ bash ${GSPEC}/allPW.sh $1
 
 bash ${GSPEC}/allRF.sh $1
 
+bash ${GSPEC}/runleadcount.sh $1
+
 
 
 
