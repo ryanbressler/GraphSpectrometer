@@ -10,15 +10,21 @@ do
 	then
 		OUTDIRBASE=${ADIR}/rf-ace/layouts/$(basename $FILE)
 		OUTDIR=${OUTDIRBASE}/fiedler
-		mkdir -p $OUTDIR
-		
-		./runpw.sh $FILE $OUTDIR 3
-		RMEMPTY $OUTDIR
+		if [ ! -d "$OUTDIR" ]; 
+		then
+			mkdir -p $OUTDIR
+			
+			./runpw.sh $FILE $OUTDIR 3
+			RMEMPTY $OUTDIR
+		fi
 
 		OUTDIR=${OUTDIRBASE}/mds
-		mkdir -p $OUTDIR
+		if [ ! -d "$OUTDIR" ]; 
+		then
+			mkdir -p $OUTDIR
 
-		./runMDS.sh $FILE $OUTDIR 3
+			./runMDS.sh $FILE $OUTDIR 3
+		fi
 		RMEMPTY $OUTDIR
 		RMEMPTY $OUTDIRBASE
 	fi

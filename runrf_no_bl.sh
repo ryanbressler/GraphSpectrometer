@@ -6,25 +6,32 @@ OUTDIR=$2
 NAME=$(basename $FMATRIX)
 TREES=${OUTDIR}/${NAME}_unblacklisted
 set +e
+
 cd ${OUTDIR}
-echo RUNNING RANDOM FOREST WITH BLACKLIST
-$RFACE -I $FMATRIX \
--i N:CLIN:TermCategory:NB:::: -O ${TREES} -n 12800
+if [ ! -e "$TREES" ]; 
+then
+	echo RUNNING RANDOM FOREST WITH BLACKLIST
+	$RFACE -I $FMATRIX \
+	-i N:CLIN:TermCategory:NB:::: -O ${TREES} -n 12800
+fi
+
 
 JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
-
-mkdir -p $JSONDIR
-
-
-if [ -e "${TREES}" ]
+if [ ! -d "$JSONDIR" ]; 
 then
-	cd ${JSONDIR}
-	echo PARSING PREDICTOR 
-	seq 0 1 60 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
-	python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
-	echo FINDING HODGE RANK
-	ls ${JSONDIR}/* | xargs --max-procs=${NGSPECPLOTINGCORES} -I FILE  \
-	python ${GSPEC}/plotpredDecomp.py FILE
+	mkdir -p $JSONDIR
+
+
+	if [ -e "${TREES}" ]
+	then
+		cd ${JSONDIR}
+		echo PARSING PREDICTOR 
+		seq 0 1 60 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
+		python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
+		echo FINDING HODGE RANK
+		ls ${JSONDIR}/* | xargs --max-procs=${NGSPECPLOTINGCORES} -I FILE  \
+		python ${GSPEC}/plotpredDecomp.py FILE
+	fi
 fi
 set -e
 

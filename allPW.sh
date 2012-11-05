@@ -10,15 +10,21 @@ do
 	then
 		OUTDIRBASE=${ADIR}/pairwise/layouts/$(basename $FILE)
 		OUTDIR=${OUTDIRBASE}/fiedler
-		mkdir -p $OUTDIR
-		
-		./runpw.sh $FILE $OUTDIR 2
-		RMEMPTY $OUTDIR
+		if [ ! -d "$OUTDIR" ]; 
+		then
+			mkdir -p $OUTDIR
+			
+			./runpw.sh $FILE $OUTDIR 2
+			RMEMPTY $OUTDIR
+		fi
 
 		OUTDIR=${OUTDIRBASE}/mds
-		mkdir -p $OUTDIR
+		if [ ! -d "$OUTDIR" ]; 
+		then
+			mkdir -p $OUTDIR
 
-		./runMDS.sh $FILE $OUTDIR 2
+			./runMDS.sh $FILE $OUTDIR 2
+		fi
 		RMEMPTY $OUTDIR
 		RMEMPTY $OUTDIRBASE
 

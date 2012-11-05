@@ -23,16 +23,19 @@ do
 		if [ -e "${LEAFFILE}" ]
 		then
 			LEAFLAYOUT=${LEAFDIR}/layouts/${NAME}/fiedler
+			if [ ! -d "$LEAFLAYOUT" ]; 
+			then
 
-			mkdir -p $LEAFLAYOUT
-			cd $LEAFLAYOUT
-			seq 2 2 128 | xargs -P 8 -I CUT python ${GSPEC}/fiedler.py ${LEAFFILE} CUT
-			for JSONFILE in ${LEAFLAYOUT}/*
-			do
-				python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX 
-			done
+				mkdir -p $LEAFLAYOUT
+				cd $LEAFLAYOUT
+				seq 2 2 128 | xargs -P 8 -I CUT python ${GSPEC}/fiedler.py ${LEAFFILE} CUT
+				for JSONFILE in ${LEAFLAYOUT}/*
+				do
+					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX 
+				done
 
-			cd -
+				cd -
+			fi
 			RMEMPTY $LEAFLAYOUT
 			RMEMPTY ${LEAFDIR}/layouts/${NAME}
 		fi
