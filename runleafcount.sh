@@ -26,8 +26,8 @@ do
 		if [ -e "${LEAFFILE}" ]
 		then
 			LEAFLAYOUT=${LEAFDIR}/layouts/${NAME}/fiedler
-			if [ ! -d "$LEAFLAYOUT" ]; 
-			then
+			#if [ ! -d "$LEAFLAYOUT" ]; 
+			#then
 
 				mkdir -p $LEAFLAYOUT
 				cd $LEAFLAYOUT
@@ -38,7 +38,7 @@ do
 				done
 
 				cd -
-			fi
+			#fi
 			RMEMPTY $LEAFLAYOUT
 			RMEMPTY ${LEAFDIR}/layouts/${NAME}
 		fi
