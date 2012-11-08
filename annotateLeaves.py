@@ -2,6 +2,7 @@
 import os
 import sys
 import json
+import collections
 
 
 
@@ -10,6 +11,8 @@ import json
 def main():
     fn=sys.argv[1]
     fm=sys.argv[2]
+    branches=sys.argv[3]
+    branchmatrix=sys.argv[4]
     print "Annotating %s with header from %s"%(os.path.abspath(fn),os.path.abspath(fm))
 
     fo=open(fn)
@@ -17,7 +20,13 @@ def main():
     fo.close()
 
     fo=open(fm)
-    data["nByi"]=fo.readline().rstrip().split("\t")[1:]
+    rowheaders=fo.next().rstrip().split("\t")[1:]
+    colheaders=[]
+    for line in fo:
+        colheaders.append(line.rstrip().split("\t")[0])
+
+    nByi=[rowheaders[n] for n in data["nByi"]]
+    data["nByi"]= nByi
     data["iByn"]=dict((key, value) for (value, key) in enumerate(data["nByi"]))
     fo.close()
 
@@ -25,6 +34,29 @@ def main():
     fo = open(fn,"w")
     json.dump(data,fo, indent=2)
     fo.close()
+
+    counters = []
+    for i,v in enumerate(colheaders)
+        counters.append(Counter())
+    fo = open(brances)
+    for line in fo:
+        vs = [int(v) for v in line.rstrip().split("\t")]
+        counters[vs[0]][vs[1]]+= vs[2]
+    fo.close()
+
+    fo = open(branchmatrix,"w")
+    fo.write("feature\t%s\n"%("\t".join(colheaders)))
+    
+
+    for fi, feature in enumerate(rowheaders):
+        vs=[feature]
+        for ci, case in enumerate(colheaders):
+            vs.append(str(counters[ci][fi]))
+        fo.write("%s\n"%("\t".join(vs))
+
+
+
+
     
 
 
