@@ -36,7 +36,7 @@ def main():
     fo.close()
 
     counters = []
-    for i,v in enumerate(colheaders)
+    for i,v in enumerate(colheaders):
         counters.append(Counter())
     fo = open(brances)
     for line in fo:
