@@ -53,7 +53,7 @@ def main():
         vs=[feature]
         for ci, case in enumerate(colheaders):
             vs.append(str(counters[ci][fi]))
-        fo.write("%s\n"%("\t".join(vs))
+        fo.write("%s\n"%("\t".join(vs)))
     fo.close()
 
 
