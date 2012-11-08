@@ -3,7 +3,7 @@ source setvars.sh
 ADIR=$1
 
 #Loop over pairwise results and run fiedler and mds
-for FMATRIX in ${ADIR}/feature_matrices/*
+for FMATRIX in ${ADIR}/../domains/feature_matrices/*
 do
 	echo Feature Matrix $FMATRIX
 	FMNAME=$(basename $FMATRIX)
