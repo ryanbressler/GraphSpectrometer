@@ -13,10 +13,13 @@ do
 		echo Feature Matrix $FMATRIX Predictor $FILE
 		LEAFDIR=${ADIR}/rf-leaves
 		BRANCHEDIR=${ADIR}/rf-branches
+		BRANCHEMATDIR=${ADIR}/rf-branche-matrix
 		mkdir -p $LEAFDIR
 		mkdir -p $BRANCHEDIR
+		mkdir -p $BRANCHEMATDIR
 
 		BRANCHFILE=${BRANCHEDIR}/${NAME} 
+		BRANCHMATFILE=${BRANCHEMATDIR}/${NAME} 
 		LEAFFILE=${LEAFDIR}/${NAME}
 		${LCOUNT} -branches="$BRANCHFILE" -leaves="$LEAFFILE" \
 		-rfpred="${FILE}" -fm="${FMATRIX}"
@@ -31,7 +34,7 @@ do
 				seq 2 2 128 | xargs -P 8 -I CUT python ${GSPEC}/fiedler.py ${LEAFFILE} CUT
 				for JSONFILE in ${LEAFLAYOUT}/*
 				do
-					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX 
+					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
 				done
 
 				cd -
@@ -42,6 +45,7 @@ do
 		RMEMPTY ${LEAFDIR}/layouts 
 		RMEMPTY $LEAFDIR
 		RMEMPTY $BRANCHEDIR
+		RMEMPTY $BRANCHEMATDIR
 
 		
 
