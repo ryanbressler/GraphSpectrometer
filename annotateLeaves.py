@@ -25,7 +25,7 @@ def main():
     for line in fo:
         colheaders.append(line.rstrip().split("\t")[0])
 
-    nByi=[rowheaders[n] for n in data["nByi"]]
+    nByi=[rowheaders[int(n)] for n in data["nByi"]]
     data["nByi"]= nByi
     data["iByn"]=dict((key, value) for (value, key) in enumerate(data["nByi"]))
     fo.close()
