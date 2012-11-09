@@ -13,7 +13,7 @@ def main():
     fm=sys.argv[2]
     branches=sys.argv[3]
     branchmatrix=sys.argv[4]
-    print "Annotating %s with header from %s"%(os.path.abspath(fn),os.path.abspath(fm))
+    print "Annotating %s with header from %s %s %s"%(os.path.abspath(fn),os.path.abspath(fm),branches,branchmatrix)
 
     fo=open(fn)
     data=json.load(fo)
@@ -27,7 +27,6 @@ def main():
 
     print "%s data points %s names%s colheaders %s rowheaders max %s"%(len(data["f1"]),len(data["nByi"]),len(colheaders),len(rowheaders),max((int(n) for n in data["nByi"])))
     print json.dumps(colheaders)
-    print json.dumps(rowheaders)
     print json.dumps(data["nByi"])
     nByi=[colheaders[int(n)] for n in data["nByi"]]
     data["nByi"]= nByi
