@@ -4,7 +4,7 @@ ADIR=$1
 BLACKLIST=$2
 
 #Loop over feature matrixes and run and layout rf-ace predictors
-for FILE in ${ADIR}/feature_matrices/*
+for FILE in ${ADIR}/../domains/feature_matrices/*
 do
 	echo Feature Matrix $FILE
 	if [ -f $FILE ]

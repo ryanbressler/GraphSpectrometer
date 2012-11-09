@@ -26,8 +26,8 @@ def main():
         rowheaders.append(line.rstrip().split("\t")[0])
 
     print "%s data points %s names%s colheaders %s rowheaders max %s"%(len(data["f1"]),len(data["nByi"]),len(colheaders),len(rowheaders),max((int(n) for n in data["nByi"])))
-    print json.dumps(colheaders)
-    print json.dumps(data["nByi"])
+    #print json.dumps(colheaders)
+    #print json.dumps(data["nByi"])
     nByi=[colheaders[int(n)] for n in data["nByi"]]
     data["nByi"]= nByi
     data["iByn"]=dict((key, value) for (value, key) in enumerate(data["nByi"]))
@@ -38,6 +38,7 @@ def main():
     json.dump(data,fo, indent=2)
     fo.close()
 
+    #This part doesn't depend on cutoffs and really should be in its own script
     counters = []
     for i,v in enumerate(colheaders):
         counters.append(collections.Counter())

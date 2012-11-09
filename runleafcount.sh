@@ -13,7 +13,7 @@ do
 		echo Feature Matrix $FMATRIX Predictor $FILE
 		LEAFDIR=${ADIR}/rf-leaves
 		BRANCHEDIR=${ADIR}/rf-branches
-		BRANCHEMATDIR=${ADIR}/rf-branche-matrix
+		BRANCHEMATDIR=${ADIR}/rf-branch-matrix
 		mkdir -p $LEAFDIR
 		mkdir -p $BRANCHEDIR
 		mkdir -p $BRANCHEMATDIR
