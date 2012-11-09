@@ -41,7 +41,7 @@ def main():
     counters = []
     for i,v in enumerate(colheaders):
         counters.append(collections.Counter())
-    fo = open(brances)
+    fo = open(branches)
     for line in fo:
         vs = [int(v) for v in line.rstrip().split("\t")]
         counters[vs[0]][vs[1]]+= vs[2]
