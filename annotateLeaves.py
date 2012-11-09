@@ -47,7 +47,7 @@ def main():
         counters[vs[0]][vs[1]]+= vs[2]
     fo.close()
 
-    print "Outputing branchmatirx to %s from %s and %s"%(branchmatirx,fm,branches)
+    print "Outputing branchmatirx to %s from %s and %s"%(branchmatrix,fm,branches)
     fo = open(branchmatrix,"w")
     fo.write("feature\t%s\n"%("\t".join(colheaders)))
     
