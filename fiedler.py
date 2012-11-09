@@ -64,7 +64,7 @@ from sklearn.cluster import DBSCAN
 import hypergeom
 
 
-def file_parse(fo, node1=0, node2=2, filter_col=-1, filter_min=.5, val_col=-1, blacklist=[]):
+def file_parse(fo, node1=0, node2=1, filter_col=-1, filter_min=.5, val_col=-1, blacklist=[]):
     """parse a sif like file into an adjascancy list by index in a matrix and node name look up tables.
 
     Takes:
