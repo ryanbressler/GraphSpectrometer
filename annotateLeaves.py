@@ -20,12 +20,14 @@ def main():
     fo.close()
 
     fo=open(fm)
-    rowheaders=fo.next().rstrip().split("\t")[1:]
-    colheaders=[]
+    colheaders=fo.next().rstrip().split("\t")[1:]
+    rowheaders=[]
     for line in fo:
-        colheaders.append(line.rstrip().split("\t")[0])
+        rowheaders.append(line.rstrip().split("\t")[0])
 
-    nByi=[rowheaders[int(n)] for n in data["nByi"]]
+    print "%s "
+
+    nByi=[colheaders[int(n)] for n in data["nByi"]]
     data["nByi"]= nByi
     data["iByn"]=dict((key, value) for (value, key) in enumerate(data["nByi"]))
     fo.close()
