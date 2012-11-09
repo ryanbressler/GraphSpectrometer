@@ -26,7 +26,9 @@ def main():
         rowheaders.append(line.rstrip().split("\t")[0])
 
     print "%s colheaders %s rowheaders max %s"%(len(colheaders),len(rowheaders),max((int(n) for n in data["nByi"])))
-
+    print json.dumps(colheaders)
+    print json.dumps(rowheaders)
+    print json.dumps(data, indent=2)
     nByi=[colheaders[int(n)] for n in data["nByi"]]
     data["nByi"]= nByi
     data["iByn"]=dict((key, value) for (value, key) in enumerate(data["nByi"]))
