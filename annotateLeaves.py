@@ -40,7 +40,7 @@ def main():
 
     counters = []
     for i,v in enumerate(colheaders):
-        counters.append(Counter())
+        counters.append(collections.Counter())
     fo = open(brances)
     for line in fo:
         vs = [int(v) for v in line.rstrip().split("\t")]
