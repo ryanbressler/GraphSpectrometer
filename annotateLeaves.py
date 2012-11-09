@@ -25,7 +25,7 @@ def main():
     for line in fo:
         rowheaders.append(line.rstrip().split("\t")[0])
 
-    print "%s "
+    print "%s colheaders %s rowheaders max %s"%(len(colheaders),len(rowheaders),max((int(n) for n in data["nByi"])))
 
     nByi=[colheaders[int(n)] for n in data["nByi"]]
     data["nByi"]= nByi
