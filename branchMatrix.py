@@ -8,12 +8,12 @@ import collections
 
 
 def main():
-    print "Geberating branch matrix using  %s %s %s %s"%(os.path.abspath(fn),os.path.abspath(fm),branches,branchmatrix)
-
+   
     fn = sys.argv[1]
     fm = sys.argv[2]
     branches=sys.argv[3]
     branchmatrix=sys.argv[4]
+    print "Geberating branch matrix using  %s %s %s %s"%(os.path.abspath(fn),os.path.abspath(fm),branches,branchmatrix)
 
     fo=open(fn)
     data=json.load(fo)
