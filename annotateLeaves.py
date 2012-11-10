@@ -2,17 +2,12 @@
 import os
 import sys
 import json
-import collections
 
-
-
-        
 
 def main():
-    fn=sys.argv[1]
-    fm=sys.argv[2]
-    branches=sys.argv[3]
-    branchmatrix=sys.argv[4]
+    fn = sys.argv[1]
+    fm = sys.argv[2]
+
     print "Annotating %s with header from %s %s %s"%(os.path.abspath(fn),os.path.abspath(fm),branches,branchmatrix)
 
     fo=open(fn)
@@ -38,32 +33,6 @@ def main():
     json.dump(data,fo, indent=2)
     fo.close()
 
-    #This part doesn't depend on cutoffs and really should be in its own script
-    counters = []
-    for i,v in enumerate(colheaders):
-        counters.append(collections.Counter())
-    fo = open(branches)
-    for line in fo:
-        vs = [int(v) for v in line.rstrip().split("\t")]
-        counters[vs[0]][vs[1]]+= vs[2]
-    fo.close()
-
-    print "Outputing branchmatirx to %s from %s and %s"%(branchmatrix,fm,branches)
-    fo = open(branchmatrix,"w")
-    fo.write("feature\t%s\n"%("\t".join(colheaders)))
-    
-
-    for fi, feature in enumerate(rowheaders):
-        vs=[feature]
-        for ci, case in enumerate(colheaders):
-            vs.append(str(counters[ci][fi]))
-        fo.write("%s\n"%("\t".join(vs)))
-    fo.close()
-
-
-
-
-    
 
 
 if __name__ == '__main__':

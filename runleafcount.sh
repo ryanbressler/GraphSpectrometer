@@ -31,10 +31,10 @@ do
 
 				mkdir -p $LEAFLAYOUT
 				cd $LEAFLAYOUT
-				seq 2 2 128 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${LEAFFILE} CUT 2
+				seq 0 2 128 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${LEAFFILE} CUT 2
 				for JSONFILE in ${LEAFLAYOUT}/*
 				do
-					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
+					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX
 				done
 
 				cd -
@@ -42,6 +42,8 @@ do
 			RMEMPTY $LEAFLAYOUT
 			RMEMPTY ${LEAFDIR}/layouts/${NAME}
 		fi
+		JSONFILE=${NAME}/fiedler/${NAME}.cutoff.0.0.json
+		python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
 		RMEMPTY ${LEAFDIR}/layouts 
 		RMEMPTY $LEAFDIR
 		RMEMPTY $BRANCHEDIR
