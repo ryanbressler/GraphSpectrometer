@@ -8,7 +8,7 @@ def main():
     fn = sys.argv[1]
     fm = sys.argv[2]
 
-    print "Annotating %s with header from %s %s %s"%(os.path.abspath(fn),os.path.abspath(fm))
+    print "Annotating %s with header from %s"%(os.path.abspath(fn),os.path.abspath(fm))
 
     fo=open(fn)
     data=json.load(fo)
