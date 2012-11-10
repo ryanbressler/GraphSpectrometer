@@ -41,9 +41,11 @@ do
 			#fi
 			RMEMPTY $LEAFLAYOUT
 			RMEMPTY ${LEAFDIR}/layouts/${NAME}
+			JSONFILE=${LEAFLAYOUT}/${NAME}.cutoff.0.0.json
+			python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
+			
 		fi
-		JSONFILE=${NAME}/fiedler/${NAME}.cutoff.0.0.json
-		python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
+
 		RMEMPTY ${LEAFDIR}/layouts 
 		RMEMPTY $LEAFDIR
 		RMEMPTY $BRANCHEDIR
