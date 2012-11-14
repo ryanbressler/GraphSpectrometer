@@ -34,7 +34,7 @@ def main():
     nByi = [colheaders[int(n)] for n in data["nByi"]]
     data["nByi"] = nByi
 
-    data["branches"] = branchMatrix.branchMatrix(fn, fm, branches)
+    
 
     fmiByHeader = dict((key, value) for (value, key) in enumerate(colheaders))
     rank = dict((int(key), int(value)) for (value, key) in enumerate(data["r1"]))
@@ -47,6 +47,17 @@ def main():
     data["iByn"] = dict((key, value) for (value, key) in enumerate(data["nByi"]))
 
     print "Overwriting %s with version annotated for branch vis" % (fn)
+    fo = open(fn, "w")
+    json.dump(data, fo, indent=2)
+    fo.close()
+    
+    fo = open(fn)
+    data = json.load(fo)
+    fo.close()
+
+    data["branches"] = branchMatrix.branchMatrix(fn, fm, branches)
+
+    print "Overwriting %s with version including branch data" % (fn)
     fo = open(fn, "w")
     json.dump(data, fo, indent=2)
     fo.close()
