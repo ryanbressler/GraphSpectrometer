@@ -6,15 +6,8 @@ import collections
 
 
 
-
-def main():
-   
-    fn = sys.argv[1]
-    fm = sys.argv[2]
-    branches=sys.argv[3]
-    branchmatrix=sys.argv[4]
-    print "Geberating branch matrix using  %s %s %s %s"%(os.path.abspath(fn),os.path.abspath(fm),branches,branchmatrix)
-
+def branchMatrix(fn, fm, branches):
+    
     fo=open(fn)
     data=json.load(fo)
     fo.close()
@@ -46,16 +39,37 @@ def main():
         colheaders.append(name)
         colindexes.append(fmiByHeader[name])
 
-    print "Outputing branchmatirx to %s from %s and %s"%(branchmatrix,fm,branches)
-    fo = open(branchmatrix,"w")
-    fo.write("feature\t%s\n"%("\t".join(colheaders)))
+    matrix=[]
+    matrix.append(["feature"]+colheaders)
+    
 
 
     for fi, feature in enumerate(rowheaders):
         vs=[feature]
+        signifigant = False 
         for ci in colindexes:
-            vs.append(str(counters[ci][fi]))
-        fo.write("%s\n"%("\t".join(vs)))
+            v = counters[ci][fi]
+            if v > 0:
+                signifigant = True
+            vs.append(v)
+        if signifigant:
+            matrix.append(vs)
+    return matrix
+
+def main():
+   
+    fn = sys.argv[1]
+    fm = sys.argv[2]
+    branches=sys.argv[3]
+    branchmatrix=sys.argv[4]
+    print "Geberating branch matrix using  %s %s %s %s"%(os.path.abspath(fn),os.path.abspath(fm),branches,branchmatrix)
+    matrix=branchMatrix(fn, fm, branches)
+    
+
+    print "Outputing branchmatirx to %s from %s and %s"%(branchmatrix,fm,branches)
+    fo = open(branchmatrix,"w")
+    for row in matrix:
+        fo.write("%s\n"%("\t".join([str(e) for e in row])))
     fo.close()
 
 
