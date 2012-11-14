@@ -34,7 +34,7 @@ do
 				seq 0 2 128 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${LEAFFILE} CUT 2
 				for JSONFILE in ${LEAFLAYOUT}/*
 				do
-					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX
+					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE
 				done
 
 				cd -
