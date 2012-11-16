@@ -12,7 +12,7 @@ if [ ! -e "$TREES" ];
 then
 	echo RUNNING RANDOM FOREST WITH BLACKLIST
 	$RFACE -I $FMATRIX \
-	-i N:CLIN:TermCategory:NB:::: -B ${BLACKLIST} -O ${TREES} -n 12800 -m 75
+	-i N:CLIN:TermCategory:NB:::: -B ${BLACKLIST} -O ${TREES} -n 12800 -m 75 -a 20
 fi
 
 JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
