@@ -19,7 +19,7 @@ def main():
 
     preterm = []
     fset = frozenset(["1", "2", "3"])
-    for i, v in termcat:
+    for i, v in enumerate(termcat):
         if v in fset:
             preterm.append(i)
     preterm = frozenset(preterm)
