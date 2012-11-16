@@ -24,15 +24,18 @@ do
 		LEAFFILE=${LEAFDIR}/${NAME}
 		${LCOUNT} -branches="$BRANCHFILE" -leaves="$LEAFFILE" \
 		-rfpred="${FILE}" -fm="${FMATRIX}"
-		if [ -e "${LEAFFILE}" ]
-		then
-			LEAFLAYOUT=${LEAFDIR}/layouts/${NAME}/fiedler
+		python ${GSPEC}/pruneLeaves.py $LEAFFILE $FMATRIX
+
+		for INERRFILE in ${LEAFFILE}*
+		do
+			INNERNAME = $(basename INERRFILE)
+			LEAFLAYOUT=${LEAFDIR}/layouts/${INNERNAME}/fiedler
 			#if [ ! -d "$LEAFLAYOUT" ]; 
 			#then
 
 				mkdir -p $LEAFLAYOUT
 				cd $LEAFLAYOUT
-				seq 0 2 128 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${LEAFFILE} CUT 2
+				seq 0 2 0 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${INERRFILE} CUT 2
 				for JSONFILE in ${LEAFLAYOUT}/*
 				do
 					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE
@@ -41,11 +44,11 @@ do
 				cd -
 			#fi
 			RMEMPTY $LEAFLAYOUT
-			RMEMPTY ${LEAFDIR}/layouts/${NAME}
-			JSONFILE=${LEAFLAYOUT}/${NAME}.cutoff.0.0.json
+			RMEMPTY ${LEAFDIR}/layouts/${INNERNAME}
+			JSONFILE=${LEAFLAYOUT}/${INNERNAME}.cutoff.0.0.json
 			python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
 			
-		fi
+		done
 		
 		RMEMPTY ${LEAFDIR}/layouts 
 		RMEMPTY $LEAFDIR
