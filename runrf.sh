@@ -12,7 +12,7 @@ if [ ! -e "$TREES" ];
 then
 	echo RUNNING RANDOM FOREST WITH BLACKLIST
 	$RFACE -I $FMATRIX \
-	 -B ${BLACKLIST} -S ${TREES} $RFACEOPTIONS
+	 --featureWeights ${BLACKLIST} --defaultFeatureWeight 1  -S ${TREES} $RFACEOPTIONS
 fi
 
 JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
