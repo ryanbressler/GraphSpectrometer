@@ -49,7 +49,7 @@ def branchMatrix(fn, fm, branches):
         signifigant = False 
         for ci in colindexes:
             v = counters[ci][fi]
-            if v > 0:
+            if v > 100:
                 signifigant = True
             vs.append(v)
         if signifigant:
