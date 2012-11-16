@@ -14,40 +14,39 @@ do
 		LEAFDIR=${ADIR}/rf-leaves
 		BRANCHEDIR=${ADIR}/rf-branches
 		BRANCHEMATDIR=${ADIR}/rf-branch-matrix
-		if [ ! -d "$LEAFDIR" ]; 
+
+		mkdir -p $LEAFDIR
+		mkdir -p $BRANCHEDIR
+		mkdir -p $BRANCHEMATDIR
+
+		BRANCHFILE=${BRANCHEDIR}/${NAME} 
+		BRANCHMATFILE=${BRANCHEMATDIR}/${NAME} 
+		LEAFFILE=${LEAFDIR}/${NAME}
+		${LCOUNT} -branches="$BRANCHFILE" -leaves="$LEAFFILE" \
+		-rfpred="${FILE}" -fm="${FMATRIX}"
+		if [ -e "${LEAFFILE}" ]
 		then
-			mkdir -p $LEAFDIR
-			mkdir -p $BRANCHEDIR
-			mkdir -p $BRANCHEMATDIR
+			LEAFLAYOUT=${LEAFDIR}/layouts/${NAME}/fiedler
+			#if [ ! -d "$LEAFLAYOUT" ]; 
+			#then
 
-			BRANCHFILE=${BRANCHEDIR}/${NAME} 
-			BRANCHMATFILE=${BRANCHEMATDIR}/${NAME} 
-			LEAFFILE=${LEAFDIR}/${NAME}
-			${LCOUNT} -branches="$BRANCHFILE" -leaves="$LEAFFILE" \
-			-rfpred="${FILE}" -fm="${FMATRIX}"
-			if [ -e "${LEAFFILE}" ]
-			then
-				LEAFLAYOUT=${LEAFDIR}/layouts/${NAME}/fiedler
-				#if [ ! -d "$LEAFLAYOUT" ]; 
-				#then
+				mkdir -p $LEAFLAYOUT
+				cd $LEAFLAYOUT
+				seq 0 2 128 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${LEAFFILE} CUT 2
+				for JSONFILE in ${LEAFLAYOUT}/*
+				do
+					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE
+				done
 
-					mkdir -p $LEAFLAYOUT
-					cd $LEAFLAYOUT
-					seq 0 2 128 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${LEAFFILE} CUT 2
-					for JSONFILE in ${LEAFLAYOUT}/*
-					do
-						python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE
-					done
-
-					cd -
-				#fi
-				RMEMPTY $LEAFLAYOUT
-				RMEMPTY ${LEAFDIR}/layouts/${NAME}
-				JSONFILE=${LEAFLAYOUT}/${NAME}.cutoff.0.0.json
-				python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
-				
-			fi
+				cd -
+			#fi
+			RMEMPTY $LEAFLAYOUT
+			RMEMPTY ${LEAFDIR}/layouts/${NAME}
+			JSONFILE=${LEAFLAYOUT}/${NAME}.cutoff.0.0.json
+			python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
+			
 		fi
+		
 		RMEMPTY ${LEAFDIR}/layouts 
 		RMEMPTY $LEAFDIR
 		RMEMPTY $BRANCHEDIR
