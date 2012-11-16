@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 source setvars.sh
 ADIR=$1
-BLACKLIST=$2
+#BLACKLIST=$2
 
 #Loop over feature matrixes and run and layout rf-ace predictors
 for FILE in ${ADIR}/../domains/feature_matrices/*
