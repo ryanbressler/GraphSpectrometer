@@ -30,7 +30,7 @@ do
 
 			for INERRFILE in ${LEAFFILE}*
 			do
-				INNERNAME = $(basename INERRFILE)
+				INNERNAME=$(basename INERRFILE)
 				LEAFLAYOUT=${LEAFDIR}/layouts/${INNERNAME}/fiedler
 				#if [ ! -d "$LEAFLAYOUT" ]; 
 				#then

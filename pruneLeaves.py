@@ -27,7 +27,7 @@ def main():
     fin = open(fn)
     fout = open(fn + "_preterm", "w")
 
-    for line in fn:
+    for line in fin:
         vs = line.rstrip().split()
         if int(vs[0]) in preterm and int(vs[1]) in preterm:
             fout.write(line)
