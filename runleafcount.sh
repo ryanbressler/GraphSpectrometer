@@ -24,32 +24,34 @@ do
 		LEAFFILE=${LEAFDIR}/${NAME}
 		${LCOUNT} -branches="$BRANCHFILE" -leaves="$LEAFFILE" \
 		-rfpred="${FILE}" -fm="${FMATRIX}"
-		python ${GSPEC}/pruneLeaves.py $LEAFFILE $FMATRIX
+		if [ -e $LEAFFILE] 
+		then	
+			python ${GSPEC}/pruneLeaves.py $LEAFFILE $FMATRIX
 
-		for INERRFILE in ${LEAFFILE}*
-		do
-			INNERNAME = $(basename INERRFILE)
-			LEAFLAYOUT=${LEAFDIR}/layouts/${INNERNAME}/fiedler
-			#if [ ! -d "$LEAFLAYOUT" ]; 
-			#then
+			for INERRFILE in ${LEAFFILE}*
+			do
+				INNERNAME = $(basename INERRFILE)
+				LEAFLAYOUT=${LEAFDIR}/layouts/${INNERNAME}/fiedler
+				#if [ ! -d "$LEAFLAYOUT" ]; 
+				#then
 
-				mkdir -p $LEAFLAYOUT
-				cd $LEAFLAYOUT
-				seq 0 2 0 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${INERRFILE} CUT 2
-				for JSONFILE in ${LEAFLAYOUT}/*
-				do
-					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE
-				done
+					mkdir -p $LEAFLAYOUT
+					cd $LEAFLAYOUT
+					seq 0 2 0 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${INERRFILE} CUT 2
+					for JSONFILE in ${LEAFLAYOUT}/*
+					do
+						python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE
+					done
 
-				cd -
-			#fi
-			RMEMPTY $LEAFLAYOUT
-			RMEMPTY ${LEAFDIR}/layouts/${INNERNAME}
-			JSONFILE=${LEAFLAYOUT}/${INNERNAME}.cutoff.0.0.json
-			python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
-			
-		done
-		
+					cd -
+				#fi
+				RMEMPTY $LEAFLAYOUT
+				RMEMPTY ${LEAFDIR}/layouts/${INNERNAME}
+				JSONFILE=${LEAFLAYOUT}/${INNERNAME}.cutoff.0.0.json
+				python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
+				
+			done
+		fi
 		RMEMPTY ${LEAFDIR}/layouts 
 		RMEMPTY $LEAFDIR
 		RMEMPTY $BRANCHEDIR
