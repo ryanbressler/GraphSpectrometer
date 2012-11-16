@@ -24,7 +24,7 @@ do
 		LEAFFILE=${LEAFDIR}/${NAME}
 		${LCOUNT} -branches="$BRANCHFILE" -leaves="$LEAFFILE" \
 		-rfpred="${FILE}" -fm="${FMATRIX}"
-		if [ -e $LEAFFILE] 
+		if [ -e $LEAFFILE ] 
 		then	
 			python ${GSPEC}/pruneLeaves.py $LEAFFILE $FMATRIX
 
