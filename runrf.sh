@@ -11,6 +11,10 @@ cd ${OUTDIR}
 if [ ! -e "$TREES" ]; 
 then
 	echo RUNNING RANDOM FOREST WITH BLACKLIST
+	echo RFACE $RFACE
+	echo FMATRIX $FMATRIX
+	echo TREES $TREES
+	echo BLACKLIST $BLACKLIST
 	$RFACE -I $FMATRIX \
 	 -B ${BLACKLIST} -S ${TREES} -i N:CLIN:TermCategory:NB:::: -n 12800 -m 100 -a 1000 -s 4 -e 8
 fi
