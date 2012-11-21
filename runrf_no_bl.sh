@@ -12,7 +12,7 @@ if [ ! -e "$TREES" ];
 then
 	echo RUNNING RANDOM FOREST WITH BLACKLIST
 	$RFACE -I $FMATRIX \
-	-S ${TREES} -i N:CLIN:TermCategory:NB:::: -n 12800 -m 75 -a 1000 -s 1
+	-S ${TREES} $RFACEOPTIONS
 fi
 
 
