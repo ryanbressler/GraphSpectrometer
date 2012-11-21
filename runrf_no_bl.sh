@@ -15,7 +15,7 @@ then
 	echo FMATRIX $FMATRIX
 	echo TREES $TREES
 	$RFACE -I $FMATRIX \
-	-S ${TREES} -i N:CLIN:TermCategory:NB:::: -n 12800 -m 100 -a 1000 -s 4 -e 8
+	--saveForest ${TREES} $RFACEOPTIONS
 fi
 
 
