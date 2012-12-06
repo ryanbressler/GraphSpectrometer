@@ -31,10 +31,10 @@ then
 	then
 		cd ${JSONDIR}
 		echo PARSING PREDICTOR 
-		seq 0 1 60 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
+		seq 0 1 60 | xargs -I CUTOFF  \
 		python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 		echo FINDING HODGE RANK
-		ls ${JSONDIR}/* | xargs --max-procs=${NGSPECPLOTINGCORES} -I FILE  \
+		ls ${JSONDIR}/* | xargs -I FILE  \
 		python ${GSPEC}/plotpredDecomp.py FILE
 
 		TREENAME=$(basename $TREES)
