@@ -76,7 +76,7 @@ then
 			RMEMPTY ${LEAFDIR}/layouts/${INNERNAME}
 			JSONFILE=${LEAFLAYOUT}/${INNERNAME}.cutoff.0.0.json
 			python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
-			echo View the results at http://glados1.systemsbiology.net:3335/#branches/${NAME}/branch
+			echo View the results at http://glados1.systemsbiology.net:3335/#branches/${TREES}/branch
 			
 		done
 	fi
