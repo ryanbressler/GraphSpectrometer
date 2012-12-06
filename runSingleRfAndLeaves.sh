@@ -7,7 +7,7 @@ ADIR=$3
 OUTDIR=${ADIR}/rf-pred/
 TARGET=$4
 NAME=$(basename $FMATRIX)
-TREES=${OUTDIR}/${NAME}_{$5}
+TREES=${OUTDIR}/${NAME}_${5}
 
 set +e
 cd ${OUTDIR}
