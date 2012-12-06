@@ -30,7 +30,7 @@ if [ -e "${TREES}" ]
 then
 	cd ${JSONDIR}
 	echo PARSING PREDICTOR 
-	seq 0 1 60 | xargs -I CUTOFF  \
+	seq 0 1 0 | xargs -I CUTOFF  \
 	python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 	echo FINDING HODGE RANK
 	ls ${JSONDIR}/* | xargs -I FILE  \
