@@ -3,7 +3,8 @@ source setvars.sh
 
 FMATRIX=$1
 BLACKLIST=$2
-OUTDIR=$3
+ADIR=$3
+OUTDIR=${ADIR}/rf-pred/
 TARGET=$4
 NAME=$(basename $FMATRIX)
 TREES=${OUTDIR}/${NAME}_{$5}
