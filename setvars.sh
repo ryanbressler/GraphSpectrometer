@@ -13,7 +13,7 @@ function RMEMPTY {
 	     echo "$1 is not Empty"
 	else
 	    echo "$1 is Empty. Removeing."
-	    rm -r $1
+	    rm -rf $1
 	fi
 }
 
