@@ -28,7 +28,7 @@ def main():
             termcat = vs[1:]
     fo.close()
 
-    print "%s data points %s names%s colheaders %s rowheaders max %s" % (len(data["f1"]), len(data["nByi"]), len(colheaders), len(rowheaders), max((int(n) for n in data["nByi"])))
+    #print "%s data points %s names%s colheaders %s rowheaders max %s" % (len(data["f1"]), len(data["nByi"]), len(colheaders), len(rowheaders), max((int(n) for n in data["nByi"])))
     #print json.dumps(colheaders)
     #print json.dumps(data["nByi"])
     nByi = [colheaders[int(n)] for n in data["nByi"]]
@@ -40,7 +40,7 @@ def main():
     rank = dict((int(key), int(value)) for (value, key) in enumerate(data["r1"]))
     sortedi = np.array([rank[key] for key in sorted(rank.keys())])
     fmis = np.array([fmiByHeader[nByi[i]] for i in sortedi])
-    data["termcat"] = list(np.array(termcat)[fmis])
+    data["termcat"] = [int(n) for n in list(np.array(termcat)[fmis])]
     for key in ["f1","f2","r1","r2","d","nByi"]:
         data[key] = list(np.array(data[key])[sortedi])
 
