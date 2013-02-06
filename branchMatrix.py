@@ -24,7 +24,7 @@ def branchMatrix(fn, fm, branches):
         counters.append(collections.Counter())
     fo = open(branches)
     for line in fo:
-        vs = [int(v) for v in line.rstrip().split("\t")]
+        vs = [int(float(v)) for v in line.rstrip().split("\t")]
         counters[vs[0]][vs[1]]+= vs[2]
     fo.close()
     fmiByHeader=dict((key, value) for (value, key) in enumerate(colheaders))
