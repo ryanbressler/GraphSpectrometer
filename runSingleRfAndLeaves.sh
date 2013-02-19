@@ -8,6 +8,8 @@ OUTDIR=${ADIR}/rf-pred/
 TARGET=$4
 NAME=$(basename $FMATRIX)
 TREES=${OUTDIR}/${NAME}_${5}
+DEFMTRY=100
+MTRY=${6:-$DEFMTRY}
 
 set +e
 cd ${OUTDIR}
@@ -19,7 +21,7 @@ echo TREES $TREES
 echo BLACKLIST $BLACKLIST
 $RFACE -I $FMATRIX \
  -B ${BLACKLIST} --saveForest ${TREES} \
- -i $TARGET -n 12800 -m 100 -a 1000 -s 4 -e 8
+ -i $TARGET -n 12800 -m ${MTRY} -a 1000 -s 4 -e 8
 
 
 JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
