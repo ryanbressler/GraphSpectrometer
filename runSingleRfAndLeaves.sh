@@ -32,10 +32,10 @@ if [ -e "${TREES}" ]
 then
 	cd ${JSONDIR}
 	echo PARSING PREDICTOR 
-	seq 0 1 0 | xargs -I CUTOFF  \
+	seq 0 2 16 | xargs -P 8 -I CUTOFF  \
 	python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 	echo FINDING HODGE RANK
-	ls ${JSONDIR}/* | xargs -I FILE  \
+	ls ${JSONDIR}/* | xargs -P 8 -I FILE  \
 	python ${GSPEC}/plotpredDecomp.py FILE
 
 	TREENAME=$(basename $TREES)
