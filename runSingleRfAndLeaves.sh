@@ -32,7 +32,7 @@ if [ -e "${TREES}" ]
 then
 	cd ${JSONDIR}
 	echo PARSING PREDICTOR 
-	seq 0 2 16 | xargs -P 8 -I CUTOFF  \
+	seq 0 8 64 | xargs -P 8 -I CUTOFF  \
 	python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 	echo FINDING HODGE RANK
 	ls ${JSONDIR}/* | xargs -P 8 -I FILE  \
@@ -78,7 +78,7 @@ then
 			RMEMPTY ${LEAFDIR}/layouts/${INNERNAME}
 			JSONFILE=${LEAFLAYOUT}/${INNERNAME}.cutoff.0.0.json
 			python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
-			echo View the results at http://glados1.systemsbiology.net:3335/#branches/${TREES}/branch
+			echo View the results at http://glados1.systemsbiology.net:3335/#branches/${TREENAME}/branch
 			
 		done
 	fi
