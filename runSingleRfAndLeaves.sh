@@ -21,7 +21,7 @@ echo TREES $TREES
 echo BLACKLIST $BLACKLIST
 $RFACE -I $FMATRIX \
  -B ${BLACKLIST} --saveForest ${TREES} \
- -i $TARGET -n 12800 -m ${MTRY} -a 1000 -s 16 -e 8
+ -i $TARGET -n 12800 -m ${MTRY} -a 1000 -s 8 -e 8
 
 
 JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
