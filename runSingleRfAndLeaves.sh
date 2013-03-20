@@ -21,7 +21,7 @@ echo TREES $TREES
 echo BLACKLIST $BLACKLIST
 $RFACE -I $FMATRIX \
  -B ${BLACKLIST} --saveForest ${TREES} \
- -i $TARGET -n 12800 -m ${MTRY} -a 1000 -s 8 -e 8
+ -i $TARGET -n 12800 -m ${MTRY} -a 1000 -s 4 -e 8
 
 
 JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
@@ -32,7 +32,7 @@ if [ -e "${TREES}" ]
 then
 	cd ${JSONDIR}
 	echo PARSING PREDICTOR 
-	seq 0 8 64 | xargs -P 8 -I CUTOFF  \
+	seq 0 4 32 | xargs -P 8 -I CUTOFF  \
 	python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 	echo FINDING HODGE RANK
 	ls ${JSONDIR}/* | xargs -P 8 -I FILE  \
