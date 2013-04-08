@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 
-#feature_matrix folds
+# Dick Kreisberg March 2013
+
+# Take definition of folds (subsets of samples)
+# Map the ids used in the fold list to the actual ids in the feature matrix
+# split the Feature Matrix into training/testing subsets
+# output each set.
+
 from pandas import *
 
     # Training fold: value = 0
