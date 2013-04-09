@@ -25,19 +25,26 @@ def read_ruleset(filename):
 
     for rule in f:
         fields = rule.strip().split("\t")
+        
+        #empty line
+        if ( len(fields) == 1 and len(fields[0]) == 0):
+            continue
+
         allow = fields[0].strip().upper()
+        
         #detect comment and move to next line
-        if ( any(allow[0] == substring for substring in comments) ):
+        if ( len(allow[0]) > 0 and any(allow[0] == substring for substring in comments) ):
             continue
-        if ( len(allow) < 1 ):
-            continue
-        if ( allow.upper() == 'A' or allow.upper() =='ALLOW' or len(allow) < 1 ):
+        elif ( allow.upper() == 'A' or allow.upper() =='ALLOW' or len(allow) < 1 ):
             if ( len(fields) > 1 ):
                 allowRules.append(fields[1:])
             else:
                 allowRules.append(['*'])
         elif ( allow.upper() =='D' or allow.upper =='DISALLOW' ):
             disallowRules.append(fields[1:])
+        #get the blacklist items
+        elif ( allow.count(':') >= 3 ):
+            disallowRules.append(allow.split(':'))
 
     f.close()
 
