@@ -5,10 +5,10 @@ OUTDIR=.
 TARGET=B:CLIN:Preterm:NB::::
 NAME=$(basename $FMATRIX)
 NROWS=$(wc -l $FMATRIX)
-MTRY=$(echo "sqrt($NROWS-1)" | bc-l)
+MTRY=$(echo "sqrt($NROWS-1)" | bc -l)
 
 TREES=${OUTDIR}/${NAME}.sf
-set +e
+
 cd ${OUTDIR}
 if [ ! -e "$TREES" ]; 
 then
@@ -20,6 +20,6 @@ then
 	-i $TARGET \
 	--nTrees  2500 \
 	--mTry ${MTRY} \
-	--saveForest ${TREES} \
+	--saveForest ${TREES}
 fi
-set -e
+
