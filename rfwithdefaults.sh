@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#uusage: ls */folds/*/train*.fm | xargs -P 8 -I FILE bash /titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer/rfwithdefaults.sh FILE
 RFACE=/titan/cancerregulome9/ITMI_PTB/bin/rf-ace-read-only/bin/rf-ace
 FMATRIX=$1
 OUTDIR=$(pwd)
