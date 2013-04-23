@@ -11,7 +11,7 @@ def main():
 			error[vs[0]]=0.0
 		count[vs[0]]+=1
 		error[vs[0]]+=float(vs[1])
-	for name,c in count:
+	for name,c in enumerate(count):
 		print "%s\t%s"%(name,string(error[name]/c))
 
 if __name__ == '__main__':
