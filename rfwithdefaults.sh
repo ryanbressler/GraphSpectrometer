@@ -4,23 +4,23 @@ FMATRIX=$1
 OUTDIR=$(pwd)
 TARGET=B:CLIN:Preterm:NB::::
 NAME=$(basename $FMATRIX)
-MTRY=$(wc -l  fsset1_train.fm | awk 'END {print int(sqrt($1))}')
+MTRY=$(wc -l  $FMATRIX | awk 'END {print int(sqrt($1))}')
 
 TREES=${OUTDIR}/${NAME}.sf
 
 cd ${OUTDIR}
-if [ ! -e "$TREES" ]; 
-then
-	echo RUNNING RANDOM FOREST
-	echo RFACE $RFACE
-	echo FMATRIX $FMATRIX
-	echo TREES $TREES
-	echo TARGET $TARGET
-	echo MTRY $MTRY
-	$RFACE -I $FMATRIX \
-	-i $TARGET \
-	--nTrees  2500 \
-	--mTry ${MTRY} \
-	--saveForest ${TREES}
-fi
+
+echo RUNNING RANDOM FOREST
+echo RFACE $RFACE
+echo FMATRIX $FMATRIX
+echo TREES $TREES
+echo TARGET $TARGET
+echo MTRY $MTRY
+$RFACE -I $FMATRIX \
+-i $TARGET \
+--nTrees  2500 \
+--mTry ${MTRY} \
+--nodeSize 1 \
+--saveForest ${TREES}
+
 
