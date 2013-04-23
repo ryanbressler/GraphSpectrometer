@@ -6,7 +6,7 @@ def main():
 	error = {}
 	for line in sys.stdin:
 		vs = line.rstrip().split()
-		if ! vs[0] in count:
+		if true!=(vs[0] in count):
 			count[vs[0]]=0
 			error[vs[0]]=0.0
 		count[vs[0]]+=1
@@ -16,4 +16,3 @@ def main():
 
 if __name__ == '__main__':
 	main()
-	
