@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 RFACE=/titan/cancerregulome9/ITMI_PTB/bin/rf-ace-read-only/bin/rf-ace
 FMATRIX=$1
-OUTDIR=.
+OUTDIR=$(pwd)
 TARGET=B:CLIN:Preterm:NB::::
 NAME=$(basename $FMATRIX)
 NROWS=$(wc -l $FMATRIX)
@@ -16,6 +16,8 @@ then
 	echo RFACE $RFACE
 	echo FMATRIX $FMATRIX
 	echo TREES $TREES
+	echo TARGET $TARGET
+	echo MTRY $MTRY
 	$RFACE -I $FMATRIX \
 	-i $TARGET \
 	--nTrees  2500 \
