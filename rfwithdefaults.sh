@@ -4,8 +4,7 @@ FMATRIX=$1
 OUTDIR=$(pwd)
 TARGET=B:CLIN:Preterm:NB::::
 NAME=$(basename $FMATRIX)
-NROWS=$(wc -l $FMATRIX) | awk 'END {print $1}'
-MTRY=$(echo "sqrt($NROWS-1)" | bc -l)
+MTRY=$(wc -l $FMATRIX) | awk 'END {print int(sqrt($1))}'
 
 TREES=${OUTDIR}/${NAME}.sf
 
