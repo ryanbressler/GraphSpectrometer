@@ -6,7 +6,7 @@ TARGET=B:CLIN:Preterm:NB::::
 NAME=$(basename $FMATRIX)
 MTRY=$(wc -l  $FMATRIX | awk 'END {print int(sqrt($1))}')
 
-TREES=${OUTDIR}/${NAME}.sf
+TREES=${FMATRIX}.sf
 
 cd ${OUTDIR}
 
