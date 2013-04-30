@@ -3,4 +3,4 @@
 TESTFILE=$1
 FILE=$(basename $TESTFILE)
 FORREST=${TESTFILE//test/train}.sf
-ERROR=rf-ace --loadForest $FORREST --testData $TESTFILE --predictions ${TESTFILE}.predictions.tsv
+rf-ace --loadForest $FORREST --testData $TESTFILE --predictions ${TESTFILE}.predictions.tsv
