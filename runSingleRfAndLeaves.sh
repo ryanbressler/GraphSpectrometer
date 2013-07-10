@@ -10,18 +10,26 @@ NAME=$(basename $FMATRIX)
 TREES=${OUTDIR}/${NAME}_${5}
 DEFMTRY=100
 MTRY=${6:-$DEFMTRY}
+DEFNTREES=12800
+NTREES=${7:-$DEFNTREES}
 
 set +e
 cd ${OUTDIR}
 
 echo RUNNING RANDOM FOREST WITH BLACKLIST
-echo RFACE $RFACE
+#echo RFACE $RFACE
 echo FMATRIX $FMATRIX
 echo TREES $TREES
 echo BLACKLIST $BLACKLIST
-$RFACE -I $FMATRIX \
- -B ${BLACKLIST} --saveForest ${TREES} \
- -i $TARGET -n 12800 -m ${MTRY} -a 1000 -s 4 -e 8
+#$RFACE -I $FMATRIX \
+# -B ${BLACKLIST} --saveForest ${TREES} \
+# -i $TARGET -n 12800 -m ${MTRY} -a 1000 -s 4 -e 8
+
+$GFOREST -train $FMATRIX \
+-blacklist ${BLACKLIST} -rfpred ${TREES} \
+-target $TARGET -nTrees ${NTREES} -mTry ${MTRY} \
+-leafSize 4 -nCores 8
+
 
 
 JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
