@@ -12,6 +12,8 @@ DEFMTRY=100
 MTRY=${6:-$DEFMTRY}
 DEFNTREES=12800
 NTREES=${7:-$DEFNTREES}
+DEFNCORES=8
+NCORES=${8:-$DEFNCORES}
 
 set +e
 cd ${OUTDIR}
@@ -28,7 +30,7 @@ echo BLACKLIST $BLACKLIST
 $GFOREST -train $FMATRIX \
 -blacklist ${BLACKLIST} -rfpred ${TREES} \
 -target $TARGET -nTrees ${NTREES} -mTry ${MTRY} \
--leafSize 4 -nCores 8
+-leafSize 8 -nCores ${NCORES}
 
 
 
@@ -40,10 +42,10 @@ if [ -e "${TREES}" ]
 then
 	cd ${JSONDIR}
 	echo PARSING PREDICTOR 
-	seq 0 4 32 | xargs -P 8 -I CUTOFF  \
+	seq 0 4 32 | xargs -P ${NCORES} -I CUTOFF  \
 	python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 	echo FINDING HODGE RANK
-	ls ${JSONDIR}/* | xargs -P 8 -I FILE  \
+	ls ${JSONDIR}/* | xargs -P ${NCORES} -I FILE  \
 	python ${GSPEC}/plotpredDecomp.py FILE
 
 	TREENAME=$(basename $TREES)
@@ -74,7 +76,7 @@ then
 
 				mkdir -p $LEAFLAYOUT
 				cd $LEAFLAYOUT
-				seq 0 2 0 | xargs -P 8 -I CUT python ${GSPEC}/parseByCol.py ${INERRFILE} CUT 2
+				seq 0 2 0 | xargs -P ${NCORES} -I CUT python ${GSPEC}/parseByCol.py ${INERRFILE} CUT 2
 				for JSONFILE in ${LEAFLAYOUT}/*
 				do
 					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE
