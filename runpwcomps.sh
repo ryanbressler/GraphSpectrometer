@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# usage ./runall.sh /titan/cancerregulome9/ITMI_PTB/public/analysis/ /titan/cancerregulome9/workspaces/users/rbressle/2012_09_18/blacklist.txt /titan/cancerregulome9/ITMI_PTB/public/analysis/layouts/
+# usage ./runpwcomps.sh files*.pwpv
 export NGSPECCORES=4
 export NGSPECPLOTINGCORES=2
 export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
@@ -9,12 +9,12 @@ export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
 #	grep GNAB $FILE > $(basename $FILE)
 #done
 
-# for PWFILE in *.pwpv
-# do
-# 	seq .8 -.2 .2 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
-# 	python ${GSPEC}/fiedler.py \
-# 	${PWFILE} CUTOFF
-# done
+for PWFILE in "$@"
+do
+	seq .8 -.2 .2 | xargs --max-procs=${NGSPECCORES} -I CUTOFF  \
+	python ${GSPEC}/fiedler.py \
+	${PWFILE} CUTOFF
+done
 
 seq .8 -.2 .2 | xargs --max-procs=${NGSPECPLOTINGCORES} -I ${CUTOFF}  \
 python ${GSPEC}/comparisonPlot.py "*.pwpv${CUTOFF}.continuous.json"
