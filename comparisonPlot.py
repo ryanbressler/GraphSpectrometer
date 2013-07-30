@@ -46,7 +46,7 @@ def plotPair(fn1,fn2):
 
 	d0index=numpy.array(d0index,dtype="int")
 	d1index=numpy.array(d1index,dtype="int")
-	fiedler.plotFiedvsFied(data[0]["f1"][d0index],data[1]["f1"][d1index],outfn,adj_list=adjs[0],adj_list2=adjs[1],width=64,nByi=nByi)#,dbscan_eps=.0005,dbscan_rank_eps=64,enrichdb="../GraphSpec/homo-sapiens-9606-gene-symbol.gmt",clust_x=.00005,clust_y=.00005)
+	fiedler.plotFiedvsFied(data[0]["r1"][d0index],data[1]["r1"][d1index],outfn,adj_list=adjs[0],adj_list2=adjs[1],width=64,nByi=nByi)#,dbscan_eps=.0005,dbscan_rank_eps=64,enrichdb="../GraphSpec/homo-sapiens-9606-gene-symbol.gmt",clust_x=.00005,clust_y=.00005)
 
 def main():
 	if len(sys.argv)==3:
