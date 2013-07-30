@@ -489,7 +489,7 @@ def doSinglePlot(fied1,fied2,fn,adj_list=False,adj_list2=False,width=16,height=F
     
     F.set_size_inches( (width,height) )
     F.savefig(fn+".png",bbox_inches='tight',pad_inches=0)
-    F.savefig(fn+".svg",bbox_inches='tight')
+    #F.savefig(fn+".svg",bbox_inches='tight')
 
     F.clear()
 
