@@ -13,6 +13,7 @@ def plotPair(fn1,fn2):
 		fo = open(fn)
 		data.append(json.load(fo))
 		data[i]["f1"]=numpy.array(data[i]["f1"])
+		data[i]["r1"]=numpy.array(data[i]["r1"])
 		fo.close()
 	
 
