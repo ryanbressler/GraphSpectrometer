@@ -14,6 +14,7 @@ DEFNTREES=12800
 NTREES=${7:-$DEFNTREES}
 DEFNCORES=8
 NCORES=${8:-$DEFNCORES}
+NPYCORES=${9:-$NCORES}
 
 set +e
 cd ${OUTDIR}
@@ -42,10 +43,10 @@ if [ -e "${TREES}" ]
 then
 	cd ${JSONDIR}
 	echo PARSING PREDICTOR 
-	seq 0 4 32 | xargs -P ${NCORES} -I CUTOFF  \
+	seq 0 4 32 | xargs -P ${NPYCORES} -I CUTOFF  \
 	python ${GSPEC}/parseRfPred.py ${TREES} CUTOFF
 	echo FINDING HODGE RANK
-	ls ${JSONDIR}/* | xargs -P ${NCORES} -I FILE  \
+	ls ${JSONDIR}/* | xargs -P ${NPYCORES} -I FILE  \
 	python ${GSPEC}/plotpredDecomp.py FILE
 
 	TREENAME=$(basename $TREES)
@@ -76,7 +77,7 @@ then
 
 				mkdir -p $LEAFLAYOUT
 				cd $LEAFLAYOUT
-				seq 0 2 0 | xargs -P ${NCORES} -I CUT python ${GSPEC}/parseByCol.py ${INERRFILE} CUT 2
+				seq 0 2 0 | xargs -P ${NPYCORES} -I CUT python ${GSPEC}/parseByCol.py ${INERRFILE} CUT 2
 				for JSONFILE in ${LEAFLAYOUT}/*
 				do
 					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE
