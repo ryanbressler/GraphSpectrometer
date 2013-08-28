@@ -35,8 +35,9 @@ def parseRfPredict(fo, cutoff):
             if line[:6] == "FOREST":
                 vhash = parserow(line)
             elif line[:4] == "TREE":
+                vhash = parserow(line)
                 ntrees += 1
-                treeid = parserow(line)["TREE"]
+                treeid = vhash["TREE"]
                 parents = {"": predicted}
                 predicted = vhash["TARGET"]
             elif line[:4] == "NODE":
