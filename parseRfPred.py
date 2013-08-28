@@ -45,18 +45,19 @@ def parseRfPredict(fo, cutoff):
                     source = vhash["SPLITTER"]
                     node = vhash["NODE"]
                     parents[node] = source
-                    target = parents[node[:-1]]
-                    vhash["parents"] = [parents[node[:-n]] for n in range(1, len(node))]
-                    vhash["treeid"] = treeid
-                    if not source in spliter_by_feature:
-                        spliter_by_feature[source] = []
-                    spliter_by_feature[source].append(vhash)
-                    if not source in adj_hash:
-                        adj_hash[source] = {}
-                    if not target in adj_hash[source]:
-                        adj_hash[source][target] = 1.0
-                    else:
-                        adj_hash[source][target] += 1.0  
+                    if len(node) > 1:
+                        target = parents[node[:-1]]
+                        vhash["parents"] = [parents[node[:-n]] for n in range(1, len(node))]
+                        vhash["treeid"] = treeid
+                        if not source in spliter_by_feature:
+                            spliter_by_feature[source] = []
+                        spliter_by_feature[source].append(vhash)
+                        if not source in adj_hash:
+                            adj_hash[source] = {}
+                        if not target in adj_hash[source]:
+                            adj_hash[source][target] = 1.0
+                        else:
+                            adj_hash[source][target] += 1.0  
         except:
             print "Error parsing line %s: %s\nparents:%s" % (i, line, parents)
             raise
