@@ -219,7 +219,7 @@ def fiedler(adj_list,plot=False,fn="FiedlerPlots",n_fied=2):
     
 
     A = graph_laplacian(adj_list)
-
+    print A.todense()
     # construct preconditioner
     ml = smoothed_aggregation_solver(A, coarse_solver='pinv2',max_coarse=10)
     M = ml.aspreconditioner()
