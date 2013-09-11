@@ -15,6 +15,7 @@ NTREES=${7:-$DEFNTREES}
 DEFNCORES=8
 NCORES=${8:-$DEFNCORES}
 NPYCORES=${9:-$NCORES}
+shift 9
 
 set +e
 cd ${OUTDIR}
@@ -31,7 +32,7 @@ echo BLACKLIST $BLACKLIST
 $GFOREST -train $FMATRIX \
 -blacklist ${BLACKLIST} -rfpred ${TREES} \
 -target $TARGET -nTrees ${NTREES} -mTry ${MTRY} \
--leafSize 8 -nCores ${NCORES}
+-leafSize 8 -nCores ${NCORES} "$@"
 
 
 
