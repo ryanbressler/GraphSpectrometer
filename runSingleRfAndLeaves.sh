@@ -32,7 +32,7 @@ echo BLACKLIST $BLACKLIST
 $GFOREST -train $FMATRIX \
 -blacklist ${BLACKLIST} -rfpred ${TREES} \
 -target $TARGET -nTrees ${NTREES} -mTry ${MTRY} \
--leafSize 8 -nCores ${NCORES} "$@"
+-nCores ${NCORES} "$@"
 
 
 
