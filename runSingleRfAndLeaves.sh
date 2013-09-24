@@ -67,7 +67,7 @@ then
 	-rfpred="${TREES}" -fm="${FMATRIX}"
 	if [ -e $LEAFFILE ] 
 	then	
-		python ${GSPEC}/pruneLeaves.py $LEAFFILE $FMATRIX
+		#python ${GSPEC}/pruneLeaves.py $LEAFFILE $FMATRIX
 
 		for INERRFILE in ${LEAFFILE}*
 		do
