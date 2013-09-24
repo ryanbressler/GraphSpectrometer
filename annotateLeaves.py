@@ -43,7 +43,7 @@ def main():
     fmis = np.array([fmiByHeader[nByi[i]] for i in sortedi])
     try:
         data["termcat"] = [int(float(n)) for n in list(np.array(termcat)[fmis])]
-    else:
+    except:
         data["termcat"] = list(np.array(termcat)[fmis])
         
     for key in ["f1","f2","r1","r2","d","nByi"]:
