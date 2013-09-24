@@ -81,7 +81,7 @@ then
 				seq 0 2 0 | xargs -P ${NPYCORES} -I CUT python ${GSPEC}/parseByCol.py ${INERRFILE} CUT 2
 				for JSONFILE in ${LEAFLAYOUT}/*
 				do
-					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE
+					python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE $TARGET
 				done
 
 				cd -

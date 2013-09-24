@@ -10,6 +10,7 @@ def main():
     fn = sys.argv[1]
     fm = sys.argv[2]
     branches = sys.argv[3]
+    target = sys.argv[4]
 
     print "Annotating %s with header from %s" % (os.path.abspath(fn), os.path.abspath(fm))
 
