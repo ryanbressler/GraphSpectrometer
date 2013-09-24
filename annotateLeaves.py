@@ -25,7 +25,7 @@ def main():
     for line in fo:
         vs = line.rstrip().split("\t")
         rowheaders.append(vs[0])
-        if vs[0].startswith("N:CLIN:TermCategory:NB"):
+        if vs[0].startswith(target):
             termcat = vs[1:]
     fo.close()
 
