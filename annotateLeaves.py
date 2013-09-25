@@ -45,7 +45,7 @@ def main():
         data["termcat"] = [int(float(n)) for n in list(np.array(termcat)[fmis])]
     except:
         data["termcat"] = list(np.array(termcat)[fmis])
-        
+
     for key in ["f1","f2","r1","r2","d","nByi"]:
         data[key] = list(np.array(data[key])[sortedi])
 

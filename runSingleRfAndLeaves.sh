@@ -91,6 +91,7 @@ then
 			JSONFILE=${LEAFLAYOUT}/${INNERNAME}.cutoff.0.0.json
 			python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
 			echo View the results at http://glados1.systemsbiology.net:3335/#branches/${TREENAME}/branch
+			echo and http://glados1.systemsbiology.net:3335/#rf-pred/${TREENAME}/graph
 			
 		done
 	fi
