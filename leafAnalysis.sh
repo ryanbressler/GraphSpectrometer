@@ -4,6 +4,7 @@ source setvars.sh
 FMATRIX=$1
 INDIR=$2
 OUTDIR=$3
+TARGET=$4
 TREES=$(ls ${INDIR}/rf2_*_31.sf| paste -s -d ',')
 
 set +e
@@ -33,11 +34,13 @@ then
 	LEAFFILE=${OUTDIR}/leaffile
 	${LCOUNT} -branches="${BRANCHFILE}" -leaves="${LEAFFILE}" \
 	-rfpred="${TREES}" -fm="${FMATRIX}"
-	
+
 	if [ -e $LEAFFILE ] 
 	then	
 					
 		xargs -P ${NPYCORES} -I CUT python ${GSPEC}/parseByCol.py ${LEAFFILE} 0 2
+
+		JSONFILE=${LEAFFILE}.cutoff.0.0.json
 
 		python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE $TARGET
 		
