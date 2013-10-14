@@ -1,53 +1,38 @@
 #!/usr/bin/env bash
-source setvars.sh
+export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
 
 FMATRIX=$1
 INDIR=$2
-OUTDIR=$3
-TARGET=$4
+OUTDIR=$INDIR
+TARGET=$3
 TREES=$(ls ${INDIR}/rf2_*_31.sf| paste -s -d ',')
 
-set +e
+
 cd ${OUTDIR}
 
 
+echo Feature Matrix $FMATRIX Predictor $TREES
 
-JSONDIR=${OUTDIR}/layouts/$(basename $TREES)/hodge
+BRANCHFILE=${OUTDIR}/branchfile 
+BRANCHMATFILE=${OUTDIR}/branchmatfile 
+LEAFFILE=${OUTDIR}/leaffile
 
+leafcount -branches="${BRANCHFILE}" -leaves="${LEAFFILE}" \
+-rfpred="${TREES}" -fm="${FMATRIX}"
 
-mkdir -p $JSONDIR
-if [ -e "${TREES}" ]
-then
+if [ -e $LEAFFILE ] 
+then	
+				
+	python ${GSPEC}/parseByCol.py ${LEAFFILE} 0 2
 
+	JSONFILE=${LEAFFILE}.cutoff.0.0.json
 
-	echo Feature Matrix $FMATRIX Predictor $TREES
-	LEAFDIR=${ADIR}/rf-leaves
-	BRANCHEDIR=${ADIR}/rf-branches
-	BRANCHEMATDIR=${ADIR}/rf-branch-matrix
+	python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE $TARGET
+	
 
-	mkdir -p $LEAFDIR
-	mkdir -p $BRANCHEDIR
-	mkdir -p $BRANCHEMATDIR
-
-	BRANCHFILE=${OUTDIR}/branchfile 
-	BRANCHMATFILE=${OUTDIR}/branchmatfile 
-	LEAFFILE=${OUTDIR}/leaffile
-	${LCOUNT} -branches="${BRANCHFILE}" -leaves="${LEAFFILE}" \
-	-rfpred="${TREES}" -fm="${FMATRIX}"
-
-	if [ -e $LEAFFILE ] 
-	then	
-					
-		xargs -P ${NPYCORES} -I CUT python ${GSPEC}/parseByCol.py ${LEAFFILE} 0 2
-
-		JSONFILE=${LEAFFILE}.cutoff.0.0.json
-
-		python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE $TARGET
+	python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
 		
-
-		python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
-			
-		
-	fi
 	
 fi
+	
+

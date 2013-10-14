@@ -26,12 +26,14 @@ vispage = """<!DOCTYPE html>
 
             var topImp = %(imp)s;
 
-            var bottomls = ["F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","All"];
-            var topls = ["ADMX","CLIN","DLTN","HHRF","HMST","MINA","MRGE","MTCD","QCTL","SURV",""];
+            var topClin = %(clinimp)s;
+
+            var bottomls = ["F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","All"];
+            var topls = ["ADMX","CLIN","DLTN","HHRF","HMST","MINA","MRGE","MTCD","SURV",""];
 
             var w = 1100,
             h = 300,
-            imph = 340
+            imph = 360
 
             // create canvas
             var svg = d3.select("#viz").append("svg:svg")
@@ -44,8 +46,7 @@ vispage = """<!DOCTYPE html>
             
             y = d3.scale.linear().range([0, h-50])
 
-            console.log("RAW MATRIX---------------------------");
-	    // 4 columns: ID,c1,c2,c3
+        
             
             var rwidth = (w-50)/(matrix.length+3)
             console.log(matrix)
@@ -65,9 +66,6 @@ vispage = """<!DOCTYPE html>
 		        .style("stroke", "rgb(220,220,220)")
 		        .style("stroke-width", 8); 
 
-            //var yAxis = d3.svg.axis().scale(y).tickSize(6,3).orient('left');
-            //svg.append('g').attr('class', 'y-axis').call(yAxis).attr('transform', 'translate(' + 10 + ',0)');
-
 
 
             // Add a rect for each date.
@@ -77,7 +75,7 @@ vispage = """<!DOCTYPE html>
 
             //upper rect
             rect.append("svg:rect")
-                .attr("x", function(d) { return x(d[0]); })
+                .attr("x", function(d,i) { return x(i+1); })
                 .attr("y", function(d) { return y(2)-y(d[1])-y(d[2]); })
                 .attr("height", function(d) { return y(d[1]); })
                 .attr("fill","#FD8F42")
@@ -86,7 +84,7 @@ vispage = """<!DOCTYPE html>
 
             //lower rect
             rect.append("svg:rect")
-                .attr("x", function(d) { return x(d[0]); })
+                .attr("x", function(d,i) { return x(i+1); })
                 .attr("y", function(d) { return y(2)-y(d[2]); })
                 .attr("height", function(d) { return y(d[2]); })
                 .attr("fill","#84ACBA")
@@ -98,7 +96,7 @@ vispage = """<!DOCTYPE html>
                 .enter()
 
             text.append("svg:text")
-                .attr("x", function(d) { return x(d[0])+2; })
+                .attr("x", function(d,i) { return x(i+1)+2; })
                 .attr("y", function(d) { return y(2)-y(d[1])-y(d[2])-4})
                 .text( function (d) { return Math.round(50*(d[1]+d[2]))/100 || "" })
                 .attr("font-family", "sans-serif")
@@ -106,28 +104,28 @@ vispage = """<!DOCTYPE html>
 
             
             text.append("svg:text")
-                .attr("x", function(d) { return x(d[0])+2; })
+                .attr("x", function(d,i) { return x(i+1)+2; })
                 .attr("y", function(d) { return y(2)-y(d[1])-y(d[2]) +12})
                 .text( function (d) { return d[1] || "" })
                 .attr("font-family", "sans-serif")
                 .attr("font-size", "12px")
 
             text.append("svg:text")
-                .attr("x", function(d) { return x(d[0])+2; })
+                .attr("x", function(d,i) { return x(i+1)+2; })
                 .attr("y", function(d) { return y(2)-y(d[2])+12; })
                 .text( function (d) { return d[2] || "" })
                 .attr("font-family", "sans-serif")
                 .attr("font-size", "12px")
 
             text.append("svg:text")
-                .attr("x", function(d) { return x(d[0])+8; })
+                .attr("x", function(d,i) { return x(i+1)+8; })
                 .attr("y", function(d) { return y(2)-4; })
                 .text( function (d,i) { return bottomls[i] })
                 .attr("font-family", "sans-serif")
                 .attr("font-size", "12px")
 
             text.append("svg:text")
-                .attr("x", function(d) { return x(d[0])+30; })
+                .attr("x", function(d,i) { return x(i+1)+30; })
                 .attr("y", function(d) { return y(2)+18; })
                 .text( function (d,i) { return Math.floor(i/3)==i/3 ? topls[i/3] : ""; })
                 .attr("font-family", "sans-serif")
@@ -146,7 +144,7 @@ vispage = """<!DOCTYPE html>
 
 	        var impy = function(i) {
 	        	less = i > (percol -1) ? percol : 0;
-	        	return (i-less)*20 +10;
+	        	return (i-less)*20 +30;
 	        }
 
 	        var impxscale = d3.scale.linear()
@@ -161,7 +159,7 @@ vispage = """<!DOCTYPE html>
 				.attr("width", function(d) { return impxscale(d[1]); })
 				.attr("height", 20)
 				.attr("fill","#55bb55")
-                .attr("stroke","#000000")
+                .attr("stroke","#55bb55")
 
             var imptext = imp.selectAll("text")
                 .data(topImp)
@@ -181,6 +179,21 @@ vispage = """<!DOCTYPE html>
                 .attr("font-family", "sans-serif")
                 .attr("font-size", "12px")
 
+            imp.append("svg:text")
+                .attr("y", 20)
+                .attr("x", impx(1))
+                .text( "CLIN, M" )
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "12px")
+
+            imp.append("svg:text")
+                .attr("y", 20)
+                .attr("x", impx(percol+1))
+                .text( "All" )
+                .attr("font-family", "sans-serif")
+                .attr("font-size", "12px")
+
+
 
 
             
@@ -197,34 +210,38 @@ vispage = """<!DOCTYPE html>
 """
 
 def main():
-	mat = scipy.io.loadmat(sys.argv[1])
+    mat = scipy.io.loadmat(sys.argv[1])
 
-	results = []
-	
-	#print mat["FIcell"][0]
+    results = []
 
-	for i,v in enumerate(mat["CVcell"][0]):
-		if v.size == 4:
-			pre = 0.0
-			full = 0.0
-			try:
-				#pre = round(float(v[0][0])/float(v[0][0]+v[0][1]),2)
-				#full = round(float(v[1][0])/float(v[1][0]+v[1][1]),2)
+    #print mat["FIcell"][0]
 
-				pre = round(float(v[0][0])/(float(v[0][0])+float(v[1][0])),2)
-				full = round(float(v[1][1])/(float(v[0][1])+float(v[1][1])),2)
-			except:
-				pass
-			results.append([i+1, pre, full])
-		else:
-			results.append([i+1,0,0])
+    for i,v in enumerate(mat["CVcell"][0]):
+    	if v.size == 4:
+    		pre = 0.0
+    		full = 0.0
+    		try:
+    			#pre = round(float(v[0][0])/float(v[0][0]+v[0][1]),2)
+    			#full = round(float(v[1][0])/float(v[1][0]+v[1][1]),2)
 
-	imp = []
+    			pre = round(float(v[0][0])/(float(v[0][0])+float(v[1][0])),2)
+    			full = round(float(v[1][1])/(float(v[0][1])+float(v[1][1])),2)
+    		except:
+    			pass
+    		results.append([i+1, pre, full])
+    	else:
+    		results.append([i+1,0,0])
 
-	for i,v in enumerate(mat["FIcell"][0][30][0]):
-		imp.append([v[0][0],mat["FIcell"][0][30][1][i][0]])
+    imp = []
+    clinimp = []
 
-	print vispage%{"json":json.dumps(results),"imp":json.dumps(imp[:32])}
+    for i,v in enumerate(mat["FIcell"][0][30][0]):
+    	imp.append([v[0][0],mat["FIcell"][0][30][1][i][0]])
+        clinimp.append([mat["FIcell"][0][4][0][i][0][0],mat["FIcell"][0][4][1][i][0]])
+
+    #print mat["FIcell"][0]
+
+    print vispage%{"json":json.dumps(results[:24]+results[27:]),"imp":json.dumps(clinimp[:16]+imp[:16]),"clinimp":json.dumps(clinimp[:16])}
 
 
 
