@@ -18,7 +18,7 @@ BRANCHMATFILE=${OUTDIR}/branchmatfile
 LEAFFILE=${OUTDIR}/leaffile
 
 leafcount -branches="${BRANCHFILE}" -leaves="${LEAFFILE}" \
--rfpred="${TREES}" -fm="${FMATRIX}"
+-rfpred="${TREES}" -fm="${FMATRIX}" -multithread
 
 if [ -e $LEAFFILE ] 
 then	
@@ -27,10 +27,7 @@ then
 
 	JSONFILE=${LEAFFILE}.cutoff.0.0.json
 
-	python ${GSPEC}/annotateLeaves.py $JSONFILE $FMATRIX $BRANCHFILE $TARGET
-	
-
-	python ${GSPEC}/branchMatrix.py $JSONFILE $FMATRIX $BRANCHFILE $BRANCHMATFILE
+	python ${GSPEC}/annotateForPredPower.py $JSONFILE $FMATRIX $TARGET
 		
 	
 fi
