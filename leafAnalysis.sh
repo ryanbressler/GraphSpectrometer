@@ -4,7 +4,6 @@ export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
 FMATRIX=$1
 INDIR=$2
 OUTDIR=$INDIR
-TARGET=$3
 TREES=$(ls ${INDIR}/rf1_*_31.sf| paste -s -d ',')
 
 
@@ -27,7 +26,7 @@ then
 
 	JSONFILE=${LEAFFILE}.cutoff.0.0.json
 
-	python ${GSPEC}/annotateForPredPower.py $JSONFILE $FMATRIX $TARGET
+	python ${GSPEC}/annotateForPredPower.py $JSONFILE $FMATRIX
 		
 	
 fi
