@@ -5,7 +5,7 @@ FMATRIX=$1
 INDIR=$2
 OUTDIR=$INDIR
 TARGET=$3
-TREES=$(ls ${INDIR}/rf2_*_31.sf| paste -s -d ',')
+TREES=$(ls ${INDIR}/rf1_*_31.sf| paste -s -d ',')
 
 
 cd ${OUTDIR}
