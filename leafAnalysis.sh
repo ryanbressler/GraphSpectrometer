@@ -16,8 +16,8 @@ BRANCHFILE=${OUTDIR}/branchfile
 BRANCHMATFILE=${OUTDIR}/branchmatfile 
 LEAFFILE=${OUTDIR}/leaffile
 
-leafcount -branches="${BRANCHFILE}" -leaves="${LEAFFILE}" \
--rfpred="${TREES}" -fm="${FMATRIX}" -multithread
+leafcount -leaves="${LEAFFILE}" \
+-rfpred="${TREES}" -fm="${FMATRIX}" -threads 2
 
 if [ -e $LEAFFILE ] 
 then	
