@@ -4,7 +4,7 @@ export GSPEC=/titan/cancerregulome9/ITMI_PTB/bin/GraphSpectrometer
 FMATRIX=$1
 INDIR=$2
 OUTDIR=$INDIR
-TREES=$(ls ${INDIR}/rf1_*_31.sf| paste -s -d ',')
+TREES=$(ls ${INDIR}/rf1_*_34.sf| paste -s -d ',')
 
 
 cd ${OUTDIR}

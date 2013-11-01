@@ -10,15 +10,15 @@ vispage = """<!DOCTYPE html>
         <style>
             svg {
                 border: solid 1px #ccc;
-                font: 10px sans-serif;
-                shape-rendering: crispEdges;
+                font: 10px Helvetica;
             }
         </style>             
     </head>
     <body>
 
         <div id="viz"></div>
-        <div id="imp"></div>
+        <div id="imp" style="display:none"></div>
+        <div id="prox"></div>
 
         <script type="text/javascript">
 
@@ -28,34 +28,32 @@ vispage = """<!DOCTYPE html>
 
             var topClin = %(clinimp)s;
 
-            var bottomls = ["F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","All"];
-            var topls = ["ADMX","CLIN","DLTN","HHRF","HMST","MINA","MRGE","MTCD","SURV",""];
+            var leafdata = %(leafdata)s;
+
+            var bottomls = ["F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","","M+F","","","NB","","F","M","All"];
+            var topls = ["Admixture","Clinical","Copy Number","Allele Type","Genomic Distance","Minor Allele Sum","Pathway","Merged Clinical","Mitochondrial","Survey",""];
 
             var w = 1100,
-            h = 300,
-            imph = 360
+                h = 180,
+                imph = 240,
+                percol = 10,
+                proxh = 300
 
-            // create canvas
+            // Predictive Power Bar Plot
             var svg = d3.select("#viz").append("svg:svg")
-            .attr("class", "chart")
-            .attr("width", w)
-            .attr("height", h )
-            .append("svg:g")
-            //.attr("transform", "translate(10,470)");
+                .attr("class", "chart")
+                .attr("width", w)
+                .attr("height", h )
+                .append("svg:g")
 
-            
-            y = d3.scale.linear().range([0, h-50])
+            var rwidth = (w-110)/(matrix.length+3)
 
         
-            
-            var rwidth = (w-50)/(matrix.length+3)
-            console.log(matrix)
-
-           
-
-            x = function(i) {
-            	return (i-1)*rwidth + Math.floor((i-1)/3)*10+10;
+            var x = function(i) {
+            	return (i-1)*rwidth + Math.floor((i-1)/3)*10+Math.floor((i-1)/29)*10+80;
             }
+
+            var y = d3.scale.linear().range([0, h-30])
             y.domain([0, 2]);
 
             svg.append("svg:line")
@@ -95,41 +93,116 @@ vispage = """<!DOCTYPE html>
                 .data(matrix)
                 .enter()
 
+            //balanced performance 
             text.append("svg:text")
-                .attr("x", function(d,i) { return x(i+1)+2; })
+                .attr("x", function(d,i) { return x(i+1)+rwidth/2; })
+                .attr("text-anchor", "middle")
                 .attr("y", function(d) { return y(2)-y(d[1])-y(d[2])-4})
                 .text( function (d) { return Math.round(50*(d[1]+d[2]))/100 || "" })
-                .attr("font-family", "sans-serif")
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "12px")
+
+            //preterm 
+            text.append("svg:text")
+                .attr("x", function(d,i) { return x(i+1)+rwidth/2; })
+                .attr("y", function(d) { return y(2)-y(d[1])-y(d[2]) +12})
+                .attr("text-anchor", "middle")
+                .text( function (d) { return d[1] || "" })
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "12px")
+
+            //fullterm
+            text.append("svg:text")
+                .attr("x", function(d,i) { return x(i+1)+rwidth/2; })
+                .attr("y", function(d) { return y(2)-y(d[2])+12; })
+                .attr("text-anchor", "middle")
+                .text( function (d) { return d[2] || "" })
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "12px")
+
+            // M/F/NB labels
+            text.append("svg:text")
+                .attr("x", function(d,i) { return x(i+1)+rwidth/2; })
+                .attr("y", function(d) { return y(2)-4; })
+                .attr("text-anchor", "middle")
+                .text( function (d,i) { return bottomls[i] })
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "12px")
+
+            //feature set label ... hack to get Survey to show up centered under two columns
+            text.append("svg:text")
+                .attr("x", function(d,i) { return x(i+1)+(3-Math.floor(i/24))*rwidth/2; })
+                .attr("y", function(d) { return y(2)+18; })
+                .attr("text-anchor", "middle")
+                .text( function (d,i) { return Math.floor(i/3)==i/3 ? topls[i/3] : ""; })
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "12px");
+            //Legend
+
+            //upper rect
+            svg.append("svg:rect")
+                .attr("x", 32)
+                .attr("y", y(2)-y(.5)-y(.5))
+                .attr("height", y(.5))
+                .attr("fill","#FD8F42")
+                .attr("stroke","#000000")
+                .attr("width", rwidth);
+
+            //lower rect
+            svg.append("svg:rect")
+                .attr("x", 32)
+                .attr("y", y(2)-y(.5))
+                .attr("height", y(.5))
+                .attr("fill","#84ACBA")
+                .attr("stroke","#000000")
+                .attr("width", rwidth);
+
+            svg.append("svg:text")
+                .attr("x", 36)
+                .attr("y", y(2)-y(.5)-y(.5)-4)
+                .text( "Avg.")
+                .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
             
-            text.append("svg:text")
-                .attr("x", function(d,i) { return x(i+1)+2; })
-                .attr("y", function(d) { return y(2)-y(d[1])-y(d[2]) +12})
-                .text( function (d) { return d[1] || "" })
-                .attr("font-family", "sans-serif")
+            svg.append("svg:text")
+                .attr("x", 36)
+                .attr("y", y(2)-y(.5)-y(.5) +12)
+                .text( "Pre" )
+                .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
-            text.append("svg:text")
-                .attr("x", function(d,i) { return x(i+1)+2; })
-                .attr("y", function(d) { return y(2)-y(d[2])+12; })
-                .text( function (d) { return d[2] || "" })
-                .attr("font-family", "sans-serif")
+            svg.append("svg:text")
+                .attr("x", 36)
+                .attr("y", y(2)-y(.5)+12)
+                .text( "Full" )
+                .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
-
-            text.append("svg:text")
-                .attr("x", function(d,i) { return x(i+1)+8; })
-                .attr("y", function(d) { return y(2)-4; })
-                .text( function (d,i) { return bottomls[i] })
-                .attr("font-family", "sans-serif")
-                .attr("font-size", "12px")
-
-            text.append("svg:text")
-                .attr("x", function(d,i) { return x(i+1)+30; })
-                .attr("y", function(d) { return y(2)+18; })
-                .text( function (d,i) { return Math.floor(i/3)==i/3 ? topls[i/3] : ""; })
-                .attr("font-family", "sans-serif")
+             
+            // Add a y-axis label.
+            svg.append("text")
+                .attr("class", "y label")
+                .attr("text-anchor", "middle")
+                .attr("y", 5)
+                .attr("x", 0-(h/2))
+                .attr("dy", ".75em")
+                .attr("transform", "rotate(-90)")
+                .text("Correct Classification Rate")
+                .attr("font-family", "Helvetica")
                 .attr("font-size", "12px");
+
+            //title
+            svg.append("text")
+                .attr("class", "title")
+                .attr("text-anchor", "middle")
+                .attr("x", w/2)
+                .attr("y", 16)
+                .text("(a) Relative Pre/Fullterm Information Content of Feature Sets")
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "13px")
+                .attr("font-weight", "bold");
+
+            /////////////////Importance Bar Plot (not shown at moment)
 
             var imp = d3.select("#imp").append("svg:svg")
 	            .attr("class", "chart")
@@ -137,7 +210,7 @@ vispage = """<!DOCTYPE html>
 	            .attr("height", imph )
 	            .append("svg:g");
 
-	        var percol = 16;
+	        
 	        var impx = function(i) {
 	        	return i > (percol-1) ? w/2 : 0 + 10;
 	        }
@@ -149,17 +222,27 @@ vispage = """<!DOCTYPE html>
 
 	        var impxscale = d3.scale.linear()
 			     .domain([0, d3.max(topImp, function(d){return d[1];})])
-			     .range([0, w/2-30]);
+			     .range([0, w/2-40]);
+
+            var clinimpscale = d3.scale.linear()
+                 .domain([0, d3.max(topClin, function(d){return d[1];})])
+                 .range([0, w/2-40]);
+
+            var impxscalefunc = function(x,i){ return i >= percol ? impxscale(x) : clinimpscale(x); }
+
+
 
 			imp.selectAll("rect")
 				.data(topImp)
 				.enter().append("rect")
 				.attr("x", function(d,i){ return impx(i); })
 				.attr("y", function(d, i) { return impy(i); })
-				.attr("width", function(d) { return impxscale(d[1]); })
+				.attr("width", function(d, i) { return impxscalefunc(d[1],i); })
 				.attr("height", 20)
-				.attr("fill","#55bb55")
-                .attr("stroke","#55bb55")
+				.attr("fill","#00ee00")
+                .attr("stroke","#000000")
+                .style('stroke-opacity', 0.4)
+                .style('fill-opacity', 0.4)
 
             var imptext = imp.selectAll("text")
                 .data(topImp)
@@ -169,37 +252,146 @@ vispage = """<!DOCTYPE html>
                 .attr("y", function(d, i) { return impy(i)+16; })
                 .attr("x", function(d, i) { return impx(i) + 4; })
                 .text( function (d) { return d[0]; })
-                .attr("font-family", "sans-serif")
+                .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
             imptext.append("svg:text")
                 .attr("y", function(d, i) { return impy(i)+16; })
-                .attr("x", function(d,i) { return impx(i)+impxscale(d[1])-30; })
+                .attr("x", function(d,i) { return impx(i)+impxscalefunc(d[1],i)-30; })
                 .text( function (d) { return Math.round(100*d[1])/100; })
-                .attr("font-family", "sans-serif")
+                .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
             imp.append("svg:text")
                 .attr("y", 20)
                 .attr("x", impx(1))
                 .text( "CLIN, M" )
-                .attr("font-family", "sans-serif")
+                .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
             imp.append("svg:text")
                 .attr("y", 20)
                 .attr("x", impx(percol+1))
                 .text( "All" )
-                .attr("font-family", "sans-serif")
+                .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
+            /////////////////// Proximity Scatter Plot
 
+           /* var color = function(d) { return d[2] == "true" ? "#FD8F42" : "#84ACBA"; };
 
+            var colors = ["#0000ff", "#D7191C", "#FDAE61", "#CCCCAC", "#ABD9E9", "#2C7BB6"];
+          
+            color = function(d){
+                if ( ! colors.hasOwnProperty(parseInt(d[3]))){
+                  console.log("bad color "+ (d[3]));
+                  return "#000000";
+                }
+                return colors[d[3]];
+            };*/
 
+            var earliest = d3.min(leafdata, function(d){return d[4];});
+            var latest = d3.max(leafdata, function(d){return d[4];})
+            var colorscale = d3.scale.linear()
+                 .domain([7*Math.floor(earliest/7),33*7,35*7,7*Math.ceil(latest/7) ])
+                 .range(["#D7191C", "#FDAE61", "#CCCCAC", "#ABD9E9"]);
+            color = function(d) {
+                return colorscale(d[4]);
+            }
+
+            var proxx = d3.scale.linear()
+                 .domain([d3.min(leafdata, function(d){return d[0];}), d3.max(leafdata, function(d){return d[0];})])
+                 .range([0, w-50]);
+
+            var proxy = d3.scale.linear()
+                 .domain([d3.min(leafdata, function(d){return d[1];}), d3.max(leafdata, function(d){return d[1];})])
+                 .range([0, proxh-60]);
             
+            var proxsvg = d3.select("#prox")
+                .append("svg")
+                .attr("width", w)
+                .attr("height", proxh);
 
+            proxsvg.selectAll("circle")
+                .data(leafdata)
+                .enter()
+                .append("circle")
+                .attr("cx", function(d){ return proxx(d[0])+25; })
+                .attr("cy", function(d){ return proxy(d[1])+30; })
+                .attr("r", 8)
+                .attr("fill",color)
+                .attr("stroke",color)
+                .style('stroke-opacity', 0.8)
+                .style('fill-opacity', 0.8)
+            //color Legend
 
+            var colorLegend = [];
+            for (var i = Math.floor(earliest/7); i <= Math.ceil(latest/7) ; i++) {
+                colorLegend.push([i])
+            }
 
+            var xstart = 48
+
+            proxsvg.selectAll("rect")
+                .data(colorLegend)
+                .enter()
+                .append("rect")
+                .attr("x", function(d,i){ console.log(i,d); return xstart + i*18; })
+                .attr("y", proxh-17 )
+                .attr("width", 18 )
+                .attr("height", 14)
+                .attr("fill", function(d){return colorscale(7*d[0]);})
+                .attr("stroke",function(d){return colorscale(7*d[0]);})
+
+            proxsvg.selectAll("text")
+                .data(colorLegend)
+                .enter().append("text")
+                .attr("x", function(d,i){ console.log(i, d); return xstart + i*18 + 2; })
+                .attr("y", proxh - 5 )
+                .text(function(d){console.log(d); return ""+d[0];})
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "12px");
+
+            proxsvg.append("text")
+                .attr("class", "colo label")
+                .attr("x", xstart - 44)
+                .attr("y", proxh - 5)
+                .text("Weeks:")
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "12px");
+
+            // Add a y-axis label.
+            proxsvg.append("text")
+                .attr("class", "y label")
+                .attr("text-anchor", "middle")
+                .attr("y", 5)
+                .attr("x", 0-(proxh/2))
+                .attr("dy", ".75em")
+                .attr("transform", "rotate(-90)")
+                .text("Index in 2nd Eigenvector")
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "12px");
+
+            //x axis label
+            proxsvg.append("text")
+                .attr("class", "x label")
+                .attr("text-anchor", "middle")
+                .attr("x", w/2)
+                .attr("y", proxh-5)
+                .text("Index in 1st Eigenvector")
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "12px");
+
+            //title
+            proxsvg.append("text")
+                .attr("class", "title")
+                .attr("text-anchor", "middle")
+                .attr("x", w/2)
+                .attr("y", 16)
+                .text("(b) Family Proximity in Random Forest Learned From All Feature Sets Combined")
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "13px")
+                .attr("font-weight", "bold");
 
             
 
@@ -210,7 +402,7 @@ vispage = """<!DOCTYPE html>
 """
 
 def main():
-    mat = scipy.io.loadmat(sys.argv[1])
+    mat = scipy.io.loadmat(sys.argv[1]+"/results.mat")
 
     results = []
 
@@ -235,13 +427,42 @@ def main():
     imp = []
     clinimp = []
 
+    for x in xrange(0,len(mat["FIcell"][0])):
+        fo = open(sys.argv[1]+"/topFs."+str(x)+".tsv","w")
+        if len(mat["FIcell"][0][x])>0:
+            for i,v in enumerate(mat["FIcell"][0][x][0]):
+                if len(mat["FIcell"][0][x][1][i])>0:
+                    fo.write("%s\t%s\n"%(v[0][0],mat["FIcell"][0][x][1][i][0]))
+        fo.close()
+
     for i,v in enumerate(mat["FIcell"][0][30][0]):
     	imp.append([v[0][0],mat["FIcell"][0][30][1][i][0]])
-        clinimp.append([mat["FIcell"][0][4][0][i][0][0],mat["FIcell"][0][4][1][i][0]])
+
+    for i,v in enumerate(mat["FIcell"][0][4][0]):
+        clinimp.append([v[0][0],mat["FIcell"][0][4][1][i][0]])
 
     #print mat["FIcell"][0]
+    fo = open(sys.argv[1]+"/leaffile.cutoff.0.0.json")
+    leafdata = json.load(fo)
+    fo.close()
+    
+    leafdata = zip(leafdata["r1"],leafdata["r2"],leafdata["ptb"],leafdata["termcat"],leafdata["gestage"])
 
-    print vispage%{"json":json.dumps(results[:24]+results[27:]),"imp":json.dumps(clinimp[:16]+imp[:16]),"clinimp":json.dumps(clinimp[:16])}
+    #no qtl
+    results = results[:27]+results[30:]
+    
+    #no survey nb
+    results = results[:29]+results[30:]
+    
+    merged = results[23]
+    results[23]=results[22]
+    results[22]=merged
+
+    mitochonrial = results[26]
+    results[26]=results[25]
+    results[25]=mitochonrial
+
+    print vispage%{"json":json.dumps(results),"imp":json.dumps(clinimp[:10]+imp[:10]),"clinimp":json.dumps(clinimp[:16]),"leafdata":json.dumps(leafdata)}
 
 
 
