@@ -30,8 +30,11 @@ vispage = """<!DOCTYPE html>
 
             var leafdata = %(leafdata)s;
 
-            var bottomls = ["F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","","M+F","","","NB","","F","M","All"];
-            var topls = ["Admixture","Clinical","Copy Number","Allele Type","Genomic Distance","Minor Allele Sum","Pathway","Merged Clinical","Mitochondrial","Survey",""];
+            // var bottomls = ["F","M","NB","F","M","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","","M+F","","","NB","","F","M","All"];
+            // var topls = ["Admixture","Clinical","Copy Number","Allele Type","Genomic Distance","Minor Allele Sum","Pathway","Merged Clinical","Mitochondrial","Survey",""];
+
+            var bottomls = ["F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","","NB","","F","M","","M+F","","F","M","All"];
+            var topls = ["Admixture","Copy Number","Allele Type","Genomic Distance","Minor Allele Sum","Pathway","Mitochondrial","Clinical","Merged Clinical","Survey",""];
 
             var w = 1100,
                 h = 180,
@@ -46,23 +49,24 @@ vispage = """<!DOCTYPE html>
                 .attr("height", h )
                 .append("svg:g")
 
-            var rwidth = (w-110)/(matrix.length+3)
+            var rwidth = (w-220)/(matrix.length+3)
 
-        
+            //hacky to get spacing right
+            //i>4 is for cutting out clin newborn, 29 for cutting out survey newborn
             var x = function(i) {
-            	return (i-1)*rwidth + Math.floor((i-1)/3)*10+Math.floor((i-1)/29)*10+80;
+                return (i-1)*rwidth + Math.floor((i-1+(i>21))/3)*20+(i>28)*20+80;
             }
 
             var y = d3.scale.linear().range([0, h-30])
             y.domain([0, 2]);
 
             svg.append("svg:line")
-		        .attr("x1", 0)
-		        .attr("y1", y(1))
-		        .attr("x2", w)
-		        .attr("y2", y(1))
-		        .style("stroke", "rgb(220,220,220)")
-		        .style("stroke-width", 8); 
+                .attr("x1", 0)
+                .attr("y1", y(1))
+                .attr("x2", w)
+                .attr("y2", y(1))
+                .style("stroke", "rgb(220,220,220)")
+                .style("stroke-width", 8); 
 
 
 
@@ -131,10 +135,10 @@ vispage = """<!DOCTYPE html>
 
             //feature set label ... hack to get Survey to show up centered under two columns
             text.append("svg:text")
-                .attr("x", function(d,i) { return x(i+1)+(3-Math.floor(i/24))*rwidth/2; })
+                .attr("x", function(d,i) { return x(i+1)+(3-(i==3||i>24))*rwidth/2; })
                 .attr("y", function(d) { return y(2)+18; })
                 .attr("text-anchor", "middle")
-                .text( function (d,i) { return Math.floor(i/3)==i/3 ? topls[i/3] : ""; })
+                .text( function (d,i) { i = i + (i>4); return Math.floor(i/3)==i/3 ? topls[i/3] : ""; })
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px");
             //Legend
@@ -205,24 +209,24 @@ vispage = """<!DOCTYPE html>
             /////////////////Importance Bar Plot (not shown at moment)
 
             var imp = d3.select("#imp").append("svg:svg")
-	            .attr("class", "chart")
-	            .attr("width", w)
-	            .attr("height", imph )
-	            .append("svg:g");
+                .attr("class", "chart")
+                .attr("width", w)
+                .attr("height", imph )
+                .append("svg:g");
 
-	        
-	        var impx = function(i) {
-	        	return i > (percol-1) ? w/2 : 0 + 10;
-	        }
+            
+            var impx = function(i) {
+                return i > (percol-1) ? w/2 : 0 + 10;
+            }
 
-	        var impy = function(i) {
-	        	less = i > (percol -1) ? percol : 0;
-	        	return (i-less)*20 +30;
-	        }
+            var impy = function(i) {
+                less = i > (percol -1) ? percol : 0;
+                return (i-less)*20 +30;
+            }
 
-	        var impxscale = d3.scale.linear()
-			     .domain([0, d3.max(topImp, function(d){return d[1];})])
-			     .range([0, w/2-40]);
+            var impxscale = d3.scale.linear()
+                 .domain([0, d3.max(topImp, function(d){return d[1];})])
+                 .range([0, w/2-40]);
 
             var clinimpscale = d3.scale.linear()
                  .domain([0, d3.max(topClin, function(d){return d[1];})])
@@ -232,14 +236,14 @@ vispage = """<!DOCTYPE html>
 
 
 
-			imp.selectAll("rect")
-				.data(topImp)
-				.enter().append("rect")
-				.attr("x", function(d,i){ return impx(i); })
-				.attr("y", function(d, i) { return impy(i); })
-				.attr("width", function(d, i) { return impxscalefunc(d[1],i); })
-				.attr("height", 20)
-				.attr("fill","#00ee00")
+            imp.selectAll("rect")
+                .data(topImp)
+                .enter().append("rect")
+                .attr("x", function(d,i){ return impx(i); })
+                .attr("y", function(d, i) { return impy(i); })
+                .attr("width", function(d, i) { return impxscalefunc(d[1],i); })
+                .attr("height", 20)
+                .attr("fill","#00ee00")
                 .attr("stroke","#000000")
                 .style('stroke-opacity', 0.4)
                 .style('fill-opacity', 0.4)
@@ -318,7 +322,7 @@ vispage = """<!DOCTYPE html>
                 .append("circle")
                 .attr("cx", function(d){ return proxx(d[0])+25; })
                 .attr("cy", function(d){ return proxy(d[1])+30; })
-                .attr("r", 8)
+                .attr("r", 6)
                 .attr("fill",color)
                 .attr("stroke",color)
                 .style('stroke-opacity', 0.8)
@@ -392,6 +396,7 @@ vispage = """<!DOCTYPE html>
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "13px")
                 .attr("font-weight", "bold");
+            
 
             
 
@@ -426,12 +431,15 @@ def main():
 
     imp = []
     clinimp = []
-
+    allimp = []
+    
     for x in xrange(0,len(mat["FIcell"][0])):
+        allimp.append([])
         fo = open(sys.argv[1]+"/topFs."+str(x)+".tsv","w")
         if len(mat["FIcell"][0][x])>0:
             for i,v in enumerate(mat["FIcell"][0][x][0]):
                 if len(mat["FIcell"][0][x][1][i])>0:
+                    allimp[-1].append([v[0][0],mat["FIcell"][0][x][1][i][0]])
                     fo.write("%s\t%s\n"%(v[0][0],mat["FIcell"][0][x][1][i][0]))
         fo.close()
 
@@ -461,6 +469,17 @@ def main():
     mitochonrial = results[26]
     results[26]=results[25]
     results[25]=mitochonrial
+
+    #no clin nb
+    results = results[:5]+results[6:]
+
+    results = results[:3]+results[5:20]+results[23:26]+results[3:5]+results[20:23]+results[-3:]
+
+    fo = open(sys.argv[1]+"/webdata.json","w")
+    json.dump({"predpower":results, "leafdata":leafdata},fo)
+    fo.close()
+
+
 
     print vispage%{"json":json.dumps(results),"imp":json.dumps(clinimp[:10]+imp[:10]),"clinimp":json.dumps(clinimp[:16]),"leafdata":json.dumps(leafdata)}
 
