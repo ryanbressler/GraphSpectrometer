@@ -452,11 +452,15 @@ def main():
 
     leafdata = []
     #print mat["FIcell"][0]
-    # fo = open(sys.argv[1]+"/leaffile.cutoff.0.0.json")
-    # leafdata = json.load(fo)
-    # fo.close()
-    
-    # leafdata = zip(leafdata["r1"],leafdata["r2"],leafdata["ptb"],leafdata["termcat"],leafdata["gestage"],leafdata["nByi"])
+    try:
+        fo = open(sys.argv[1]+"/leaffile.cutoff.0.0.json")
+        leafdata = json.load(fo)
+        fo.close()
+
+        leafdata = zip(leafdata["r1"],leafdata["r2"],leafdata["ptb"],leafdata["termcat"],leafdata["gestage"],leafdata["nByi"])
+    except Exception, e:
+        print "Could not load leafdata."
+   
 
     #no qtl
     #results = results[:27]+results[30:]
