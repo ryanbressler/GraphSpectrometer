@@ -443,7 +443,7 @@ def main():
                     fo.write("%s\t%s\n"%(v[0][0],mat["FIcell"][0][x][1][i][0]))
         fo.close()
 
-    for i,v in enumerate(mat["FIcell"][0][33][0]):
+    for i,v in enumerate(mat["FIcell"][0][30][0]):
     	imp.append([v[0][0],mat["FIcell"][0][30][1][i][0]])
 
     for i,v in enumerate(mat["FIcell"][0][4][0]):
