@@ -135,12 +135,13 @@ vispage = """<!DOCTYPE html>
 
             //feature set label ... hack to get Survey to show up centered under two columns
             text.append("svg:text")
-                .attr("x", function(d,i) { return x(i+1)+(3-(i==3||i>24))*rwidth/2; })
+                .attr("x", function(d,i) { return x(i+1)+(3-(i==21 || i>24))*rwidth/2; })
                 .attr("y", function(d) { return y(2)+18; })
                 .attr("text-anchor", "middle")
-                .text( function (d,i) { i = i + (i>4); return Math.floor(i/3)==i/3 ? topls[i/3] : ""; })
+                .text( function (d,i) { i = i + (i>22); return Math.floor(i/3)==i/3 ? topls[i/3] : ""; })
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px");
+                
             //Legend
 
             //upper rect
