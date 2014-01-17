@@ -444,7 +444,7 @@ def main():
         fo.close()
 
     for i,v in enumerate(mat["FIcell"][0][33][0]):
-    	imp.append([v[0][0],mat["FIcell"][0][33][1][i][0]])
+    	imp.append([v[0][0],mat["FIcell"][0][30][1][i][0]])
 
     for i,v in enumerate(mat["FIcell"][0][4][0]):
         clinimp.append([v[0][0],mat["FIcell"][0][4][1][i][0]])
