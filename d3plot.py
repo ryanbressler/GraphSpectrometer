@@ -458,7 +458,7 @@ def main():
     # leafdata = zip(leafdata["r1"],leafdata["r2"],leafdata["ptb"],leafdata["termcat"],leafdata["gestage"],leafdata["nByi"])
 
     #no qtl
-    results = results[:27]+results[30:]
+    #results = results[:27]+results[30:]
     
     #no survey nb
     results = results[:29]+results[30:]
