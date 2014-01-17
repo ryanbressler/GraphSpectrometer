@@ -17,7 +17,7 @@ vispage = """<!DOCTYPE html>
     <body>
 
         <div id="viz"></div>
-        <div id="imp" style="display:none"></div>
+        <div id="imp" ></div>
         <div id="prox"></div>
 
         <script type="text/javascript">
@@ -443,18 +443,19 @@ def main():
                     fo.write("%s\t%s\n"%(v[0][0],mat["FIcell"][0][x][1][i][0]))
         fo.close()
 
-    for i,v in enumerate(mat["FIcell"][0][30][0]):
-    	imp.append([v[0][0],mat["FIcell"][0][30][1][i][0]])
+    for i,v in enumerate(mat["FIcell"][0][33][0]):
+    	imp.append([v[0][0],mat["FIcell"][0][33][1][i][0]])
 
     for i,v in enumerate(mat["FIcell"][0][4][0]):
         clinimp.append([v[0][0],mat["FIcell"][0][4][1][i][0]])
 
+    leafdata = []
     #print mat["FIcell"][0]
-    fo = open(sys.argv[1]+"/leaffile.cutoff.0.0.json")
-    leafdata = json.load(fo)
-    fo.close()
+    # fo = open(sys.argv[1]+"/leaffile.cutoff.0.0.json")
+    # leafdata = json.load(fo)
+    # fo.close()
     
-    leafdata = zip(leafdata["r1"],leafdata["r2"],leafdata["ptb"],leafdata["termcat"],leafdata["gestage"])
+    # leafdata = zip(leafdata["r1"],leafdata["r2"],leafdata["ptb"],leafdata["termcat"],leafdata["gestage"],leafdata["nByi"])
 
     #no qtl
     results = results[:27]+results[30:]
