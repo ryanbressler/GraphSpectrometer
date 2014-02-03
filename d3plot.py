@@ -459,7 +459,7 @@ def main():
 
         leafdata = zip(leafdata["r1"],leafdata["r2"],leafdata["ptb"],leafdata["termcat"],leafdata["gestage"],leafdata["nByi"])
     except Exception, e:
-        print "Could not load leafdata."
+        sys.stderr.write('Could not load leafdata.\n')
    
 
     #no qtl
