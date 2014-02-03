@@ -6,7 +6,7 @@ import branchMatrix
 import numpy as np
 
 
-def annotate(fn,fm,gestagefeature,cap1,cap2):
+def annotate(fn,fm,gestagefeature):
     print "Annotating %s with header from %s" % (os.path.abspath(fn), os.path.abspath(fm))
 
     fo = open(fn)
@@ -58,8 +58,6 @@ def annotate(fn,fm,gestagefeature,cap1,cap2):
 
     data["iByn"] = dict((key, value) for (value, key) in enumerate(data["nByi"]))
     data["colorfeaturename"]=gestage
-    data["cap1"]=cap1
-    data["cap2"]=cap2
 
     print "Overwriting %s with version annotated for predpower vis" % (fn)
     fo = open(fn, "w")
@@ -72,12 +70,15 @@ def main():
 
     gestage = "N:CLIN:Gestational_Age_at_Delivery:NB::::"
     if len(sys.argv) == 3:
-        annotate(fn,fm,gestagefeature,"Preterm  Preterm (PTB) vs. Fullterm (FTB)","Gestational Age in Weeks")
+        annotate(fn,fm,gestagefeature)
     else:
         anotatefo = open(sys.argv[3])
         for line in anotatefo:
             vs = line.rstrip().split("\t")
-            annotate(vs[3]+"/"+fn,fm,vs[1],vs[4],vs[2])
+            try:
+                annotate(vs[3]+"/"+fn,fm,vs[1])
+            except:
+                sys.stderr.write('Could not annotate leafdata.\n')
     
 
     
