@@ -9,10 +9,12 @@ import numpy as np
 def annotate(fn,fm,gestagefeature):
     print "Annotating %s with header from %s" % (os.path.abspath(fn), os.path.abspath(fm))
 
+    
     try:
         fo = open(fn)
     except:
         sys.stderr.write('Could not load leafdata.\n')
+        return
     
     data = json.load(fo)
     fo.close()
