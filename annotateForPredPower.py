@@ -34,7 +34,10 @@ def annotate(fn,fm,gestagefeature,cap1,cap2):
     #print "%s data points %s names%s colheaders %s rowheaders max %s" % (len(data["f1"]), len(data["nByi"]), len(colheaders), len(rowheaders), max((int(n) for n in data["nByi"])))
     #print json.dumps(colheaders)
     #print json.dumps(data["nByi"])
-    nByi = [colheaders[int(n)] for n in data["nByi"]]
+    try:
+        nByi = [colheaders[int(n)] for n in data["nByi"]]
+    except:
+        nByi = data["nByi"]
     data["nByi"] = nByi
 
     
