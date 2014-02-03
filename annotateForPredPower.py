@@ -27,7 +27,7 @@ def annotate(fn,fm,gestagefeature,cap1,cap2):
             ptb = vs[1:]
         if vs[0].startswith("N:CLIN:TermCategory:NB::::"):
             termcat = vs[1:]
-        if vs[0].startswith(gestage):
+        if vs[0].startswith(gestagefeature):
             gestage = vs[1:]
     fo.close()
 
@@ -69,7 +69,7 @@ def main():
 
     gestage = "N:CLIN:Gestational_Age_at_Delivery:NB::::"
     if len(sys.argv) == 3:
-        annotate(fn,fm,gestagefeature,"Preterm  Preterm (PTB) vs. Fullterm (FTB)","Gestational Age (Weeks)")
+        annotate(fn,fm,gestagefeature,"Preterm  Preterm (PTB) vs. Fullterm (FTB)","Gestational Age in Weeks")
     else:
         anotatefo = open(sys.argv[3])
         for line in anotatefo:
