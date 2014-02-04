@@ -491,7 +491,7 @@ def doPlot(rundir,colorbyfeaturename,cap1,cap2):
     results = results[:3]+results[5:20]+results[23:26]+results[3:5]+results[20:23]+results[-3:]
 
     fo = open(rundir+"/webdata.json","w")
-    json.dump({"predpower":results, "leafdata":leafdata,,"colorbyfeaturename":colorbyfeaturename,"cap1":cap1,"cap2":cap2,"imp":clinimp[:10]+imp[:10],"clinimp":clinimp[:16]},fo)
+    json.dump({"predpower":results, "leafdata":leafdata,"colorbyfeaturename":colorbyfeaturename,"cap1":cap1,"cap2":cap2,"imp":clinimp[:10]+imp[:10],"clinimp":clinimp[:16]},fo)
     fo.close()
 
     fo = open(rundir+"/"+os.path.basename(rundir)+".html","w")
