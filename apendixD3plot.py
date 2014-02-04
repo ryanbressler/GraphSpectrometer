@@ -1,7 +1,7 @@
 import scipy.io
 import json
 import sys
-
+import os
 vispage = """<!DOCTYPE html>
 <html>
     <head>
