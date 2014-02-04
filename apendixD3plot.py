@@ -36,9 +36,6 @@ vispage = """<!DOCTYPE html>
 
             var cap2 = "%(cap2)s";
 
-            //"colorbyfeaturename":colorbyfeaturename,"cap1":cap1,"cap2":cap2
-
-
             // var bottomls = ["F","M","NB","F","M","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","","M+F","","","NB","","F","M","All"];
             // var topls = ["Admixture","Clinical","Copy Number","Allele Type","Genomic Distance","Minor Allele Sum","Pathway","Merged Clinical","Mitochondrial","Survey",""];
 
@@ -211,7 +208,7 @@ vispage = """<!DOCTYPE html>
                 .attr("text-anchor", "middle")
                 .attr("x", w/2)
                 .attr("y", 16)
-                .text("(a) Relative Pre/Fullterm Information Content of Feature Sets")
+                .text("(a) "+cap1)
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "13px")
                 .attr("font-weight", "bold");
@@ -306,12 +303,25 @@ vispage = """<!DOCTYPE html>
 
             var earliest = d3.min(leafdata, function(d){return d[4];});
             var latest = d3.max(leafdata, function(d){return d[4];})
-            var colorscale = d3.scale.linear()
+            color = function(d) {
+                    console.log(d)
+                    if (d[4]) {
+                        return "#FD8F42";
+                    } else {
+                        return "#84ACBA";
+                    }
+                }
+            if (colorbyfeaturename == "N:CLIN:Gestational_Age_at_Delivery:NB::::") {
+                colorscale = d3.scale.linear()
                  .domain([7*Math.floor(earliest/7),33*7,35*7,7*Math.ceil(latest/7) ])
                  .range(["#D7191C", "#FDAE61", "#CCCCAC", "#ABD9E9"]);
-            color = function(d) {
-                return colorscale(d[4]);
+
+                color = function(d) {
+                    return colorscale(d[4]);
+                }
             }
+
+            
 
             var proxx = d3.scale.linear()
                  .domain([d3.min(leafdata, function(d){return d[0];}), d3.max(leafdata, function(d){return d[0];})])
@@ -340,9 +350,12 @@ vispage = """<!DOCTYPE html>
             //color Legend
 
             var colorLegend = [];
+            
             for (var i = Math.floor(earliest/7); i <= Math.ceil(latest/7) ; i++) {
                 colorLegend.push([i])
             }
+           
+            
 
             var xstart = 48
 
@@ -369,8 +382,8 @@ vispage = """<!DOCTYPE html>
             proxsvg.append("text")
                 .attr("class", "colo label")
                 .attr("x", xstart - 44)
-                .attr("y", proxh - 5)
-                .text("Weeks:")
+                .attr("y", proxh - 22)
+                .text(cap2+":")
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px");
 
@@ -407,13 +420,6 @@ vispage = """<!DOCTYPE html>
                 .attr("font-size", "13px")
                 .attr("font-weight", "bold");
             
-
-            
-
-
-        </script>
-    </body>
-</html>
 """
 
 def doPlot(rundir,colorbyfeaturename,cap1,cap2):
