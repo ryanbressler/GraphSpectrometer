@@ -30,6 +30,15 @@ vispage = """<!DOCTYPE html>
 
             var leafdata = %(leafdata)s;
 
+            var colorbyfeaturename="%(colorbyfeaturename)s";
+
+            var cap1 ="%(cap1)s";
+
+            var cap2 = "%(cap2)s";
+
+            //"colorbyfeaturename":colorbyfeaturename,"cap1":cap1,"cap2":cap2
+
+
             // var bottomls = ["F","M","NB","F","M","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","","M+F","","","NB","","F","M","All"];
             // var topls = ["Admixture","Clinical","Copy Number","Allele Type","Genomic Distance","Minor Allele Sum","Pathway","Merged Clinical","Mitochondrial","Survey",""];
 
@@ -482,7 +491,7 @@ def doPlot(rundir,colorbyfeaturename,cap1,cap2):
     results = results[:3]+results[5:20]+results[23:26]+results[3:5]+results[20:23]+results[-3:]
 
     fo = open(rundir+"/webdata.json","w")
-    json.dump({"predpower":results, "leafdata":leafdata},fo)
+    json.dump({"predpower":results, "leafdata":leafdata,,"colorbyfeaturename":colorbyfeaturename,"cap1":cap1,"cap2":cap2,"imp":clinimp[:10]+imp[:10],"clinimp":clinimp[:16]},fo)
     fo.close()
 
     fo = open(rundir+"/"+os.path.basename(rundir)+".html","w")
