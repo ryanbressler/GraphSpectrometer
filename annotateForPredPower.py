@@ -57,10 +57,6 @@ def annotate(fn,fm,gestagefeature):
     data["termcat"] = [int(float(n)) for n in list(np.array(termcat)[fmis])]
 
     data["gestage"] = list(np.array(gestage)[fmis])
-    try: 
-        data["gestage"] = [bool(n) for n in list(np.array(gestage)[fmis])]
-    except:
-        print "Could not parse as bool"
 
     try: 
         data["gestage"] = [float(n) for n in list(np.array(gestage)[fmis])]
