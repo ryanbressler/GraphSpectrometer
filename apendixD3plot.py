@@ -36,9 +36,6 @@ vispage = """<!DOCTYPE html>
 
             var cap2 = "%(cap2)s";
 
-            //"colorbyfeaturename":colorbyfeaturename,"cap1":cap1,"cap2":cap2
-
-
             // var bottomls = ["F","M","NB","F","M","F","M","NB","F","M","NB","F","M","NB","F","M","NB","F","M","NB","","M+F","","","NB","","F","M","All"];
             // var topls = ["Admixture","Clinical","Copy Number","Allele Type","Genomic Distance","Minor Allele Sum","Pathway","Merged Clinical","Mitochondrial","Survey",""];
 
@@ -180,16 +177,16 @@ vispage = """<!DOCTYPE html>
 
             
             svg.append("svg:text")
-                .attr("x", 36)
+                .attr("x", 42)
                 .attr("y", y(2)-y(.5)-y(.5) +12)
-                .text( "Pre" )
+                .text( "T" )
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
             svg.append("svg:text")
-                .attr("x", 36)
+                .attr("x", 42)
                 .attr("y", y(2)-y(.5)+12)
-                .text( "Full" )
+                .text( "F" )
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
              
@@ -211,7 +208,7 @@ vispage = """<!DOCTYPE html>
                 .attr("text-anchor", "middle")
                 .attr("x", w/2)
                 .attr("y", 16)
-                .text("(a) Relative Pre/Fullterm Information Content of Feature Sets")
+                .text("(a) "+cap1)
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "13px")
                 .attr("font-weight", "bold");
@@ -264,15 +261,15 @@ vispage = """<!DOCTYPE html>
 
             imptext.append("svg:text")
                 .attr("y", function(d, i) { return impy(i)+16; })
-                .attr("x", function(d, i) { return impx(i) + 4; })
+                .attr("x", function(d, i) { return impx(i) + 52; })
                 .text( function (d) { return d[0]; })
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
             imptext.append("svg:text")
                 .attr("y", function(d, i) { return impy(i)+16; })
-                .attr("x", function(d,i) { return impx(i)+impxscalefunc(d[1],i)-30; })
-                .text( function (d) { return Math.round(100*d[1])/100; })
+                .attr("x", function(d,i) { return impx(i)+ 4; }) //impxscalefunc(d[1],i)-30; })
+                .text( function (d) { return Math.round(10000*d[1])/10000; })
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
@@ -306,11 +303,33 @@ vispage = """<!DOCTYPE html>
 
             var earliest = d3.min(leafdata, function(d){return d[4];});
             var latest = d3.max(leafdata, function(d){return d[4];})
-            var colorscale = d3.scale.linear()
+            var colorLegend = [];
+            var colorscale = "";
+
+            if (colorbyfeaturename == "N:CLIN:Gestational_Age_at_Delivery:NB::::") {
+                colorscale = d3.scale.linear()
                  .domain([7*Math.floor(earliest/7),33*7,35*7,7*Math.ceil(latest/7) ])
                  .range(["#D7191C", "#FDAE61", "#CCCCAC", "#ABD9E9"]);
-            color = function(d) {
-                return colorscale(d[4]);
+                color = function(d) {
+                    return colorscale(d[4]);
+                }
+                for (var i = Math.floor(earliest/7); i <= Math.ceil(latest/7) ; i++) {
+                    colorLegend.push([i])
+                }
+
+            } else {
+                colorscale = function(d) {
+                    if (d == "true") {
+                        return "#FD8F42";   
+                    } else {
+                        return "#84ACBA";
+                    }
+                    
+                }
+               color = function(d) {
+                    return colorscale(d[4]);   
+                }
+                colorLegend = ["true","false"] 
             }
 
             var proxx = d3.scale.linear()
@@ -339,40 +358,61 @@ vispage = """<!DOCTYPE html>
                 .style('fill-opacity', 0.8)
             //color Legend
 
-            var colorLegend = [];
-            for (var i = Math.floor(earliest/7); i <= Math.ceil(latest/7) ; i++) {
-                colorLegend.push([i])
+            
+
+            var xstart = 4;
+            if (colorbyfeaturename == "N:CLIN:Gestational_Age_at_Delivery:NB::::") {
+                proxsvg.selectAll("rect")
+                    .data(colorLegend)
+                    .enter()
+                    .append("rect")
+                    .attr("x", function(d,i){ console.log(i,d); return xstart + i*18; })
+                    .attr("y", proxh-17 )
+                    .attr("width", 18 )
+                    .attr("height", 14)
+                    .attr("fill", function(d){return colorscale(7*d[0]);})
+                    .attr("stroke",function(d){return colorscale(7*d[0]);})
+
+                proxsvg.selectAll("text")
+                    .data(colorLegend)
+                    .enter().append("text")
+                    .attr("x", function(d,i){ console.log(i, d); return xstart + i*18 + 2; })
+                    .attr("y", proxh - 5 )
+                    .text(function(d){console.log(d); return ""+d[0];})
+                    .attr("font-family", "Helvetica")
+                    .attr("font-size", "12px");
+
+            } else {
+                proxsvg.selectAll("rect")
+                    .data(colorLegend)
+                    .enter()
+                    .append("rect")
+                    .attr("x", function(d,i){ console.log(i,d); return xstart + i*36; })
+                    .attr("y", proxh-17 )
+                    .attr("width", 36 )
+                    .attr("height", 14)
+                    .attr("fill", function(d){return colorscale(d);})
+                    .attr("stroke",function(d){return colorscale(d);})
+
+                proxsvg.selectAll("text")
+                    .data(colorLegend)
+                    .enter().append("text")
+                    .attr("x", function(d,i){ console.log(i, d); return xstart + i*36 + 2; })
+                    .attr("y", proxh - 5 )
+                    .text(function(d){console.log(d); return ""+d;})
+                    .attr("font-family", "Helvetica")
+                    .attr("font-size", "12px");
+
+               
             }
-
-            var xstart = 48
-
-            proxsvg.selectAll("rect")
-                .data(colorLegend)
-                .enter()
-                .append("rect")
-                .attr("x", function(d,i){ console.log(i,d); return xstart + i*18; })
-                .attr("y", proxh-17 )
-                .attr("width", 18 )
-                .attr("height", 14)
-                .attr("fill", function(d){return colorscale(7*d[0]);})
-                .attr("stroke",function(d){return colorscale(7*d[0]);})
-
-            proxsvg.selectAll("text")
-                .data(colorLegend)
-                .enter().append("text")
-                .attr("x", function(d,i){ console.log(i, d); return xstart + i*18 + 2; })
-                .attr("y", proxh - 5 )
-                .text(function(d){console.log(d); return ""+d[0];})
-                .attr("font-family", "Helvetica")
-                .attr("font-size", "12px");
 
             proxsvg.append("text")
                 .attr("class", "colo label")
-                .attr("x", xstart - 44)
-                .attr("y", proxh - 5)
-                .text("Weeks:")
+                .attr("x", xstart)
+                .attr("y", proxh - 22)
+                .text(cap2+":")
                 .attr("font-family", "Helvetica")
-                .attr("font-size", "12px");
+                .attr("font-size", "12px"); 
 
             // Add a y-axis label.
             proxsvg.append("text")
