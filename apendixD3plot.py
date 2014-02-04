@@ -494,7 +494,7 @@ def main():
     anotatefo = open(sys.argv[1])
     for line in anotatefo:
         vs = line.rstrip().split("\t")    
-        annotate(vs[3],vs[1],v[4],v[2])
+        doPlot(vs[3],vs[1],v[4],v[2])
     
 
 
