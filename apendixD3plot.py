@@ -44,7 +44,7 @@ vispage = """<!DOCTYPE html>
 
             var w = 1100,
                 h = 180,
-                imph = 240,
+                imph = 250,
                 percol = 10,
                 proxh = 300
 
@@ -208,7 +208,7 @@ vispage = """<!DOCTYPE html>
                 .attr("text-anchor", "middle")
                 .attr("x", w/2)
                 .attr("y", 16)
-                .text("(a) "+cap1)
+                .text(cap1)
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "13px")
                 .attr("font-weight", "bold");
@@ -228,7 +228,7 @@ vispage = """<!DOCTYPE html>
 
             var impy = function(i) {
                 less = i > (percol -1) ? percol : 0;
-                return (i-less)*20 +30;
+                return (i-less)*20 +40;
             }
 
             var impxscale = d3.scale.linear()
@@ -261,7 +261,7 @@ vispage = """<!DOCTYPE html>
 
             imptext.append("svg:text")
                 .attr("y", function(d, i) { return impy(i)+16; })
-                .attr("x", function(d, i) { return impx(i) + 52; })
+                .attr("x", function(d, i) { return impx(i) + 64; })
                 .text( function (d) { return d[0]; })
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
@@ -269,23 +269,34 @@ vispage = """<!DOCTYPE html>
             imptext.append("svg:text")
                 .attr("y", function(d, i) { return impy(i)+16; })
                 .attr("x", function(d,i) { return impx(i)+ 4; }) //impxscalefunc(d[1],i)-30; })
-                .text( function (d) { return Math.round(10000*d[1])/10000; })
+                .text( function (d) { return Math.round(1000000*d[1])/1000000; })
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
             imp.append("svg:text")
-                .attr("y", 20)
+                .attr("y", 32)
                 .attr("x", impx(1))
                 .text( "CLIN, M" )
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
 
             imp.append("svg:text")
-                .attr("y", 20)
+                .attr("y", 32)
                 .attr("x", impx(percol+1))
                 .text( "All" )
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "12px")
+
+            //title
+            imp.append("text")
+                .attr("class", "title")
+                .attr("text-anchor", "middle")
+                .attr("x", w/2)
+                .attr("y", 16)
+                .text("Feature Importance")
+                .attr("font-family", "Helvetica")
+                .attr("font-size", "13px")
+                .attr("font-weight", "bold");
 
             /////////////////// Proximity Scatter Plot
 
@@ -356,85 +367,107 @@ vispage = """<!DOCTYPE html>
                 .attr("stroke",color)
                 .style('stroke-opacity', 0.8)
                 .style('fill-opacity', 0.8)
-            //color Legend
-
             
 
-            var xstart = 4;
-            if (colorbyfeaturename == "N:CLIN:Gestational_Age_at_Delivery:NB::::") {
-                proxsvg.selectAll("rect")
-                    .data(colorLegend)
-                    .enter()
-                    .append("rect")
-                    .attr("x", function(d,i){ console.log(i,d); return xstart + i*18; })
-                    .attr("y", proxh-17 )
-                    .attr("width", 18 )
-                    .attr("height", 14)
-                    .attr("fill", function(d){return colorscale(7*d[0]);})
-                    .attr("stroke",function(d){return colorscale(7*d[0]);})
-
-                proxsvg.selectAll("text")
-                    .data(colorLegend)
-                    .enter().append("text")
-                    .attr("x", function(d,i){ console.log(i, d); return xstart + i*18 + 2; })
-                    .attr("y", proxh - 5 )
-                    .text(function(d){console.log(d); return ""+d[0];})
+            if ( leafdata.length == 0 ) {
+                //title
+                proxsvg.append("text")
+                    .attr("class", "title")
+                    .attr("text-anchor", "middle")
+                    .attr("x", w/2)
+                    .attr("y", proxh/2)
+                    .text("No solution due to poor forest performance.")
                     .attr("font-family", "Helvetica")
-                    .attr("font-size", "12px");
+                    .attr("font-size", "13px")
+                    .attr("font-weight", "bold");
+
 
             } else {
-                proxsvg.selectAll("rect")
-                    .data(colorLegend)
-                    .enter()
-                    .append("rect")
-                    .attr("x", function(d,i){ console.log(i,d); return xstart + i*36; })
-                    .attr("y", proxh-17 )
-                    .attr("width", 36 )
-                    .attr("height", 14)
-                    .attr("fill", function(d){return colorscale(d);})
-                    .attr("stroke",function(d){return colorscale(d);})
 
-                proxsvg.selectAll("text")
-                    .data(colorLegend)
-                    .enter().append("text")
-                    .attr("x", function(d,i){ console.log(i, d); return xstart + i*36 + 2; })
-                    .attr("y", proxh - 5 )
-                    .text(function(d){console.log(d); return ""+d;})
+
+
+                //color Legend
+
+                
+
+                var xstart = 4;
+                if (colorbyfeaturename == "N:CLIN:Gestational_Age_at_Delivery:NB::::") {
+                    proxsvg.selectAll("rect")
+                        .data(colorLegend)
+                        .enter()
+                        .append("rect")
+                        .attr("x", function(d,i){ console.log(i,d); return xstart + i*18; })
+                        .attr("y", proxh-17 )
+                        .attr("width", 18 )
+                        .attr("height", 14)
+                        .attr("fill", function(d){return colorscale(7*d[0]);})
+                        .attr("stroke",function(d){return colorscale(7*d[0]);})
+
+                    proxsvg.selectAll("text")
+                        .data(colorLegend)
+                        .enter().append("text")
+                        .attr("x", function(d,i){ console.log(i, d); return xstart + i*18 + 2; })
+                        .attr("y", proxh - 5 )
+                        .text(function(d){console.log(d); return ""+d[0];})
+                        .attr("font-family", "Helvetica")
+                        .attr("font-size", "12px");
+
+                } else {
+                    proxsvg.selectAll("rect")
+                        .data(colorLegend)
+                        .enter()
+                        .append("rect")
+                        .attr("x", function(d,i){ console.log(i,d); return xstart + i*36; })
+                        .attr("y", proxh-17 )
+                        .attr("width", 36 )
+                        .attr("height", 14)
+                        .attr("fill", function(d){return colorscale(d);})
+                        .attr("stroke",function(d){return colorscale(d);})
+
+                    proxsvg.selectAll("text")
+                        .data(colorLegend)
+                        .enter().append("text")
+                        .attr("x", function(d,i){ console.log(i, d); return xstart + i*36 + 2; })
+                        .attr("y", proxh - 5 )
+                        .text(function(d){console.log(d); return ""+d;})
+                        .attr("font-family", "Helvetica")
+                        .attr("font-size", "12px");
+
+                   
+                }
+
+                proxsvg.append("text")
+                    .attr("class", "colo label")
+                    .attr("x", xstart)
+                    .attr("y", proxh - 22)
+                    .text(cap2+":")
+                    .attr("font-family", "Helvetica")
+                    .attr("font-size", "12px"); 
+
+                // Add a y-axis label.
+                proxsvg.append("text")
+                    .attr("class", "y label")
+                    .attr("text-anchor", "middle")
+                    .attr("y", 5)
+                    .attr("x", 0-(proxh/2))
+                    .attr("dy", ".75em")
+                    .attr("transform", "rotate(-90)")
+                    .text("Index in 2nd Eigenvector")
                     .attr("font-family", "Helvetica")
                     .attr("font-size", "12px");
 
-               
+                //x axis label
+                proxsvg.append("text")
+                    .attr("class", "x label")
+                    .attr("text-anchor", "middle")
+                    .attr("x", w/2)
+                    .attr("y", proxh-5)
+                    .text("Index in 1st Eigenvector")
+                    .attr("font-family", "Helvetica")
+                    .attr("font-size", "12px");
+
+                
             }
-
-            proxsvg.append("text")
-                .attr("class", "colo label")
-                .attr("x", xstart)
-                .attr("y", proxh - 22)
-                .text(cap2+":")
-                .attr("font-family", "Helvetica")
-                .attr("font-size", "12px"); 
-
-            // Add a y-axis label.
-            proxsvg.append("text")
-                .attr("class", "y label")
-                .attr("text-anchor", "middle")
-                .attr("y", 5)
-                .attr("x", 0-(proxh/2))
-                .attr("dy", ".75em")
-                .attr("transform", "rotate(-90)")
-                .text("Index in 2nd Eigenvector")
-                .attr("font-family", "Helvetica")
-                .attr("font-size", "12px");
-
-            //x axis label
-            proxsvg.append("text")
-                .attr("class", "x label")
-                .attr("text-anchor", "middle")
-                .attr("x", w/2)
-                .attr("y", proxh-5)
-                .text("Index in 1st Eigenvector")
-                .attr("font-family", "Helvetica")
-                .attr("font-size", "12px");
 
             //title
             proxsvg.append("text")
@@ -442,10 +475,12 @@ vispage = """<!DOCTYPE html>
                 .attr("text-anchor", "middle")
                 .attr("x", w/2)
                 .attr("y", 16)
-                .text("(b) Family Proximity in Random Forest Learned From All Feature Sets Combined")
+                .text("Family Proximity in Random Forest Learned From All Feature Sets Combined")
                 .attr("font-family", "Helvetica")
                 .attr("font-size", "13px")
                 .attr("font-weight", "bold");
+
+            
             
 
             
